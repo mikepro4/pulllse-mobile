@@ -3,7 +3,7 @@ import userApi from "../axios/userApi";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const uploadAudio = createAsyncThunk("audio/upload", async (blob, thunkAPI) => {
+const uploadAudio = createAsyncThunk("audio/upload", async (formData, thunkAPI) => {
   console.log("uploadAudio action called");
   try {
     const userId = await AsyncStorage.getItem("userId");
@@ -12,7 +12,7 @@ const uploadAudio = createAsyncThunk("audio/upload", async (blob, thunkAPI) => {
     const { url } = response.data;
 
     // Upload the audio file to the preassigned S3 link
-    await axios.put(url, blob, {
+    await axios.put(url, formData, {
       headers: {
         "Content-Type": "audio/x-caf",
       },

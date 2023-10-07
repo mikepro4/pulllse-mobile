@@ -6,7 +6,6 @@ import * as Sharing from "expo-sharing";
 import { uploadAudio } from "../redux";
 import { useDispatch } from "react-redux";
 import * as FileSystem from "expo-file-system";
-global.Buffer = global.Buffer || require("buffer").Buffer;
 
 export default function App() {
   const [recording, setRecording] = React.useState();
@@ -15,16 +14,15 @@ export default function App() {
   const [name, setName] = React.useState("Recording");
 
   const dispatch = useDispatch();
-
   const createBlobFromAudioFile = async (audioFilePath) => {
     try {
-      const fileData = await FileSystem.readAsStringAsync(audioFilePath, {
+      const fileUri = FileSystem.documentDirectory + audioFilePath; // Adjust path as needed
+      const fileData = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
       const blob = new Blob([new Uint8Array(Buffer.from(fileData, "base64"))], {
         type: "audio/x-caf",
       });
-
       return blob;
     } catch (error) {
       console.error("Error creating blob from audio file:", error);
@@ -68,16 +66,47 @@ export default function App() {
         file: recording.getURI(),
       });
 
+
       const uri = recording.getURI();
+      console.log(uri)
+      // const blob = createBlobFromAudioFile(uri).then((blob) => {
+      //   dispatch(uploadAudio(blob));
+      // });
 
-      const formatedUri = uri.replace("file:///", "");
-      const newUri = "/" + formatedUri;
-      console.log(newUri);
-      const fileData = await FileSystem.readAsStringAsync(newUri);
+      const formData = new FormData();
+      formData.append('file', {
+        uri: uri,
+        type: 'audio/x-caf',
+        name: 'recording.caf',
+      });
 
-      const blob = await fetch(newUri).then((response) => response.blob());
+      dispatch(uploadAudio(formData))
 
-      await dispatch(uploadAudio(fileData.blob()));
+
+      // fetch(uri)
+      //   .then(response => response.arrayBuffer())
+      //   .then(buffer => {
+      //     // Create a new blob with the x-caf format specified
+      //     const blob = new Blob([buffer], { type: 'audio/x-caf' });
+      //     console.log(blob);
+      //     dispatch(uploadAudio(blob));
+      //   })
+      //   .catch(error => {
+      //     console.error("There was an error creating the blob", error);
+      //   });
+
+      // fetch(uri)
+      //   .then(response => response.blob())
+      //   .then(blob => {
+      //     console.log(blob);  // This is your blob object
+      //     dispatch(uploadAudio(blob));
+      //   })
+      //   .catch(error => {
+      //     console.error("There was an error creating the blob", error);
+      //   });
+
+      
+
 
       setRecordings(updatedRecordings);
     } catch (error) {
