@@ -5,6 +5,8 @@ import { Audio } from "expo-av";
 import * as Sharing from "expo-sharing";
 import { uploadAudio } from "../redux";
 import { useDispatch } from "react-redux";
+import * as FileSystem from "expo-file-system";
+global.Buffer = global.Buffer || require("buffer").Buffer;
 
 export default function App() {
   const [recording, setRecording] = React.useState();
@@ -13,6 +15,22 @@ export default function App() {
   const [name, setName] = React.useState("Recording");
 
   const dispatch = useDispatch();
+
+  const createBlobFromAudioFile = async (audioFilePath) => {
+    try {
+      const fileData = await FileSystem.readAsStringAsync(audioFilePath, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const blob = new Blob([new Uint8Array(Buffer.from(fileData, "base64"))], {
+        type: "audio/x-caf",
+      });
+
+      return blob;
+    } catch (error) {
+      console.error("Error creating blob from audio file:", error);
+      throw error;
+    }
+  };
 
   async function startRecording() {
     try {
@@ -52,11 +70,14 @@ export default function App() {
 
       const uri = recording.getURI();
 
-      const file = await fetch(uri);
-      const blob = await file.blob();
-      console.log(blob, "blob file");
+      const formatedUri = uri.replace("file:///", "");
+      const newUri = "/" + formatedUri;
+      console.log(newUri);
+      const fileData = await FileSystem.readAsStringAsync(newUri);
 
-      dispatch(uploadAudio(blob));
+      const blob = await fetch(newUri).then((response) => response.blob());
+
+      await dispatch(uploadAudio(fileData.blob()));
 
       setRecordings(updatedRecordings);
     } catch (error) {
