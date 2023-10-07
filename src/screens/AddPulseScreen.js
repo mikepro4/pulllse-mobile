@@ -6,121 +6,74 @@ import * as Sharing from "expo-sharing";
 import { uploadAudio } from "../redux";
 import { useDispatch } from "react-redux";
 import * as FileSystem from "expo-file-system";
+import * as Permissions from 'expo-permissions';
 
 export default function App() {
-  const [recording, setRecording] = React.useState();
-  const [recordings, setRecordings] = React.useState([]);
   const [message, setMessage] = React.useState("");
   const [name, setName] = React.useState("Recording");
 
+  const [recording, setRecording] = React.useState();
+  const [isRecording, setIsRecording] = React.useState(false);
+  const [sound, setSound] = React.useState();
+
   const dispatch = useDispatch();
-  const createBlobFromAudioFile = async (audioFilePath) => {
+
+  const startRecording = async () => {
     try {
-      const fileUri = FileSystem.documentDirectory + audioFilePath; // Adjust path as needed
-      const fileData = await FileSystem.readAsStringAsync(fileUri, {
-        encoding: FileSystem.EncodingType.Base64,
+      const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+      if (status !== 'granted') throw new Error('Permissions not granted');
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: true,
       });
-      const blob = new Blob([new Uint8Array(Buffer.from(fileData, "base64"))], {
-        type: "audio/x-caf",
-      });
-      return blob;
+
+      const newRecording = new Audio.Recording();
+      await newRecording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      await newRecording.startAsync();
+
+      setRecording(newRecording);
+      setIsRecording(true); // Set recording status to true
     } catch (error) {
-      console.error("Error creating blob from audio file:", error);
-      throw error;
+      console.error(error);
     }
   };
 
-  async function startRecording() {
+  const stopRecording = async () => {
     try {
-      const permission = await Audio.requestPermissionsAsync();
-
-      if (permission.status === "granted") {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: true,
-          playsInSilentModeIOS: true,
-        });
-
-        const { recording } = await Audio.Recording.createAsync(
-          Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-        );
-
-        setRecording(recording);
-      } else {
-        setMessage("Please grant permission to app to access microphone");
-      }
-    } catch (err) {
-      console.error("Failed to start recording", err);
-    }
-  }
-  async function stopRecording() {
-    try {
-      setRecording(undefined);
       await recording.stopAndUnloadAsync();
-
-      let updatedRecordings = [...recordings];
-      const { sound, status } = await recording.createNewLoadedSoundAsync();
-
-      updatedRecordings.push({
-        sound: sound,
-        duration: getDurationFormatted(status.durationMillis),
-        file: recording.getURI(),
-      });
-
-
-      const uri = recording.getURI();
+      const uri = recording.getURI(); // URI of the recorded file
       console.log(uri)
-      // const blob = createBlobFromAudioFile(uri).then((blob) => {
-      //   dispatch(uploadAudio(blob));
-      // });
 
-      const formData = new FormData();
-      formData.append('file', {
-        uri: uri,
-        type: 'audio/x-caf',
-        name: 'recording.caf',
-      });
+      // To play the recording
+      const { sound } = await Audio.Sound.createAsync(
+        { uri },
+        { volume: 1.0 },
+      );
+      // const formData = new FormData();
 
-      dispatch(uploadAudio(formData))
+      const response = await fetch(uri);
+      const fileContent = await response.arrayBuffer();
 
+      console.log(fileContent)
 
-      // fetch(uri)
-      //   .then(response => response.arrayBuffer())
-      //   .then(buffer => {
-      //     // Create a new blob with the x-caf format specified
-      //     const blob = new Blob([buffer], { type: 'audio/x-caf' });
-      //     console.log(blob);
-      //     dispatch(uploadAudio(blob));
-      //   })
-      //   .catch(error => {
-      //     console.error("There was an error creating the blob", error);
-      //   });
-
-      // fetch(uri)
-      //   .then(response => response.blob())
-      //   .then(blob => {
-      //     console.log(blob);  // This is your blob object
-      //     dispatch(uploadAudio(blob));
-      //   })
-      //   .catch(error => {
-      //     console.error("There was an error creating the blob", error);
-      //   });
-
-      
-
-
-      setRecordings(updatedRecordings);
+      dispatch(uploadAudio(fileContent))
+      setSound(sound);
+      setIsRecording(false); // Set recording status to false
     } catch (error) {
-      console.error("Error stopping the recording:", error);
+      console.error(error);
     }
-  }
+  };
 
-  function getDurationFormatted(millis) {
-    const minutes = millis / 1000 / 60;
-    const minutesDisplay = Math.floor(minutes);
-    const seconds = Math.round((minutes - minutesDisplay) * 60);
-    const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
-    return `${minutesDisplay}:${secondsDisplay}`;
-  }
+  const playRecording = async () => {
+    try {
+      await sound.setPositionAsync(0);
+      await sound.playAsync();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   function getRecordingLines() {
     return recordings.map((recordingLine, index) => {
@@ -147,11 +100,11 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>{message}</Text>
-      <Button
-        title={recording ? "Stop Recording" : "Start Recording"}
-        onPress={recording ? stopRecording : startRecording}
-      />
-      {getRecordingLines()}
+      <Button title="Start Recording" onPress={startRecording} />
+      <Button title="Stop Recording" onPress={stopRecording} />
+      <Button title="Play Recording" onPress={playRecording} />
+      <Text>{isRecording ? 'Recording...' : 'Not Recording'}</Text>
+
       <StatusBar style="auto" />
     </View>
   );
