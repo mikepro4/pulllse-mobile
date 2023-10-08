@@ -6,7 +6,6 @@ import * as Sharing from "expo-sharing";
 import { uploadAudio } from "../redux";
 import { useDispatch } from "react-redux";
 import * as FileSystem from "expo-file-system";
-import * as Permissions from 'expo-permissions';
 
 export default function App() {
   const [message, setMessage] = React.useState("");
@@ -20,94 +19,95 @@ export default function App() {
 
   const startRecording = async () => {
     try {
-      const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-      if (status !== 'granted') throw new Error('Permissions not granted');
+      const permission = await Audio.requestPermissionsAsync();
 
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: true,
-      });
-
-      const newRecording = new Audio.Recording();
-      await newRecording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-      await newRecording.startAsync();
-
-      setRecording(newRecording);
-      setIsRecording(true); // Set recording status to true
-    } catch (error) {
-      console.error(error);
+      if (permission.status === "granted") {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+          staysActiveInBackground: true,
+        });
+    
+        const newRecording = new Audio.Recording();
+        await newRecording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+        await newRecording.startAsync();
+    
+        setRecording(newRecording);
+        setIsRecording(true);
+      }
+    } catch (err) {
+      console.error("Failed to start recording", err);
     }
-  };
+};
 
-  const stopRecording = async () => {
-    try {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI(); // URI of the recorded file
-      console.log(uri)
+const stopRecording = async () => {
+  try {
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI(); // URI of the recorded file
+    console.log(uri)
 
-      // To play the recording
-      const { sound } = await Audio.Sound.createAsync(
-        { uri },
-        { volume: 1.0 },
-      );
-      // const formData = new FormData();
+    // To play the recording
+    const { sound } = await Audio.Sound.createAsync(
+      { uri },
+      { volume: 1.0 },
+    );
+    // const formData = new FormData();
 
-      const response = await fetch(uri);
-      const fileContent = await response.arrayBuffer();
+    const response = await fetch(uri);
+    const fileContent = await response.arrayBuffer();
 
-      console.log(fileContent)
+    console.log(fileContent)
 
-      dispatch(uploadAudio(fileContent))
-      setSound(sound);
-      setIsRecording(false); // Set recording status to false
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const playRecording = async () => {
-    try {
-      await sound.setPositionAsync(0);
-      await sound.playAsync();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  function getRecordingLines() {
-    return recordings.map((recordingLine, index) => {
-      return (
-        <View key={index} style={styles.row}>
-          <Text style={styles.fill}>
-            Recording {index + 1} - {recordingLine.duration}
-          </Text>
-          <Button
-            style={styles.button}
-            onPress={() => recordingLine.sound.replayAsync()}
-            title="Play"
-          ></Button>
-          <Button
-            style={styles.button}
-            onPress={() => Sharing.shareAsync(recordingLine.file)}
-            title="Share"
-          ></Button>
-        </View>
-      );
-    });
+    dispatch(uploadAudio(fileContent))
+    setSound(sound);
+    setIsRecording(false); // Set recording status to false
+  } catch (error) {
+    console.error(error);
   }
+};
 
-  return (
-    <View style={styles.container}>
-      <Text>{message}</Text>
-      <Button title="Start Recording" onPress={startRecording} />
-      <Button title="Stop Recording" onPress={stopRecording} />
-      <Button title="Play Recording" onPress={playRecording} />
-      <Text>{isRecording ? 'Recording...' : 'Not Recording'}</Text>
+const playRecording = async () => {
+  try {
+    await sound.setPositionAsync(0);
+    await sound.playAsync();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-      <StatusBar style="auto" />
-    </View>
-  );
+function getRecordingLines() {
+  return recordings.map((recordingLine, index) => {
+    return (
+      <View key={index} style={styles.row}>
+        <Text style={styles.fill}>
+          Recording {index + 1} - {recordingLine.duration}
+        </Text>
+        <Button
+          style={styles.button}
+          onPress={() => recordingLine.sound.replayAsync()}
+          title="Play"
+        ></Button>
+        <Button
+          style={styles.button}
+          onPress={() => Sharing.shareAsync(recordingLine.file)}
+          title="Share"
+        ></Button>
+      </View>
+    );
+  });
+}
+
+return (
+  <View style={styles.container}>
+    <Text>{message}</Text>
+    <Button title="Start Recording" onPress={startRecording} />
+    <Button title="Stop Recording" onPress={stopRecording} />
+    <Button title="Play Recording" onPress={playRecording} />
+    <Text>{isRecording ? 'Recording...' : 'Not Recording'}</Text>
+
+    <StatusBar style="auto" />
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
