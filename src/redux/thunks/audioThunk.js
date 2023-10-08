@@ -8,7 +8,7 @@ const uploadAudio = createAsyncThunk("audio/upload", async ({blob, name, duratio
   try {
     const user = await AsyncStorage.getItem("userId");
     // Get the preassigned S3 URL
-    const response = await userApi.get("http://localhost:4000/api/upload");
+    const response = await userApi.get("http://192.168.1.157:4000/api/upload");
     const { url, key } = response.data;
 
     // Upload the audio file to the preassigned S3 link
@@ -18,7 +18,7 @@ const uploadAudio = createAsyncThunk("audio/upload", async ({blob, name, duratio
       },
     });
 
-      await userApi.post("http://localhost:4000/api/saveAudioLink", {
+      await userApi.post("http://192.168.1.157:4000/api/saveAudioLink", {
         audioLink: "https://my-audio-bucket-111.s3.us-east-2.amazonaws.com/" + key,
         name,
         duration,
