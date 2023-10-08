@@ -40,11 +40,20 @@ export default function App() {
     }
 };
 
+function getDurationFormatted(millis) {
+  const minutes = millis / 1000 / 60;
+  const minutesDisplay = Math.floor(minutes);
+  const seconds = Math.round((minutes - minutesDisplay) * 60);
+  const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
+  return `${minutesDisplay}:${secondsDisplay}`;
+}
+
 const stopRecording = async () => {
   try {
     await recording.stopAndUnloadAsync();
     const uri = recording.getURI(); // URI of the recorded file
-    console.log(uri)
+    const { status } = await recording.createNewLoadedSoundAsync();
+    console.log(status.durationMillis)
 
     // To play the recording
     const { sound } = await Audio.Sound.createAsync(
@@ -58,7 +67,7 @@ const stopRecording = async () => {
 
     console.log(fileContent)
 
-    dispatch(uploadAudio(fileContent))
+    dispatch(uploadAudio({blob: fileContent, duration:status.durationMillis, name }))
     setSound(sound);
     setIsRecording(false); // Set recording status to false
   } catch (error) {
