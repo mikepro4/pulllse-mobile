@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const uploadAudio = createAsyncThunk("audio/upload", async ({blob, name, duration}, thunkAPI) => {
   console.log("uploadAudio action called");
   try {
-    const userId = await AsyncStorage.getItem("userId");
+    const user = await AsyncStorage.getItem("userId");
     // Get the preassigned S3 URL
     const response = await userApi.get("http://localhost:4000/api/upload");
     const { url, key } = response.data;
@@ -21,7 +21,8 @@ const uploadAudio = createAsyncThunk("audio/upload", async ({blob, name, duratio
       await userApi.post("http://localhost:4000/api/saveAudioLink", {
         audioLink: "https://my-audio-bucket-111.s3.us-east-2.amazonaws.com/" + key,
         name,
-        duration
+        duration,
+        user
       });
     return url;
   } catch (error) {
