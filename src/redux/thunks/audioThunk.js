@@ -3,45 +3,55 @@ import userApi from "../axios/userApi";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const uploadAudio = createAsyncThunk("audio/upload", async ({blob, name, duration}, thunkAPI) => {
-  console.log("uploadAudio action called");
-  try {
-    const user = await AsyncStorage.getItem("userId");
-    // Get the preassigned S3 URL
-    const response = await userApi.get("http://192.168.1.157:4000/api/upload");
-    const { url, key } = response.data;
+const uploadAudio = createAsyncThunk(
+  "audio/upload",
+  async ({ blob, name, duration }, thunkAPI) => {
+    console.log("uploadAudio action called");
+    try {
+      const user = await AsyncStorage.getItem("userId");
+      // Get the preassigned S3 URL
+      const response = await userApi.get("/api/upload");
+      const { url, key } = response.data;
 
-    // Upload the audio file to the preassigned S3 link
-    await axios.put(url, blob, {
-      headers: {
-        "Content-Type": "audio/x-m4a",
-      },
-    });
+      // Upload the audio file to the preassigned S3 link
+      await axios.put(url, blob, {
+        headers: {
+          "Content-Type": "audio/x-m4a",
+        },
+      });
 
-      await userApi.post("http://192.168.1.157:4000/api/saveAudioLink", {
-        audioLink: "https://my-audio-bucket-111.s3.us-east-2.amazonaws.com/" + key,
+      await userApi.post("/api/saveAudioLink", {
+        audioLink:
+          "https://my-audio-bucket-111.s3.us-east-2.amazonaws.com/" + key,
         name,
         duration,
-        user
+        user,
       });
-    return url;
-  } catch (error) {
-    console.log("Error in uploadAudio action:", error); // <-- Add this
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-
-const fetchUserAudios = createAsyncThunk(
-  "audio/fetch",
-  async (userId, thunkAPI) => {
-    try {
-      const response = await userApi.get("/api/userAudios");
-
-      return response.data;
+      return url;
     } catch (error) {
+      console.log("Error in uploadAudio action:", error); // <-- Add this
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
 
-export { uploadAudio, fetchUserAudios };
+const fetchUserAudios = createAsyncThunk("audio/fetch", async (_, thunkAPI) => {
+  try {
+    const userId = await AsyncStorage.getItem("userId");
+    const response = await userApi.get(`/api/userAudios?userId=${userId}`);
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
+});
+
+const deleteAudio = createAsyncThunk("audio/delete", async (key, thunkAPI) => {
+  try {
+    await userApi.post("/api/deleteAudio", { key });
+    return key; // return the key of deleted audio to handle it in the reducer
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
+});
+
+export { uploadAudio, fetchUserAudios, deleteAudio };
