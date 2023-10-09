@@ -26,7 +26,9 @@ const LoginScreen = () => {
           headerText="Sing In To Your Account"
           errorMessage={errorMessage}
           submitButtonText="Sign In"
-          onSubmit={(email, password) => dispatch(signin({ email, password }))}
+          onSubmit={(email, password) =>
+            dispatch(signin({ email, password, navigate }))
+          }
         />
         <Button
           title="Go to SignUp"

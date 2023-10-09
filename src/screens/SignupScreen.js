@@ -29,7 +29,9 @@ const SignUpScreen = () => {
           headerText="Sign Up For Tracker"
           errorMessage={errorMessage}
           submitButtonText="Sign Up"
-          onSubmit={(email, password) => dispatch(signup({ email, password }))}
+          onSubmit={(email, password) =>
+            dispatch(signup({ email, password, navigate }))
+          }
         />
         <Button
           title="Go to SignIn"

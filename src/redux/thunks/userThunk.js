@@ -4,11 +4,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const tryLocalSignIn = createAsyncThunk(
   "user/tryLocalSignIn",
-  async (_, { rejectWithValue }) => {
+  async ({ navigate }, { rejectWithValue }) => {
     const token = await AsyncStorage.getItem("token");
+
     if (token) {
+      navigate("MainFlow", { screen: "FeedScreen" });
       return token;
     } else {
+      navigate("LoginFlow");
       throw new Error("No token found.");
     }
   }
@@ -16,7 +19,7 @@ const tryLocalSignIn = createAsyncThunk(
 
 const signup = createAsyncThunk(
   "user/signup",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password, navitate }, { rejectWithValue }) => {
     try {
       const response = await userApi.post("/signup", { email, password });
 
@@ -25,6 +28,7 @@ const signup = createAsyncThunk(
 
       // Set the user's ID in AsyncStorage
       await AsyncStorage.setItem("userId", response.data.userId);
+      navigate("MainFlow", { screen: "FeedScreen" });
 
       // Return the token for further processing or usage in reducers
       return response.data.token;
@@ -36,7 +40,7 @@ const signup = createAsyncThunk(
 
 const signin = createAsyncThunk(
   "user/signin",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password, navigate }, { rejectWithValue }) => {
     try {
       const response = await userApi.post("/signin", { email, password });
 
@@ -45,6 +49,7 @@ const signin = createAsyncThunk(
 
       // Set the user's ID in AsyncStorage
       await AsyncStorage.setItem("userId", response.data.userId);
+      navigate("MainFlow", { screen: "FeedScreen" });
 
       // Return the token for further processing or usage in reducers
       return response.data.token;
@@ -56,8 +61,9 @@ const signin = createAsyncThunk(
 
 const signout = createAsyncThunk(
   "user/signout",
-  async (_, { rejectWithValue }) => {
+  async ({ navigate }, { rejectWithValue }) => {
     await AsyncStorage.removeItem("token");
+    navigate("LoginFlow");
     return null;
   }
 );

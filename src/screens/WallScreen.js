@@ -4,10 +4,11 @@ import { signout } from "../redux";
 import { useDispatch } from "react-redux";
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 const WallScreen = () => {
   const dispatch = useDispatch();
-
+  const { navigate } = useNavigation();
   return (
     <SafeAreaView>
       <View>
@@ -15,7 +16,7 @@ const WallScreen = () => {
         <Button
           title="Sign Out"
           onPress={() => {
-            dispatch(signout());
+            dispatch(signout({ navigate }));
           }}
         />
       </View>

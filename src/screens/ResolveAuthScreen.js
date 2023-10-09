@@ -10,16 +10,8 @@ const ResolveAuthScreen = () => {
   const token = useSelector((state) => state.user.token); // Assuming state structure
 
   useEffect(() => {
-    // Dispatch the thunk
-    dispatch(tryLocalSignIn());
-
-    // Navigate based on the presence of the token
-    if (token) {
-      navigate("MainFlow", { screen: "FeedScreen" }); // Update with your route name
-    } else {
-      navigate("LoginFlow"); // Update with your route name
-    }
-  }, [token, dispatch, navigate]);
+    dispatch(tryLocalSignIn({ navigate }));
+  }, []);
 
   return null;
 };
