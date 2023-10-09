@@ -10,7 +10,7 @@ const uploadAudio = createAsyncThunk(
     try {
       const user = await AsyncStorage.getItem("userId");
       // Get the preassigned S3 URL
-      const response = await userApi.get("/api/upload");
+      const response = await userApi.get(`/api/upload?userId=${user}`);
       const { url, key } = response.data;
 
       // Upload the audio file to the preassigned S3 link
