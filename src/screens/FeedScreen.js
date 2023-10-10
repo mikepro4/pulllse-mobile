@@ -11,7 +11,16 @@ const FeedScreen = () => {
   const dispatch = useDispatch();
   const audioList = useSelector((state) => state.audio.recordings);
 
+  const setPlayer = async () => {
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+      staysActiveInBackground: true,
+    });
+  }
+
+
   useEffect(() => {
+    setPlayer()
     dispatch(fetchUserAudios());
   }, []);
 

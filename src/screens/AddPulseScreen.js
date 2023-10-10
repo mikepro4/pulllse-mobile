@@ -72,6 +72,9 @@ export default function App() {
         })
       );
       setSound(sound);
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      })
       setIsRecording(false); // Set recording status to false
     } catch (error) {
       console.error(error);
