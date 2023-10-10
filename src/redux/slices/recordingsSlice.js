@@ -26,8 +26,7 @@ const recordingsSlice = createSlice({
       })
       .addCase(uploadAudio.fulfilled, (state, action) => {
         state.status = "succeeded";
-        // If you want to update some part of state when audio upload is successful, do it here
-        // Example: state.uploadedUrl = action.payload;
+        state.recordings = [...state.recordings, action.payload];
       })
       .addCase(uploadAudio.rejected, (state, action) => {
         state.status = "failed";
@@ -49,9 +48,8 @@ const recordingsSlice = createSlice({
       })
       .addCase(deleteAudio.fulfilled, (state, action) => {
         state.status = "succeeded";
-        // Remove the deleted audio from the recordings array
         state.recordings = state.recordings.filter(
-          (recording) => recording.key !== action.payload
+          (recording) => recording.audioLink !== action.payload
         );
       })
       .addCase(deleteAudio.rejected, (state, action) => {

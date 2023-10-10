@@ -36,8 +36,8 @@ const FeedScreen = () => {
       }
     }
     if (audioLink) {
-      const key = removeBaseUrl(audioLink); // Extract key from the audioLink
-      dispatch(deleteAudio(key));
+      const key = removeBaseUrl(audioLink);
+      dispatch(deleteAudio({ key, link: audioLink }));
     }
   };
 
