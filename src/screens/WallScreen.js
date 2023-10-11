@@ -14,6 +14,7 @@ const WallScreen = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const userInfo = useSelector((state) => state.user.userInfo);
+
   console.log(userInfo);
   useEffect(() => {
     dispatch(fetchUserInfo());
