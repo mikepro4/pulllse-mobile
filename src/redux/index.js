@@ -1,15 +1,26 @@
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { userReducer } from "./slices/userSlice";
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { recordsReducer } from "./slices/recordingsSlice";
 import { imageReducer } from "./slices/imageSlice";
+import { signout } from "./thunks/userThunk";
+
+const rootReducer = combineReducers({
+  user: userReducer,
+  audio: recordsReducer,
+  image: imageReducer,
+});
+
+const resettableReducer = (state, action) => {
+  // Use the .fulfilled property of the signout action to get the correct action type
+  if (action.type === signout.fulfilled.type) {
+    state = undefined;
+  }
+  return rootReducer(state, action);
+};
 
 export const store = configureStore({
-  reducer: {
-    user: userReducer,
-    audio: recordsReducer,
-    image: imageReducer,
-  },
+  reducer: resettableReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
