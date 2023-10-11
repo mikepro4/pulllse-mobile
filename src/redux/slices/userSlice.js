@@ -1,11 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { signup, signin, signout, tryLocalSignIn } from "../thunks/userThunk";
+import {
+  signup,
+  signin,
+  signout,
+  tryLocalSignIn,
+  fetchUserInfo,
+} from "../thunks/userThunk";
 
 const userSlice = createSlice({
   name: "user",
   initialState: {
     email: "",
     token: null,
+    userInfo: {},
     isLoading: false,
     errorMessage: "",
   },
@@ -66,6 +73,17 @@ const userSlice = createSlice({
         state.token = action.payload;
       })
       .addCase(tryLocalSignIn.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errorMessage = action.error.message;
+      })
+      .addCase(fetchUserInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userInfo = action.payload;
+      })
+      .addCase(fetchUserInfo.rejected, (state, action) => {
         state.isLoading = false;
         state.errorMessage = action.error.message;
       });

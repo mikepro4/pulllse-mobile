@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 const SignUpScreen = () => {
   const { errorMessage } = useSelector((state) => state.user);
   const state = useSelector((state) => state.user);
+  console.log(state);
 
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
@@ -26,11 +27,12 @@ const SignUpScreen = () => {
     <SafeAreaView>
       <View>
         <AuthForm
+          userShow
           headerText="Sign Up For Tracker"
           errorMessage={errorMessage}
           submitButtonText="Sign Up"
-          onSubmit={(email, password) =>
-            dispatch(signup({ email, password, navigate }))
+          onSubmit={(email, password, userName) =>
+            dispatch(signup({ email, password, userName, navigate }))
           }
         />
         <Button
