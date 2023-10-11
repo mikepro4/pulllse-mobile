@@ -23,6 +23,7 @@ const LoginScreen = () => {
     <SafeAreaView>
       <View>
         <AuthForm
+          userShow={false}
           headerText="Sing In To Your Account"
           errorMessage={errorMessage}
           submitButtonText="Sign In"

@@ -1,16 +1,32 @@
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+
 import { Text, Button, Input } from "react-native-elements";
 import { StyleSheet } from "react-native";
 
-const AuthForm = ({ headerText, errorMessage, onSubmit, submitButtonText }) => {
+const AuthForm = ({
+  headerText,
+  errorMessage,
+  onSubmit,
+  submitButtonText,
+  userShow,
+}) => {
   const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const { navigate } = useNavigation();
 
   return (
     <>
       <Text h3>{headerText}</Text>
+
+      {userShow ? (
+        <Input
+          label="Username"
+          value={userName}
+          onChangeText={setUserName}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+      ) : null}
 
       <Input
         label="Email"
@@ -32,7 +48,7 @@ const AuthForm = ({ headerText, errorMessage, onSubmit, submitButtonText }) => {
       <Button
         title={submitButtonText}
         onPress={() => {
-          onSubmit(email, password);
+          onSubmit(email, password, userName);
         }}
       />
     </>
