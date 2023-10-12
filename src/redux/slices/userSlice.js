@@ -6,6 +6,7 @@ import {
   tryLocalSignIn,
   fetchUserInfo,
 } from "../thunks/userThunk";
+import { uploadAudio } from "../thunks/audioThunk";
 
 const userSlice = createSlice({
   name: "user",
@@ -23,7 +24,10 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Signup cases
+      .addCase(uploadAudio.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.userInfo.postsCount += 1;
+      })
       .addCase(signup.pending, (state) => {
         state.isLoading = true;
         state.errorMessage = "";

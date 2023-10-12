@@ -4,7 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserImage, deleteImage, uploadImage } from "../redux";
 
-const ProfilePicture = () => {
+const ProfilePicture = ({ fetchedPic }) => {
   const dispatch = useDispatch();
   const img = useSelector((state) => state.image.image);
   const [image, setImage] = useState(null);

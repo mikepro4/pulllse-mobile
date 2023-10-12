@@ -17,6 +17,7 @@ const imageSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
       .addCase(uploadImage.pending, (state) => {
         state.status = "loading";
       })
