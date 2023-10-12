@@ -5,11 +5,14 @@ import React, { useState, useEffect } from "react";
 import { Audio } from "expo-av";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserAudios, deleteAudio } from "../redux";
+import Icon from "../components/icon"
 
 const FeedScreen = () => {
   return (
-    <SafeAreaView>
-      <View>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#000000'}} barStyle="light-content">
+      <Icon name="search" />
+
+      <View style={{ backgroundColor: 'transparent'}}>
         <Text>FeedScreen</Text>
       </View>
     </SafeAreaView>

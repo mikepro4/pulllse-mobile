@@ -120,7 +120,6 @@ export default function App() {
       <Button title="Play Recording" onPress={playRecording} />
       <Text>{isRecording ? "Recording..." : "Not Recording"}</Text>
 
-      <StatusBar style="auto" />
     </View>
   );
 }
@@ -128,7 +127,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -3,12 +3,14 @@ import { userReducer } from "./slices/userSlice";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { recordsReducer } from "./slices/recordingsSlice";
 import { imageReducer } from "./slices/imageSlice";
+import { tabReducer } from "./slices/tabSlice";
 import { signout } from "./thunks/userThunk";
 
 const rootReducer = combineReducers({
   user: userReducer,
   audio: recordsReducer,
   image: imageReducer,
+  tab: tabReducer
 });
 
 const resettableReducer = (state, action) => {
