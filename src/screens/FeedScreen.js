@@ -4,9 +4,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import { Audio } from "expo-av";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserAudios, deleteAudio } from "../redux";
+import { fetchUserAudios, deleteAudio, fetchUserInfo } from "../redux";
 
 const FeedScreen = () => {
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(fetchUserInfo());
+  // }, []);
+
   return (
     <SafeAreaView>
       <View>

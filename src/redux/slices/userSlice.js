@@ -7,13 +7,28 @@ import {
   fetchUserInfo,
 } from "../thunks/userThunk";
 import { uploadAudio } from "../thunks/audioThunk";
+import { followUser } from "../thunks/followSubscribeThunk";
 
 const userSlice = createSlice({
   name: "user",
   initialState: {
     email: "",
     token: null,
-    userInfo: {},
+    userInfo: {
+      __v: 0,
+      _id: "",
+      dateCreated: "",
+      followersCount: 0,
+      followingCount: 0,
+      notificationsCount: 0,
+      postsCount: 0,
+      subscribersCount: 0,
+      user: {
+        _id: "",
+        email: "",
+      },
+      userName: "",
+    },
     isLoading: false,
     errorMessage: "",
   },
@@ -24,10 +39,14 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(uploadAudio.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.userInfo.postsCount += 1;
-      })
+      // .addCase(uploadAudio.fulfilled, (state, action) => {
+      //   state.status = "succeeded";
+      //   state.userInfo.postsCount += 1;
+      // })
+      // .addCase(followUser.fulfilled, (state, action) => {
+      //   state.status = "succeeded";
+      //   state.userInfo.followersCount += 1;
+      // })
       .addCase(signup.pending, (state) => {
         state.isLoading = true;
         state.errorMessage = "";

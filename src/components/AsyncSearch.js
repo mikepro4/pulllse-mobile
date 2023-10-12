@@ -9,9 +9,13 @@ import {
 } from "react-native";
 import userApi from "../redux/axios/userApi";
 import throttle from "lodash/throttle";
+import { followUser } from "../redux";
+import { useDispatch, useSelector } from "react-redux";
+
 const AsyncSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const dispatch = useDispatch();
   console.log("results", results);
 
   const throttledSearch = useCallback(
@@ -55,7 +59,15 @@ const AsyncSearch = () => {
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           console.log("item", item),
-          (<Text style={styles.itemText}>{item.userName}</Text>)
+          (
+            <View style={styles.userElement}>
+              <Text style={styles.itemText}>{item.userName}</Text>
+              <Button
+                title="follow"
+                onPress={() => dispatch(followUser(item.user))}
+              />
+            </View>
+          )
         )}
       />
     </View>
@@ -63,6 +75,12 @@ const AsyncSearch = () => {
 };
 
 const styles = StyleSheet.create({
+  userElement: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
+  },
   container: {
     flex: 1,
     flexDirection: "column",

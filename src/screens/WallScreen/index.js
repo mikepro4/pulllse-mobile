@@ -2,22 +2,28 @@ import { StyleSheet, Text, View, Button, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { signout } from "../../redux";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ProfilePicture from "../../components/ProfilePicture";
 import UserPosts from "../../components/UserPosts";
 
 import { useNavigation } from "@react-navigation/native";
 import { fetchUserInfo } from "../../redux";
 import { useDispatch, useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 const WallScreen = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const userInfo = useSelector((state) => state.user.userInfo);
+  const userInfo1 = useSelector((state) => state.user);
 
-  useEffect(() => {
-    dispatch(fetchUserInfo());
-  }, [dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchUserInfo());
+      // Return function is the cleanup function, equivalent to componentWillUnmount in class components
+      return () => {};
+    }, [dispatch])
+  );
 
   return (
     <SafeAreaView>
@@ -40,6 +46,10 @@ const WallScreen = () => {
             <View>
               <Text>Posts:</Text>
               <Text>{userInfo.postsCount}</Text>
+            </View>
+            <View>
+              <Text>Following:</Text>
+              <Text>{userInfo.followingCount}</Text>
             </View>
             <View>
               <Text>Followers:</Text>

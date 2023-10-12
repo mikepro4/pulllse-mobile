@@ -32,7 +32,7 @@ setupListeners(store.dispatch);
 
 export * from "./thunks/userThunk";
 export * from "./thunks/audioThunk";
-
+export * from "./thunks/followSubscribeThunk";
 export * from "./thunks/imageThunk";
 
 export { clearErrorMessage } from "./slices/userSlice";

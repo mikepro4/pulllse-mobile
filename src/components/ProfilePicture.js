@@ -6,13 +6,13 @@ import { fetchUserImage, deleteImage, uploadImage } from "../redux";
 
 const ProfilePicture = ({ fetchedPic }) => {
   const dispatch = useDispatch();
-  const img = useSelector((state) => state.image.image);
+  const { imageLink } = useSelector((state) => state.image.image);
   const [image, setImage] = useState(null);
+  console.log("img", imageLink);
 
   useEffect(() => {
     dispatch(fetchUserImage());
-    setImage(img.imageLink);
-  }, [img.imageLink]);
+  }, []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,16 +27,16 @@ const ProfilePicture = ({ fetchedPic }) => {
       const fileContent = await response.arrayBuffer();
 
       function removeBaseUrl(link) {
-        if (img.imageLink) {
+        if (imageLink) {
           const baseUrl =
             "https://my-photo-bucket-111.s3.us-east-2.amazonaws.com/";
           return link.replace(baseUrl, "");
         }
       }
-      if (img.imageLink) {
-        dispatch(deleteImage(removeBaseUrl(img.imageLink)));
+      if (imageLink) {
+        dispatch(deleteImage(removeBaseUrl(imageLink)));
       }
-
+      setImage(result.assets[0].uri);
       dispatch(
         uploadImage({
           blob: fileContent,
@@ -48,9 +48,9 @@ const ProfilePicture = ({ fetchedPic }) => {
   return (
     <>
       <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {(image || img.imageLink) && (
+      {(image || imageLink) && (
         <Image
-          source={{ uri: image || img.imageLink }}
+          source={{ uri: image || imageLink }}
           style={{ width: 200, height: 200, borderRadius: 1000 }}
         />
       )}

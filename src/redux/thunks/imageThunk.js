@@ -24,6 +24,7 @@ const uploadImage = createAsyncThunk(
 
         user,
       });
+      console.log("finalUrl", finalUrl);
       return finalUrl;
     } catch (error) {
       console.log("Error in uploadImage action:", error);
@@ -36,6 +37,7 @@ const fetchUserImage = createAsyncThunk("image/fetch", async (_, thunkAPI) => {
   try {
     const userId = await AsyncStorage.getItem("userId");
     const response = await userApi.get(`/api/userImages?userId=${userId}`);
+    console.log("fetchUserImage", response.data);
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);

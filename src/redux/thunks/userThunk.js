@@ -20,14 +20,12 @@ const tryLocalSignIn = createAsyncThunk(
 const signup = createAsyncThunk(
   "user/signup",
   async ({ email, password, userName, navigate }, { rejectWithValue }) => {
-    console.log(userName);
     try {
       const response = await userApi.post("/signup", {
         email,
         password,
         userName,
       });
-      console.log("signup response", response.data);
 
       // Set the token in AsyncStorage
       await AsyncStorage.setItem("token", response.data.token);
@@ -77,7 +75,9 @@ const signout = createAsyncThunk(
 
 const fetchUserInfo = createAsyncThunk("user/fetchUserInfo", async () => {
   const userId = await AsyncStorage.getItem("userId");
+
   const response = await userApi.get(`/userinfo/${userId}`);
+
   return response.data;
 });
 
