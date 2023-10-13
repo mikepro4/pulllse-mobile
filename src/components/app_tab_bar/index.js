@@ -18,6 +18,7 @@ const AppTabBar = () => {
       mass: 1,
       damping: 57,
       stiffness: 450,
+      easing: Easing.inOut(Easing.ease),
     });
     opacity.value= withTiming(0, {
       duration: 150,

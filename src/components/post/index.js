@@ -1,15 +1,15 @@
 import { StyleSheet, View, ScrollView, Button } from "react-native";
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, Easing } from 'react-native-reanimated';
 
-import { useDispatch, useSelector } from "react-redux";
 import Icon from "../../components/icon"
 import CustomText from "../../components/text";
 
 import Theme from "../../styles/theme"
 
-const Player = () => {
+const Post = (props) => {
     const opacity = useSharedValue(0);
 
     const animateIn = () => {
@@ -28,23 +28,21 @@ const Player = () => {
     }));
 
     return (
-        <Animated.View style={[styles.playerContainer, animatedStyles]}>
-            {/* <CustomText>Player Render</CustomText> */}
+        <Animated.View style={[styles.postContainer, animatedStyles]}>
+            {/* <CustomText>Post</CustomText> */}
         </Animated.View>
     );
 };
 
-export default Player;
+export default Post;
 
 const styles = StyleSheet.create({
-    playerContainer: {
-        position: "absolute",
+    postContainer: {
+        backgroundColor: "#222222",
         flex: 1,
-        zIndex: 2,
-        backgroundColor: "#000000",
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0
+        height: 480,
+        marginBottom: 20,
+        marginHorizontal: 10,
+        borderRadius: 30
     }
 });
