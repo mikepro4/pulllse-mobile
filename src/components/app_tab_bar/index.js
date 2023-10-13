@@ -1,12 +1,57 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { switchTab } from '../../redux/slices/tabSlice';
+import { switchTab, togglePlayer } from '../../redux/slices/tabSlice';
 import Icon from '../icon'
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, Easing } from 'react-native-reanimated';
+
+import Theme from "../../styles/theme"
 
 const AppTabBar = () => {
   const activeTab = useSelector((state) => state.tab);
   const dispatch = useDispatch();
+  const offset = useSharedValue(0);
+  const opacity = useSharedValue(1);
+
+  const animateOut = () => {
+    offset.value = withSpring(85, {
+      mass: 1,
+      damping: 57,
+      stiffness: 450,
+    });
+    opacity.value= withTiming(0, {
+      duration: 150,
+      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+    })
+  };
+
+  // Animate tab bar back in when "plus" is deselected
+  const animateIn = () => {
+    offset.value = withSpring(0, {
+      mass: 1,
+      damping: 57,
+      stiffness: 450,
+      easing: Easing.inOut(Easing.ease),
+    });
+    opacity.value= withTiming(1, {
+      duration: 150,
+      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+    })
+  };
+
+  useEffect(() => {
+    if (activeTab.player) {
+      animateOut();
+    } else {
+      animateIn();
+    }
+  }, [activeTab]); // Re-run effect when activeTab changes
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateY: offset.value }],
+    opacity: opacity.value
+  }));
+
 
   const Button = ({ content, onPress }) => {
     return (
@@ -21,7 +66,7 @@ const AppTabBar = () => {
   }
 
   return (
-    <View style={styles.tabBar}>
+    <Animated.View style={[styles.tabBar, animatedStyles]}>
 
       <Button
         content={<Icon name="mountains" style={{ fill: activeTab.name === 'feed' ? '#fff' : 'transparent' }} />}
@@ -41,10 +86,7 @@ const AppTabBar = () => {
 
       <Button
         content={<Icon name="plus" style={{ strokeWidth: activeTab.name === 'player' ? '2' : '1' }} />}
-        onPress={() => dispatch(switchTab({
-          name: 'player',
-          icon: 'plus'
-        }))}
+        onPress={() => dispatch(togglePlayer(true))}
       />
 
       <Button
@@ -63,7 +105,7 @@ const AppTabBar = () => {
         }))}
       />
 
-    </View>
+    </Animated.View>
   );
 };
 
@@ -79,7 +121,8 @@ const styles = StyleSheet.create({
     height: 85,
     paddingHorizontal: 20,
     borderTopWidth: 1, 
-    borderTopColor: 'rgba(255, 255, 255, 0.05)'
+    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: '#000000'
   },
   button: {
     flex: 1,

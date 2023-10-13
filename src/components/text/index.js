@@ -3,9 +3,11 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const CustomText = (props) => {
+
+    
     return (
         <Text
-            style={[{ color: 'white' }, props.style]}>
+            style={[styles.text, props.style]}>
             {props.children}
         </Text>
     );
@@ -13,4 +15,10 @@ const CustomText = (props) => {
 
 export default CustomText;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    text: {
+        color: 'white',
+        fontFamily: 'aeonik-regular',
+        fontSize: 20,
+    }
+});

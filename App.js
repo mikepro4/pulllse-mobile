@@ -1,23 +1,23 @@
+import React, { useState, useEffect, useCallback } from 'react';
 import { Provider } from "react-redux";
 import { store } from "./src/redux";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 import LoginScreen from "./src/screens/LoginScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import ResolveAuthScreen from "./src/screens/ResolveAuthScreen";
-import FeedScreen from "./src/screens/FeedScreen";
-import WallScreen from "./src/screens/WallScreen";
-import AddPulseScreen from "./src/screens/AddPulseScreen";
 
 import MainFlow from "./src/screens/"
 
 import { StatusBar } from "expo-status-bar";
 
-
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+SplashScreen.preventAutoHideAsync();
 
 const Stack = createNativeStackNavigator();
 const LoginStack = () => (
@@ -41,36 +41,6 @@ const LoginStack = () => (
   </Stack.Navigator>
 );
 
-const Tab = createBottomTabNavigator();
-// const MainFlow = () => (
-//   <Tab.Navigator
-//     screenOptions={{
-//       tabBarStyle: { backgroundColor: 'transparent' }, // Add this line
-//     }}
-//   >
-//     <Tab.Screen
-//       name="FeedScreen"
-//       component={FeedScreen}
-//       options={{ headerShown: false, cardStyle: { backgroundColor: '#000000', flex: 1 }, }}
-//     />
-//     <Tab.Screen
-//       name="AddPulseScreen"
-//       component={AddPulseScreen}
-//       options={{ headerShown: false }}
-//       screenOptions={{
-//         cardStyle: { backgroundColor: 'transparent' },
-//       }}
-//     />
-//     <Tab.Screen
-//       name="WallScreen"
-//       component={WallScreen}
-//       options={{ headerShown: false }}
-//       screenOptions={{
-//         cardStyle: { backgroundColor: 'transparent' },
-//       }}
-//     />
-//   </Tab.Navigator>
-// );
 
 const App = () => (
   <NavigationContainer
@@ -109,14 +79,38 @@ const App = () => (
       />
     </Stack.Navigator>
   </NavigationContainer>
-);
+)
 
-export default () => {
+
+
+
+export default MainApp = () => {
+
+  const [fontsLoaded] = useFonts({
+    'aeonik-regular': require('./assets/fonts/Aeonik-Regular.ttf'),
+    'london-regular': require('./assets/fonts/London-Regular.ttf'),
+  });
+
+  useEffect(() => {
+    async function prepare() {
+      await SplashScreen.preventAutoHideAsync();
+    }
+    prepare();
+  }, []);
+
+  if (!fontsLoaded) {
+    return undefined;
+  } else {
+    SplashScreen.hideAsync();
+  }
+
   return (
     <SafeAreaProvider>
       <Provider store={store}>
-        <StatusBar style="light" />
-        <App />
+
+          <StatusBar style="light" />
+          <App />
+
       </Provider>
     </SafeAreaProvider>
   );

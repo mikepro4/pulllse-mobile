@@ -4,6 +4,9 @@ import X from "./x";
 import Plus from "./plus";
 import Search from "./search";
 import User from "./user";
+import Lll from "./lll";
+import Notification from "./notification";
+import Pulse from "./pulse";
 
 const Icon = ({ name, style }) => {
     switch (name) {
@@ -17,6 +20,12 @@ const Icon = ({ name, style }) => {
             return <Search style={style} />
         case 'user':
             return <User style={style} />
+        case 'lll':
+            return <Lll style={style} />
+        case 'notification':
+            return <Notification style={style} />
+        case 'pulse':
+            return <Pulse style={style} />
         default:
             return
     }
