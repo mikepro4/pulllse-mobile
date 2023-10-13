@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { store } from "./src/redux";
 import { StyleSheet, View, Text } from "react-native";
 import { useFonts } from 'expo-font';

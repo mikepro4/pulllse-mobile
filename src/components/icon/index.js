@@ -7,6 +7,8 @@ import User from "./user";
 import Lll from "./lll";
 import Notification from "./notification";
 import Pulse from "./pulse";
+import ArrowBack from "./arrowBack";
+import ArrowForward from "./arrowForward";
 
 const Icon = ({ name, style }) => {
     switch (name) {
@@ -26,6 +28,10 @@ const Icon = ({ name, style }) => {
             return <Notification style={style} />
         case 'pulse':
             return <Pulse style={style} />
+        case 'arrow_back':
+            return <ArrowBack style={style} />
+        case 'arrow_forward':
+            return <ArrowForward style={style} />
         default:
             return
     }
