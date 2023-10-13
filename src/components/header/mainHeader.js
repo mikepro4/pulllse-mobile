@@ -11,7 +11,7 @@ const Header = () => {
     return (
         <View style={styles.container}>
             <View>
-                <Icon name="lll"/>
+                <Icon name="map"/>
             </View>
 
             <View>

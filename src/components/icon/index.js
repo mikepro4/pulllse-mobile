@@ -9,6 +9,7 @@ import Notification from "./notification";
 import Pulse from "./pulse";
 import ArrowBack from "./arrowBack";
 import ArrowForward from "./arrowForward";
+import Map from "./map";
 
 const Icon = ({ name, style }) => {
     switch (name) {
@@ -32,6 +33,8 @@ const Icon = ({ name, style }) => {
             return <ArrowBack style={style} />
         case 'arrow_forward':
             return <ArrowForward style={style} />
+        case 'map':
+            return <Map style={style} />
         default:
             return
     }
