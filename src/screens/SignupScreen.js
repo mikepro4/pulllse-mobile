@@ -10,7 +10,6 @@ import { useSelector, useDispatch } from "react-redux";
 const SignUpScreen = () => {
   const { errorMessage } = useSelector((state) => state.user);
   const state = useSelector((state) => state.user);
-  console.log(state);
 
   const { navigate } = useNavigation();
   const dispatch = useDispatch();

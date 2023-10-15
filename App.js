@@ -7,6 +7,7 @@ import ResolveAuthScreen from "./src/screens/ResolveAuthScreen";
 import FeedScreen from "./src/screens/FeedScreen";
 import WallScreen from "./src/screens/WallScreen";
 import AddFriendsScreen from "./src/screens/WallScreen/AddFriendsScreen";
+import UserListScreen from "./src/screens/WallScreen/UserListScreen";
 import AddPulseScreen from "./src/screens/AddPulseScreen";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -40,6 +41,11 @@ const WallStack = () => (
     <Stack.Screen
       name="AddFriendsScreen"
       component={AddFriendsScreen}
+      options={{ headerShown: true }}
+    />
+    <Stack.Screen
+      name="UserListScreen"
+      component={UserListScreen}
       options={{ headerShown: true }}
     />
   </Stack.Navigator>

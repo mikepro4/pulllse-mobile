@@ -8,7 +8,6 @@ const ProfilePicture = ({ fetchedPic }) => {
   const dispatch = useDispatch();
   const { imageLink } = useSelector((state) => state.image.image);
   const [image, setImage] = useState(null);
-  console.log("img", imageLink);
 
   useEffect(() => {
     dispatch(fetchUserImage());

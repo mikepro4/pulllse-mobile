@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, Button, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Image,
+  TouchableOpacity,
+  LogBox,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { signout } from "../../redux";
 
@@ -15,15 +23,19 @@ const WallScreen = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const userInfo = useSelector((state) => state.user.userInfo);
-  const userInfo1 = useSelector((state) => state.user);
 
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchUserInfo());
+
       // Return function is the cleanup function, equivalent to componentWillUnmount in class components
       return () => {};
     }, [dispatch])
   );
+
+  const handlePress = (listType) => {
+    navigate("UserListScreen", { listType });
+  };
 
   return (
     <SafeAreaView>
@@ -47,18 +59,27 @@ const WallScreen = () => {
               <Text>Posts:</Text>
               <Text>{userInfo.postsCount}</Text>
             </View>
-            <View>
-              <Text>Following:</Text>
-              <Text>{userInfo.followingCount}</Text>
-            </View>
-            <View>
-              <Text>Followers:</Text>
-              <Text>{userInfo.followersCount}</Text>
-            </View>
-            <View>
-              <Text>Subscribers:</Text>
-              <Text>{userInfo.subscribersCount}</Text>
-            </View>
+
+            <TouchableOpacity onPress={() => handlePress("fetchFollowing")}>
+              <View>
+                <Text>Following:</Text>
+                <Text>{userInfo.followingCount}</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => handlePress("fetchFollowers")}>
+              <View>
+                <Text>Followers:</Text>
+                <Text>{userInfo.followersCount}</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => handlePress("fetchFollowers")}>
+              <View>
+                <Text>Subscribers:</Text>
+                <Text>{userInfo.subscribersCount}</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
         <UserPosts />

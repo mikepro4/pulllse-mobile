@@ -37,7 +37,6 @@ const signup = createAsyncThunk(
       // Return the token for further processing or usage in reducers
       return response.data.token;
     } catch (err) {
-      console.log(err);
       throw new Error("Something went wrong with sign up");
     }
   }

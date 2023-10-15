@@ -11,7 +11,6 @@ const ResolveAuthScreen = () => {
     const token = await AsyncStorage.getItem("token");
     return token;
   };
-  console.log("token:", getToken());
 
   // const token = useSelector((state) => state.user.token); // Assuming state structure
 

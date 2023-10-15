@@ -17,4 +17,21 @@ const followUser = createAsyncThunk(
     }
   }
 );
-export { followUser };
+
+const unfollowUser = createAsyncThunk(
+  "userFollow/unfollow",
+  async (userIdToUnfollow, { rejectWithValue }) => {
+    try {
+      const loggedInUserId = await AsyncStorage.getItem("userId");
+      const response = await userApi.post(`/unfollowUser`, {
+        userIdToUnfollow,
+        loggedInUserId,
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export { followUser, unfollowUser };

@@ -1,4 +1,6 @@
 import React, { useState, useCallback } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {
   View,
   TextInput,
@@ -6,22 +8,26 @@ import {
   Text,
   Button,
   StyleSheet,
+  Image,
 } from "react-native";
 import userApi from "../redux/axios/userApi";
 import throttle from "lodash/throttle";
-import { followUser } from "../redux";
+import { followUser, unfollowUser } from "../redux";
 import { useDispatch, useSelector } from "react-redux";
+import UsersList from "./UsersList";
 
 const AsyncSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const dispatch = useDispatch();
-  console.log("results", results);
 
   const throttledSearch = useCallback(
     throttle(async (searchQuery) => {
       try {
-        let response = await userApi(`/searchUser?q=${searchQuery}`);
+        const loggedInUserId = await AsyncStorage.getItem("userId");
+        let response = await userApi(
+          `/searchUser?q=${searchQuery}&loggedInUserId=${loggedInUserId}`
+        );
         setResults(response.data);
       } catch (error) {
         console.error("Error searching: ", error);
@@ -32,7 +38,10 @@ const AsyncSearch = () => {
 
   const fetchInitialProfiles = async () => {
     try {
-      let response = await userApi.get(`/searchUser/fetchInitialProfiles`);
+      const loggedInUserId = await AsyncStorage.getItem("userId");
+      let response = await userApi.get(
+        `/searchUser/fetchInitialProfiles?loggedInUserId=${loggedInUserId}`
+      );
       setResults(response.data);
     } catch (error) {
       console.error("Error fetching initial profiles: ", error);
@@ -53,34 +62,12 @@ const AsyncSearch = () => {
         placeholder="Search products..."
         onFocus={fetchInitialProfiles}
       />
-      <FlatList
-        style={styles.list}
-        data={results}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          console.log("item", item),
-          (
-            <View style={styles.userElement}>
-              <Text style={styles.itemText}>{item.userName}</Text>
-              <Button
-                title="follow"
-                onPress={() => dispatch(followUser(item.user))}
-              />
-            </View>
-          )
-        )}
-      />
+      <UsersList results={results} setResults={setResults} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  userElement: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flex: 1,
-  },
   container: {
     flex: 1,
     flexDirection: "column",
@@ -97,14 +84,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff", // white background
   },
   button: {
-    marginBottom: 10,
-  },
-  list: {
-    marginTop: 20,
-    height: 100,
-  },
-  itemText: {
-    fontSize: 18,
     marginBottom: 10,
   },
 });
