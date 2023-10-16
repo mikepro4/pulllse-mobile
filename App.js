@@ -9,6 +9,7 @@ import WallScreen from "./src/screens/WallScreen";
 import AddFriendsScreen from "./src/screens/WallScreen/AddFriendsScreen";
 import UserListScreen from "./src/screens/WallScreen/UserListScreen";
 import AddPulseScreen from "./src/screens/AddPulseScreen";
+import UserProfileScreen from "./src/screens/WallScreen/UserProfileScreen";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -36,6 +37,11 @@ const WallStack = () => (
     <Stack.Screen
       name="WallScreen"
       component={WallScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="UserProfileScreen"
+      component={UserProfileScreen}
       options={{ headerShown: false }}
     />
     <Stack.Screen

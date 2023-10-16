@@ -1,17 +1,13 @@
-import { StyleSheet, Button, Image } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
 import React, { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserImage, deleteImage, uploadImage } from "../redux";
 
-const ProfilePicture = ({ fetchedPic }) => {
+const ProfilePicture = ({ imageLink }) => {
   const dispatch = useDispatch();
-  const { imageLink } = useSelector((state) => state.image.image);
-  const [image, setImage] = useState(null);
-
-  useEffect(() => {
-    dispatch(fetchUserImage());
-  }, []);
+  const [image, setImage] = useState(imageLink);
+  console.log(imageLink);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -35,7 +31,7 @@ const ProfilePicture = ({ fetchedPic }) => {
       if (imageLink) {
         dispatch(deleteImage(removeBaseUrl(imageLink)));
       }
-      setImage(result.assets[0].uri);
+      //   setImage(result.assets[0].uri);
       dispatch(
         uploadImage({
           blob: fileContent,
@@ -45,18 +41,32 @@ const ProfilePicture = ({ fetchedPic }) => {
   };
 
   return (
-    <>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {(image || imageLink) && (
-        <Image
-          source={{ uri: image || imageLink }}
-          style={{ width: 200, height: 200, borderRadius: 1000 }}
-        />
-      )}
-    </>
+    <TouchableOpacity onPress={pickImage}>
+      <View style={styles.container}>
+        {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
+        {imageLink ? (
+          <Image
+            source={{ uri: imageLink }}
+            style={{ width: 100, height: 100, borderRadius: 1000 }}
+          />
+        ) : (
+          <Text>Pick Image</Text>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 };
 
 export default ProfilePicture;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    width: 100,
+    height: 100,
+    borderRadius: 1000,
+    backgroundColor: "grey",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

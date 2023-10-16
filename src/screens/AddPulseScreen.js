@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { Audio } from "expo-av";
 import * as Sharing from "expo-sharing";
@@ -9,12 +9,12 @@ import { useDispatch, useSelector } from "react-redux";
 import * as FileSystem from "expo-file-system";
 
 export default function App() {
-  const [message, setMessage] = React.useState("");
-  const [name, setName] = React.useState("Recording");
-
-  const [recording, setRecording] = React.useState();
-  const [isRecording, setIsRecording] = React.useState(false);
-  const [sound, setSound] = React.useState();
+  const [message, setMessage] = useState("");
+  const [name, setName] = useState("Recording");
+  const [recording, setRecording] = useState();
+  const [isRecording, setIsRecording] = useState(false);
+  const [buttonLabel, setButtonLabel] = useState("Start Recording");
+  const [sound, setSound] = useState();
 
   const dispatch = useDispatch();
 
@@ -43,13 +43,13 @@ export default function App() {
     }
   };
 
-  function getDurationFormatted(millis) {
-    const minutes = millis / 1000 / 60;
-    const minutesDisplay = Math.floor(minutes);
-    const seconds = Math.round((minutes - minutesDisplay) * 60);
-    const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
-    return `${minutesDisplay}:${secondsDisplay}`;
-  }
+  // function getDurationFormatted(millis) {
+  //   const minutes = millis / 1000 / 60;
+  //   const minutesDisplay = Math.floor(minutes);
+  //   const seconds = Math.round((minutes - minutesDisplay) * 60);
+  //   const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
+  //   return `${minutesDisplay}:${secondsDisplay}`;
+  // }
 
   const stopRecording = async () => {
     try {
@@ -74,7 +74,7 @@ export default function App() {
       setSound(sound);
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
-      })
+      });
       setIsRecording(false); // Set recording status to false
     } catch (error) {
       console.error(error);

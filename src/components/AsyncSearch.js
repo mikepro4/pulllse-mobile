@@ -20,7 +20,7 @@ const AsyncSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const dispatch = useDispatch();
-
+  console.log("resultsAsync", results);
   const throttledSearch = useCallback(
     throttle(async (searchQuery) => {
       try {

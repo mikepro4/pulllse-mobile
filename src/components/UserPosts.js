@@ -35,6 +35,14 @@ const UserPosts = () => {
     setSound(undefined);
   }
 
+  function getDurationFormatted(millis) {
+    const minutes = millis / 1000 / 60;
+    const minutesDisplay = Math.floor(minutes);
+    const seconds = Math.round((minutes - minutesDisplay) * 60);
+    const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
+    return `${minutesDisplay}:${secondsDisplay}`;
+  }
+
   const handleDelete = async (audioLink) => {
     function removeBaseUrl(link) {
       if (audioList) {
@@ -61,7 +69,7 @@ const UserPosts = () => {
               title="Delete"
               onPress={() => handleDelete(audio.audioLink)}
             />
-            <Text>Duration: {audio.duration}</Text>
+            <Text>Duration: {getDurationFormatted(audio.duration)}</Text>
           </View>
         ))}
       </ScrollView>

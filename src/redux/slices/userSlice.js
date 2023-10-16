@@ -8,27 +8,25 @@ import {
 } from "../thunks/userThunk";
 import { uploadAudio } from "../thunks/audioThunk";
 import { followUser } from "../thunks/followSubscribeThunk";
+import { uploadImage, deleteImage } from "../thunks/imageThunk";
 
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    email: "",
-    token: null,
     userInfo: {
       __v: 0,
       _id: "",
+      email: "",
+      userName: "",
+      imageLink: null,
       dateCreated: "",
+      postsCount: 0,
       followersCount: 0,
+      subscribersCount: 0,
       followingCount: 0,
       notificationsCount: 0,
-      postsCount: 0,
-      subscribersCount: 0,
-      user: {
-        _id: "",
-        email: "",
-      },
-      userName: "",
     },
+    token: null,
     isLoading: false,
     errorMessage: "",
   },
@@ -47,6 +45,31 @@ const userSlice = createSlice({
       //   state.status = "succeeded";
       //   state.userInfo.followersCount += 1;
       // })
+      .addCase(uploadImage.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(uploadImage.fulfilled, (state, action) => {
+        state.userInfo.imageLink = action.payload; // Set the image link
+        state.isLoading = false;
+      })
+      .addCase(uploadImage.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errorMessage = action.error.message;
+      })
+      .addCase(deleteImage.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteImage.fulfilled, (state, action) => {
+        state.isLoading = false;
+
+        if (state.userInfo.imageLink === action.payload) {
+          state.userInfo.imageLink = null; // Clear the image or set to any default value
+        }
+      })
+      .addCase(deleteImage.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errorMessage = action.error.message;
+      })
       .addCase(signup.pending, (state) => {
         state.isLoading = true;
         state.errorMessage = "";
