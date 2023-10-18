@@ -44,12 +44,12 @@ const MainFlow = () => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#000000'}}>
+        <View style={{ flex: 1, backgroundColor: '#000000'}}>
             <Header/>
             {renderPlayer()}
             {renderedScreen}
             <AppTabBar />
-        </SafeAreaView>
+        </View>
     );
 };
 
