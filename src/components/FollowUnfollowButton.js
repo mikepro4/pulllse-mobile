@@ -53,6 +53,7 @@ const FollowUnfollowButton = ({ item, results, setResults }) => {
               onPress={() => handleSubscribe(item._id)}
             />
           )}
+          {item.isSubscribed === "declined" && <Button title="Declined" />}
         </>
       ) : (
         <Button title="Follow" onPress={() => handleFollow(item._id)} />

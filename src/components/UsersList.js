@@ -17,7 +17,7 @@ const UsersList = ({ results, setResults }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const storedUserInfo = useSelector((state) => state.user.userInfo);
-
+  console.log("results", results);
   return (
     <>
       {results ? (
@@ -31,6 +31,7 @@ const UsersList = ({ results, setResults }) => {
                 storedUserInfo._id !== item._id
                   ? navigation.push("UserProfileScreen", {
                       id: item._id,
+                      item,
                     })
                   : navigation.navigate("WallScreen");
               }}

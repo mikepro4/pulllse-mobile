@@ -9,11 +9,11 @@ import userApi from "../../redux/axios/userApi";
 import FollowUnfollowButton from "../../components/FollowUnfollowButton";
 
 const UserProfileScreen = ({ route }) => {
-  const { id } = route.params;
+  const { id, item } = route.params;
   const [userInfo, setUserInfo] = useState({});
   const [userAudios, setUserAudios] = useState();
   const storedUserInfo = useSelector((state) => state.user.userInfo);
-  const dispatch = useDispatch();
+  const [userButton, setUserButton] = useState([item]);
 
   // const userInfo = useSelector((state) => state.user.userInfo);
   useEffect(() => {
@@ -54,11 +54,11 @@ const UserProfileScreen = ({ route }) => {
         userInfo={userInfo}
         userId={id}
       />
-      {/* <FollowUnfollowButton
-        item={isFollowing}
-        results={[userInfo]}
-        setResults={setUserInfo}
-      /> */}
+      <FollowUnfollowButton
+        item={userButton[0]}
+        results={userButton}
+        setResults={setUserButton}
+      />
     </SafeAreaView>
   );
 };
