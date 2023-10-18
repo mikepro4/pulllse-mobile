@@ -34,4 +34,20 @@ const unfollowUser = createAsyncThunk(
   }
 );
 
-export { followUser, unfollowUser };
+const subscribeUser = createAsyncThunk(
+  "userSubscribe/subscribe",
+  async (userIdToSubscribe, { rejectWithValue }) => {
+    try {
+      const loggedInUserId = await AsyncStorage.getItem("userId");
+      const response = await userApi.post(`/subscribeUser`, {
+        userId: userIdToSubscribe, // the user you want to subscribe to
+        subscriberId: loggedInUserId, // the logged-in user who wants to subscribe
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export { followUser, unfollowUser, subscribeUser };

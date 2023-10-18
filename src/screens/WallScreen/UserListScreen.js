@@ -1,34 +1,36 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import UsersList from "../../components/UsersList";
 import userApi from "../../redux/axios/userApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 
 const UserListScreen = ({ route, navigation }) => {
   const [results, setResults] = useState();
-  const { listType } = route.params;
+  const { listType, userId } = route.params;
+  const storedUserInfo = useSelector((state) => state.user.userInfo);
 
-  const fetchData = async () => {
+  const fetchData = async (id) => {
     try {
-      const userId = await AsyncStorage.getItem("userId");
-      // Fetching data using GET request with userId as a query parameter
       const response = await userApi.get(`/${listType}`, {
-        params: { userId },
+        params: { userId: id, loggedInUserId: storedUserInfo._id },
       });
       console.log("response.data", response.data);
-      // Directly setting the results since axios automatically parses JSON
       setResults(response.data);
     } catch (e) {
       console.error(e);
     }
   };
+
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(userId);
+  }, [userId]);
 
   return (
     <View>
-      <Text>UserListScreen</Text>
+      <Text>{listType}</Text>
+
       <UsersList results={results} setResults={setResults} />
     </View>
   );

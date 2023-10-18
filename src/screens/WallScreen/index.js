@@ -13,23 +13,39 @@ import { signout } from "../../redux";
 import React, { useState, useEffect, useCallback } from "react";
 import ProfilePicture from "../../components/ProfilePicture";
 import UserPosts from "../../components/UserPosts";
+import UserWallPage from "../../components/UserWallPage";
 
 import { useNavigation } from "@react-navigation/native";
-import { fetchUserInfo } from "../../redux";
+import { fetchUserInfo, fetchUserAudios } from "../../redux";
 import { useDispatch, useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const WallScreen = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const userInfo = useSelector((state) => state.user.userInfo);
+  const storedUserInfo = useSelector((state) => state.user.userInfo);
+
+  const audioList = useSelector((state) => state.audio.recordings);
+  const [userId, setUserId] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(fetchUserInfo());
+      const fetchUserDetails = async () => {
+        const userIdFromStorage = await AsyncStorage.getItem("userId"); // Retrieving userId from AsyncStorage
 
-      // Return function is the cleanup function, equivalent to componentWillUnmount in class components
-      return () => {};
+        if (userIdFromStorage) {
+          dispatch(fetchUserInfo({ userId: userIdFromStorage })); // Passing userId as an argument to your action
+          dispatch(fetchUserAudios({ userId: userIdFromStorage }));
+          setUserId(userIdFromStorage); // 2. Update the userId state
+        } else {
+          console.error("UserId not found in AsyncStorage");
+        }
+      };
+
+      fetchUserDetails();
+
+      return () => {}; // Cleanup function
     }, [dispatch])
   );
 
@@ -39,55 +55,36 @@ const WallScreen = () => {
 
   return (
     <SafeAreaView>
-      <View>
-        <View style={styles.header}>
-          <Text style={styles.h1}>{userInfo.userName}</Text>
+      <View style={styles.header}>
+        <Text style={styles.h1}>{storedUserInfo.userName}</Text>
+        {storedUserInfo._id === userId && (
           <Button
             title="Add Friends"
             onPress={() => {
               navigate("AddFriendsScreen");
             }}
           />
-        </View>
-        <View style={styles.container}>
-          <ProfilePicture imageLink={userInfo.imageLink} />
-          <View style={styles.itemsCenter}>
-            <View style={styles.infoContainer}>
-              <View style={styles.lilBox}>
-                <Text>Posts:</Text>
-                <Text>{userInfo.postsCount}</Text>
-              </View>
-
-              <TouchableOpacity onPress={() => handlePress("fetchFollowing")}>
-                <View style={styles.lilBox}>
-                  <Text>Following:</Text>
-                  <Text>{userInfo.followingCount}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handlePress("fetchFollowers")}>
-                <View style={styles.lilBox}>
-                  <Text>Followers:</Text>
-                  <Text>{userInfo.followersCount}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handlePress("fetchFollowers")}>
-                <View style={styles.bigBox}>
-                  <Text>Subs:</Text>
-                  <Text>{userInfo.subscribersCount}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <UserPosts />
-        <Button
-          title="Sign Out"
-          onPress={() => {
-            dispatch(signout({ navigate }));
-          }}
-          style={styles.signOut}
-        />
+        )}
       </View>
+      <UserWallPage
+        userAudios={audioList}
+        userInfo={storedUserInfo}
+        userId={storedUserInfo._id}
+        storedUserInfo={storedUserInfo._id}
+      />
+      <Button
+        title="Notifications"
+        onPress={() => {
+          navigate("NotificationsScreen");
+        }}
+      />
+
+      <Button
+        title="Sign Out"
+        onPress={() => {
+          dispatch(signout({ navigate }));
+        }}
+      />
     </SafeAreaView>
   );
 };
@@ -115,6 +112,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    width: "100%",
+    paddingRight: 10,
   },
   h1: {
     marginLeft: 20,

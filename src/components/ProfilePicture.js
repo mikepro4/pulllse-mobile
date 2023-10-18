@@ -1,13 +1,12 @@
 import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserImage, deleteImage, uploadImage } from "../redux";
+import { deleteImage, uploadImage } from "../redux";
 
-const ProfilePicture = ({ imageLink }) => {
+const ProfilePicture = ({ imageLink, userId }) => {
   const dispatch = useDispatch();
-  const [image, setImage] = useState(imageLink);
-  console.log(imageLink);
+  const storedUserInfo = useSelector((state) => state.user.userInfo);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -41,7 +40,10 @@ const ProfilePicture = ({ imageLink }) => {
   };
 
   return (
-    <TouchableOpacity onPress={pickImage}>
+    <TouchableOpacity
+      onPress={storedUserInfo._id === userId ? pickImage : null}
+      activeOpacity={storedUserInfo._id === userId ? 0.2 : 1}
+    >
       <View style={styles.container}>
         {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
         {imageLink ? (

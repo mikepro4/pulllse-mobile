@@ -9,6 +9,7 @@ import {
 import { uploadAudio } from "../thunks/audioThunk";
 import { followUser } from "../thunks/followSubscribeThunk";
 import { uploadImage, deleteImage } from "../thunks/imageThunk";
+import { deleteAudio } from "../thunks/audioThunk";
 
 const userSlice = createSlice({
   name: "user",
@@ -45,6 +46,10 @@ const userSlice = createSlice({
       //   state.status = "succeeded";
       //   state.userInfo.followersCount += 1;
       // })
+      .addCase(deleteAudio.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.userInfo.postsCount -= 1;
+      })
       .addCase(uploadImage.pending, (state) => {
         state.isLoading = true;
       })

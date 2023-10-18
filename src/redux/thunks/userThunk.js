@@ -72,12 +72,15 @@ const signout = createAsyncThunk(
   }
 );
 
-const fetchUserInfo = createAsyncThunk("user/fetchUserInfo", async () => {
-  const userId = await AsyncStorage.getItem("userId");
+const fetchUserInfo = createAsyncThunk(
+  "user/fetchUserInfo",
+  async ({ userId }) => {
+    // const userId = await AsyncStorage.getItem("userId");
 
-  const response = await userApi.get(`/userinfo/${userId}`);
+    const response = await userApi.get(`/userinfo/${userId}`);
 
-  return response.data;
-});
+    return response.data;
+  }
+);
 
 export { signin, signout, signup, tryLocalSignIn, fetchUserInfo };
