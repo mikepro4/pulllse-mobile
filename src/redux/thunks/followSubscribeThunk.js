@@ -49,5 +49,21 @@ const subscribeUser = createAsyncThunk(
     }
   }
 );
+const unsubscribeUser = createAsyncThunk(
+  "userSubscribe/unsubscribe",
+  async (userIdToUnsubscribe, { rejectWithValue }) => {
+    console.log("userIdToUnsubscribe", userIdToUnsubscribe);
+    try {
+      const loggedInUserId = await AsyncStorage.getItem("userId");
+      const response = await userApi.post(`/unsubscribeUser`, {
+        userId: userIdToUnsubscribe,
+        subscriberId: loggedInUserId,
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
 
-export { followUser, unfollowUser, subscribeUser };
+export { followUser, unfollowUser, subscribeUser, unsubscribeUser };

@@ -44,9 +44,22 @@ const NotificationsScreen = () => {
     }
   };
 
-  const handleDecline = (id) => {
-    console.log(`Declined: ${id}`);
-    // Here, you could also add functionality to manage the decline of the notification.
+  const handleDecline = async (userId, subscriberId, postId) => {
+    try {
+      // Sending a post request to accept the subscription
+      await userApi.post("/declineSubscription", {
+        userId,
+        subscriberId,
+        postId,
+      });
+
+      // Updating the notifications state by filtering out the accepted notification
+      setNotifications((prevNotifications) =>
+        prevNotifications.filter((notification) => notification._id !== postId)
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const NotificationItem = ({ item }) => (
@@ -65,7 +78,9 @@ const NotificationsScreen = () => {
         />
         <Button
           title="Decline"
-          onPress={() => handleDecline(item._id)}
+          onPress={() =>
+            handleDecline(storedUserInfo._id, item.from._id, item._id)
+          }
           color="red"
         />
       </View>

@@ -1,10 +1,17 @@
 import { StyleSheet, Text, Button } from "react-native";
-import { followUser, unfollowUser, subscribeUser } from "../redux";
+import {
+  followUser,
+  unfollowUser,
+  subscribeUser,
+  unsubscribeUser,
+} from "../redux";
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
 
 const FollowUnfollowButton = ({ item, results, setResults }) => {
   const dispatch = useDispatch();
+
+  console.log("item", item._id);
 
   const handleUnfollow = async (userId) => {
     await dispatch(unfollowUser(userId));
@@ -35,25 +42,41 @@ const FollowUnfollowButton = ({ item, results, setResults }) => {
     }
   };
 
+  const handleUnsubscribeUnfollow = async (userId) => {
+    try {
+      await dispatch(unfollowUser(userId));
+      await dispatch(unsubscribeUser(userId));
+      const updatedResults = results.map((result) =>
+        result._id === userId
+          ? { ...result, isFollowing: false, isSubscribed: null }
+          : result
+      );
+      await setResults(updatedResults);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <>
       {item.isSubscribed === "accepted" ? (
         <Button
           title="Unsubscribe and Unfollow"
-          onPress={() => handleUnsubscribe(item._id)}
+          onPress={() => handleUnsubscribeUnfollow(item._id)}
         />
       ) : item.isFollowing ? (
         <>
           <Button title="Unfollow" onPress={() => handleUnfollow(item._id)} />
           {item.isSubscribed === "pending" ? (
             <Button title="Pending" />
+          ) : item.isSubscribed === "declined" ? (
+            <Button title="Declined" />
           ) : (
             <Button
               title="Subscribe"
               onPress={() => handleSubscribe(item._id)}
             />
           )}
-          {item.isSubscribed === "declined" && <Button title="Declined" />}
         </>
       ) : (
         <Button title="Follow" onPress={() => handleFollow(item._id)} />
