@@ -1,19 +1,10 @@
 import React, { useState, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import {
-  View,
-  TextInput,
-  FlatList,
-  Text,
-  Button,
-  StyleSheet,
-  Image,
-} from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 import userApi from "../redux/axios/userApi";
 import throttle from "lodash/throttle";
-import { followUser, unfollowUser } from "../redux";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import UsersList from "./UsersList";
 
 const AsyncSearch = () => {

@@ -14,6 +14,7 @@ const UserWallPage = ({ userAudios, userInfo, userId, storedUserInfo }) => {
       userId,
     });
   };
+  console.log("userInfo", userInfo);
 
   return (
     <View>
@@ -37,9 +38,17 @@ const UserWallPage = ({ userAudios, userInfo, userId, storedUserInfo }) => {
                 <Text>{userInfo.followersCount}</Text>
               </View>
             </TouchableOpacity>
+          </View>
+          <View style={styles.infoContainer}>
+            <TouchableOpacity onPress={() => handlePress("fetchSubscribing")}>
+              <View style={styles.lilBox}>
+                <Text>Subscribing:</Text>
+                <Text>{userInfo.subscriptionsCount}</Text>
+              </View>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => handlePress("fetchSubscribers")}>
-              <View style={styles.bigBox}>
-                <Text>Subs:</Text>
+              <View style={styles.lilBox}>
+                <Text>Subscribers:</Text>
                 <Text>{userInfo.subscribersCount}</Text>
               </View>
             </TouchableOpacity>
@@ -65,6 +74,8 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: "black",
     alignItems: "center",
+    maxWidth: 100,
+    justifyContent: "center",
   },
   container: {
     flexDirection: "row",
@@ -77,7 +88,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
   },
   h1: {
     marginLeft: 20,
@@ -86,8 +96,10 @@ const styles = StyleSheet.create({
   infoContainer: {
     marginTop: 10,
     flexDirection: "row",
+    justifyContent: "space-between",
     gap: 5,
     borderWidth: 1,
     borderColor: "black",
+    borderRightWidth: 0,
   },
 });

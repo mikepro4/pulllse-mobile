@@ -66,22 +66,20 @@ export default function App() {
         file: recording.getURI(),
       });
 
-
       const uri = recording.getURI();
-      console.log(uri)
+      console.log(uri);
       // const blob = createBlobFromAudioFile(uri).then((blob) => {
       //   dispatch(uploadAudio(blob));
       // });
 
       const formData = new FormData();
-      formData.append('file', {
+      formData.append("file", {
         uri: uri,
-        type: 'audio/x-caf',
-        name: 'recording.caf',
+        type: "audio/x-caf",
+        name: "recording.caf",
       });
 
-      dispatch(uploadAudio(formData))
-
+      dispatch(uploadAudio(formData));
 
       // fetch(uri)
       //   .then(response => response.arrayBuffer())
@@ -105,8 +103,27 @@ export default function App() {
       //     console.error("There was an error creating the blob", error);
       //   });
 
-      
-
+      function getRecordingLines() {
+        return recordings.map((recordingLine, index) => {
+          return (
+            <View key={index} style={styles.row}>
+              <Text style={styles.fill}>
+                Recording {index + 1} - {recordingLine.duration}
+              </Text>
+              <Button
+                style={styles.button}
+                onPress={() => recordingLine.sound.replayAsync()}
+                title="Play"
+              ></Button>
+              <Button
+                style={styles.button}
+                onPress={() => Sharing.shareAsync(recordingLine.file)}
+                title="Share"
+              ></Button>
+            </View>
+          );
+        });
+      }
 
       setRecordings(updatedRecordings);
     } catch (error) {

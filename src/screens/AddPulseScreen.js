@@ -1,19 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Button, StyleSheet, Text, View, TextInput } from "react-native";
 import { Audio } from "expo-av";
 import * as Sharing from "expo-sharing";
 import { uploadAudio } from "../redux";
-import { useDispatch, useSelector } from "react-redux";
-
-import * as FileSystem from "expo-file-system";
+import { useDispatch } from "react-redux";
 
 export default function App() {
-  const [message, setMessage] = useState("");
   const [name, setName] = useState("Recording");
   const [recording, setRecording] = useState();
   const [isRecording, setIsRecording] = useState(false);
-  const [buttonLabel, setButtonLabel] = useState("Start Recording");
   const [sound, setSound] = useState();
 
   const dispatch = useDispatch();
@@ -43,14 +39,6 @@ export default function App() {
     }
   };
 
-  // function getDurationFormatted(millis) {
-  //   const minutes = millis / 1000 / 60;
-  //   const minutesDisplay = Math.floor(minutes);
-  //   const seconds = Math.round((minutes - minutesDisplay) * 60);
-  //   const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
-  //   return `${minutesDisplay}:${secondsDisplay}`;
-  // }
-
   const stopRecording = async () => {
     try {
       await recording.stopAndUnloadAsync();
@@ -72,6 +60,7 @@ export default function App() {
         })
       );
       setSound(sound);
+      setName("Recording");
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
@@ -90,31 +79,14 @@ export default function App() {
     }
   };
 
-  function getRecordingLines() {
-    return recordings.map((recordingLine, index) => {
-      return (
-        <View key={index} style={styles.row}>
-          <Text style={styles.fill}>
-            Recording {index + 1} - {recordingLine.duration}
-          </Text>
-          <Button
-            style={styles.button}
-            onPress={() => recordingLine.sound.replayAsync()}
-            title="Play"
-          ></Button>
-          <Button
-            style={styles.button}
-            onPress={() => Sharing.shareAsync(recordingLine.file)}
-            title="Share"
-          ></Button>
-        </View>
-      );
-    });
-  }
-
   return (
     <View style={styles.container}>
-      <Text>{message}</Text>
+      <TextInput
+        style={styles.input}
+        value={name}
+        onChangeText={(value) => setName(value)}
+        placeholder="Recording"
+      />
       <Button title="Start Recording" onPress={startRecording} />
       <Button title="Stop Recording" onPress={stopRecording} />
       <Button title="Play Recording" onPress={playRecording} />
@@ -126,6 +98,16 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    width: 300,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "#fff", // white background
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Button } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import UsersList from "../../components/UsersList";
 import userApi from "../../redux/axios/userApi";
@@ -9,14 +9,15 @@ import { useDispatch, useSelector } from "react-redux";
 const UserListScreen = ({ route, navigation }) => {
   const [results, setResults] = useState();
   const { listType, userId } = route.params;
-  const storedUserInfo = useSelector((state) => state.user.userInfo);
+
+  const { _id } = useSelector((state) => state.user.userInfo);
 
   const fetchData = async (id) => {
     try {
       const response = await userApi.get(`/${listType}`, {
-        params: { userId: id, loggedInUserId: storedUserInfo._id },
+        params: { userId: id, loggedInUserId: _id },
       });
-      console.log("response.data", response.data);
+
       setResults(response.data);
     } catch (e) {
       console.error(e);
