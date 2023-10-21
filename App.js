@@ -4,9 +4,9 @@ import { store } from "./src/redux";
 import { StyleSheet, View, Text } from "react-native";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import "react-native-devsettings";
+// import "react-native-devsettings";
 
-import FlipperAsyncStorage from 'rn-flipper-async-storage-advanced';
+// import FlipperAsyncStorage from 'rn-flipper-async-storage-advanced';
 
 import LoginScreen from "./src/screens/LoginScreen";
 import SignupScreen from "./src/screens/SignupScreen";
@@ -111,7 +111,7 @@ export default MainApp = () => {
   return (
     <SafeAreaProvider>
       <Provider store={store}>
-          <FlipperAsyncStorage />
+          {/* <FlipperAsyncStorage /> */}
           <StatusBar style="light" />
           <App />
 
