@@ -45,7 +45,7 @@ const LoginStack = () => (
 const App = () => (
   <NavigationContainer
     screenOptions={{
-      cardStyle: { backgroundColor: 'transparent' },
+      cardStyle: { backgroundColor: 'black' },
     }}
   >
     <Stack.Navigator
@@ -75,7 +75,7 @@ const App = () => (
       <Stack.Screen
         name="MainFlow"
         component={MainFlow}
-        options={{ headerShown: false, cardStyle: { backgroundColor: '#000000', flex: 1 }, }}
+        options={{ headerShown: false, cardStyle: { backgroundColor: 'black', flex: 1 }, }}
       />
     </Stack.Navigator>
   </NavigationContainer>

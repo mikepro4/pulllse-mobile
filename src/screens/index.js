@@ -9,6 +9,12 @@ import AppTabBar from "../components/app_tab_bar";
 import Header from "../components/header";
 import CustomText from "../components/text";
 import Player from "../screens/player"
+import Notifications from "./notifications";
+
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+
+const Stack = createNativeStackNavigator();
 
 
 const MainFlow = () => {
@@ -53,7 +59,44 @@ const MainFlow = () => {
     );
 };
 
-export default MainFlow;
+
+export default MainApp = () => {
+    return (
+        <Stack.Navigator 
+          initialRouteName="Main" 
+          screenOptions={{
+            cardStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        >
+          <Stack.Screen 
+            name="Main" 
+            component={MainFlow}  
+            options={{
+              headerShown: false,
+              cardStyle: {
+                backgroundColor: 'transparent',
+              },
+            }}
+          />
+          <Stack.Screen 
+            name="Notifications" 
+            component={Notifications}  
+            options={{
+              headerShown: false,
+              cardStyle: {
+                backgroundColor: 'transparent',
+              },
+            }}
+          />
+        </Stack.Navigator>
+    );
+  }
+  
+
+
+// export default MainFlow;
 
 const styles = StyleSheet.create({
     playerContainer: {

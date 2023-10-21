@@ -7,30 +7,38 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "../icon"
 import Logo from "../icon/logo"
 
-const Header = () => {
+import CustomText from "../text";
+
+const NotificationHeader = () => {
     const navigation = useNavigation();
 
     return (
         <View style={styles.container}>
-            <View>
-                <Icon name="map"/>
-            </View>
+            <TouchableOpacity
+                style={{width: 22}}
+                onPress={() => {
+                    navigation.goBack();
+                }}
+            >
+               <Icon name="arrow_back"/>
+            </TouchableOpacity>
 
-            <View>
-                <Logo />
+            <View style={{position: "relative", top: -4}}>
+                <CustomText style={{fontSize: 16}}>Notifications</CustomText>
             </View>
 
             <TouchableOpacity
+                style={{width: 22}}
                 onPress={() => {
-                    navigation.navigate("Notifications");
+                    // navigation.navigate("Notifications");
                 }}>
-                <Icon name="notification"/>
+                {/* <CustomText>Action</CustomText> */}
             </TouchableOpacity>
         </View>
     );
 };
 
-export default Header;
+export default NotificationHeader;
 
 const styles = StyleSheet.create({
     container: {
