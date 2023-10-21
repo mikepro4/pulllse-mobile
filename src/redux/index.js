@@ -5,6 +5,7 @@ import { recordsReducer } from "./slices/recordingsSlice";
 import { imageReducer } from "./slices/imageSlice";
 import { tabReducer } from "./slices/tabSlice";
 import { signout } from "./thunks/userThunk";
+import reduxFlipper from 'redux-flipper';
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -27,7 +28,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
       thunk: true,
-    }),
+    }).concat(reduxFlipper()),
 });
 
 setupListeners(store.dispatch);

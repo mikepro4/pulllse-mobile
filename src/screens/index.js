@@ -10,6 +10,7 @@ import Header from "../components/header";
 import CustomText from "../components/text";
 import Player from "../screens/player"
 import Notifications from "./notifications";
+import X from "./x";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -36,7 +37,7 @@ const MainFlow = () => {
             renderedScreen = <FeedScreen />;
             break;
         case 'x':
-            renderedScreen = <CustomText>Profile</CustomText>
+            renderedScreen = <X />;
             break;
         case 'search':
             renderedScreen = <CustomText>Search</CustomText>
