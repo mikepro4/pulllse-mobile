@@ -26,12 +26,12 @@ const NotificationsScreen = () => {
     fetchNotifications();
   }, []);
 
-  const handleAccept = async (userId, subscriberId, postId) => {
+  const handleAccept = async (userId, targetUserId, postId) => {
     try {
       // Sending a post request to accept the subscription
       await userApi.post("/acceptSubscription", {
         userId,
-        subscriberId,
+        targetUserId,
         postId,
       });
 
@@ -44,12 +44,12 @@ const NotificationsScreen = () => {
     }
   };
 
-  const handleDecline = async (userId, subscriberId, postId) => {
+  const handleDecline = async (userId, targetUserId, postId) => {
     try {
       // Sending a post request to accept the subscription
       await userApi.post("/declineSubscription", {
         userId,
-        subscriberId,
+        targetUserId,
         postId,
       });
 

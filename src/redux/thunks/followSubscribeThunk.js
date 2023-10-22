@@ -4,12 +4,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const followUser = createAsyncThunk(
   "userFollow/follow",
-  async (userIdToFollow, { rejectWithValue }) => {
+  async (targetUserId, { rejectWithValue }) => {
     try {
-      const loggedInUserId = await AsyncStorage.getItem("userId");
+      const userId = await AsyncStorage.getItem("userId");
       const response = await userApi.post(`/followUser`, {
-        userIdToFollow,
-        loggedInUserId,
+        targetUserId,
+        userId,
       });
       return response.data;
     } catch (err) {
@@ -20,12 +20,12 @@ const followUser = createAsyncThunk(
 
 const unfollowUser = createAsyncThunk(
   "userFollow/unfollow",
-  async (userIdToUnfollow, { rejectWithValue }) => {
+  async (targetUserId, { rejectWithValue }) => {
     try {
-      const loggedInUserId = await AsyncStorage.getItem("userId");
+      const userId = await AsyncStorage.getItem("userId");
       const response = await userApi.post(`/unfollowUser`, {
-        userIdToUnfollow,
-        loggedInUserId,
+        targetUserId,
+        userId,
       });
       return response.data;
     } catch (err) {
@@ -36,12 +36,12 @@ const unfollowUser = createAsyncThunk(
 
 const subscribeUser = createAsyncThunk(
   "userSubscribe/subscribe",
-  async (userIdToSubscribe, { rejectWithValue }) => {
+  async (targetUserId, { rejectWithValue }) => {
     try {
-      const loggedInUserId = await AsyncStorage.getItem("userId");
-      const response = await userApi.post(`/subscribeUser`, {
-        userId: userIdToSubscribe, // the user you want to subscribe to
-        subscriberId: loggedInUserId, // the logged-in user who wants to subscribe
+      const userId = await AsyncStorage.getItem("userId");
+      const response = await userApi.post(`/sendSubscriptionRequest`, {
+        userId, // the user you want to subscribe to
+        targetUserId, // the logged-in user who wants to subscribe
       });
       return response.data;
     } catch (err) {
@@ -51,13 +51,12 @@ const subscribeUser = createAsyncThunk(
 );
 const unsubscribeUser = createAsyncThunk(
   "userSubscribe/unsubscribe",
-  async (userIdToUnsubscribe, { rejectWithValue }) => {
-    console.log("userIdToUnsubscribe", userIdToUnsubscribe);
+  async (targetUserId, { rejectWithValue }) => {
     try {
-      const loggedInUserId = await AsyncStorage.getItem("userId");
+      const userId = await AsyncStorage.getItem("userId");
       const response = await userApi.post(`/unsubscribeUser`, {
-        userId: userIdToUnsubscribe,
-        subscriberId: loggedInUserId,
+        userId,
+        targetUserId,
       });
       return response.data;
     } catch (err) {
