@@ -11,6 +11,7 @@ import CustomText from "../components/text";
 import Player from "../screens/player"
 import Notifications from "./notifications";
 import X from "./x";
+import Search from "./search";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -40,7 +41,7 @@ const MainFlow = () => {
             renderedScreen = <X />;
             break;
         case 'search':
-            renderedScreen = <CustomText>Search</CustomText>
+            renderedScreen = <Search/>
             break;
         case 'profile':
             renderedScreen = <CustomText>Profile</CustomText>

@@ -58,10 +58,10 @@ const FeedScreen = ({ navigation }) => {
 
 
   return (
-    <View style={{ backgroundColor: "black"}}>
+    <View style={{ backgroundColor: "black" }}>
 
       {isMenuVisible.value && <Animated.View style={[styles.tabContainer, getAnimatedTabStyle()]}>
-      <Tab tabs={tabs} onTabChange={(position) => console.log(position)} />
+        <Tab tabs={tabs} onTabChange={(position) => console.log(position)} />
 
       </Animated.View>}
 
@@ -70,6 +70,7 @@ const FeedScreen = ({ navigation }) => {
         onScroll={scrollHandler}
         scrollEventThrottle={16}
       >
+        
         {Array.from({ length: 50 }).map((_, index) => (
           <Post key={index} />
         ))}
@@ -94,5 +95,5 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 185,
     zIndex: 1,
-  },
+  }
 });

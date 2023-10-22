@@ -82,5 +82,7 @@
     <false/>
     <key>NSCameraUsageDescription</key>
     <string>The camera is needed for AR functionality</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Need for maps</string>
   </dict>
 </plist>
