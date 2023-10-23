@@ -1,18 +1,19 @@
-import { StyleSheet, View, ScrollView, Button, TouchableOpacity, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  useDerivedValue,
-  useAnimatedScrollHandler,
-  withDelay,
-  withSpring,
-  withTiming,
-  Easing
-} from 'react-native-reanimated';
+import CustomText from "../../components/text";
+import Post from "../../components/post";
+import Theme from "../../styles/theme";
+import Tab from "../../components/tab";
 
 
 import CustomText from "../../components/text"
@@ -21,7 +22,6 @@ import Theme from "../../styles/theme"
 import Tab from "../../components/tab"
 
 import { resetScroll } from '../../redux/slices/tabSlice'
-
 
 const FeedScreen = ({ navigation }) => {
   const [initialAnimation, setInitialAnimation] = useState(true);
@@ -88,15 +88,15 @@ const FeedScreen = ({ navigation }) => {
 
   const tabs = [
     {
-      title: "For you"
+      title: "For you",
     },
     {
-      title: "Featured"
+      title: "Featured",
     },
     {
-      title: "Abyss"
-    }
-  ]
+      title: "Abyss",
+    },
+  ];
 
   const scrollRef = useRef();
 
@@ -112,16 +112,14 @@ const FeedScreen = ({ navigation }) => {
     );
     }
   }, [activeTab])
-  
-
 
   return (
     <View style={{ backgroundColor: "black" }}>
-
-      {isMenuVisible.value && <Animated.View style={[styles.tabContainer, getAnimatedTabStyle()]}>
-        <Tab tabs={tabs} onTabChange={(position) => console.log(position)} />
-
-      </Animated.View>}
+      {isMenuVisible.value && (
+        <Animated.View style={[styles.tabContainer, getAnimatedTabStyle()]}>
+          <Tab tabs={tabs} onTabChange={(position) => console.log(position)} />
+        </Animated.View>
+      )}
 
       <Animated.ScrollView
         style={[styles.content, getAnimatedFeedStyle() ]}
@@ -149,10 +147,10 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 2
+    zIndex: 2,
   },
   content: {
     paddingTop: 185,
     zIndex: 1,
-  }
+  },
 });

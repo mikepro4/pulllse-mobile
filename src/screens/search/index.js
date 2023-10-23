@@ -1,13 +1,14 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import customMapStyle from '../../components/map/mapStyle';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import customMapStyle from "../../components/map/mapStyle";
+import AsyncSearch from "../../components/async_search";
+import CustomText from "../../components/text";
 
 const SearchScreen = () => {
-    return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-
-            <View style={styles.container}>
+  return (
+    <View style={{ flex: 1, marginTop: 100 }}>
+      {/* <View style={styles.container}>
                 <MapView
                     provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                     style={styles.map}
@@ -20,22 +21,22 @@ const SearchScreen = () => {
                     }}
                 >
                 </MapView>
-            </View>
-        </View>
-    );
+            </View> */}
+      <AsyncSearch />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-      ...StyleSheet.absoluteFillObject,
-      flex: 1,
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-    },
-    map: {
-      ...StyleSheet.absoluteFillObject,
-    },
-  });
-  
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
 
 export default SearchScreen;
