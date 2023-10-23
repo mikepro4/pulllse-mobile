@@ -33,23 +33,27 @@ const uploadAudio = createAsyncThunk(
   }
 );
 
-const fetchUserAudios = createAsyncThunk("audio/fetch", async (_, thunkAPI) => {
-  try {
-    const userId = await AsyncStorage.getItem("userId");
-    const response = await userApi.get(`/api/userAudios?userId=${userId}`);
-    return response.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
+const fetchUserAudios = createAsyncThunk(
+  "audio/fetch",
+  async ({ userId }, thunkAPI) => {
+    try {
+      // const userId = await AsyncStorage.getItem("userId");
+      const response = await userApi.get(`/api/userAudios?userId=${userId}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
 const deleteAudio = createAsyncThunk(
   "audio/delete",
   async ({ key, link }, thunkAPI) => {
     try {
-      await userApi.post("/api/deleteAudio", { key });
+      const user = await AsyncStorage.getItem("userId");
+      await userApi.post("/api/deleteAudio", { key, user });
 
-      return link; // return the key of deleted audio to handle it in the reducer
+      return link;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

@@ -19,11 +19,12 @@ const uploadImage = createAsyncThunk(
       });
       const finalUrl =
         "https://my-photo-bucket-111.s3.us-east-2.amazonaws.com/" + key;
+
       await userApi.post("/api/saveImageLink", {
         imageLink: finalUrl,
-
         user,
       });
+      console.log("finalUrl", finalUrl);
       return finalUrl;
     } catch (error) {
       console.log("Error in uploadImage action:", error);
@@ -36,6 +37,7 @@ const fetchUserImage = createAsyncThunk("image/fetch", async (_, thunkAPI) => {
   try {
     const userId = await AsyncStorage.getItem("userId");
     const response = await userApi.get(`/api/userImages?userId=${userId}`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
