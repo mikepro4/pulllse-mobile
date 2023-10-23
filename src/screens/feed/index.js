@@ -1,6 +1,6 @@
 import { StyleSheet, View, ScrollView, Button, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Animated, {
@@ -20,6 +20,8 @@ import Post from "../../components/post"
 import Theme from "../../styles/theme"
 import Tab from "../../components/tab"
 
+import { resetScroll } from '../../redux/slices/tabSlice'
+
 
 const FeedScreen = ({ navigation }) => {
   const [initialAnimation, setInitialAnimation] = useState(true);
@@ -28,6 +30,7 @@ const FeedScreen = ({ navigation }) => {
   const opacity = useSharedValue(0);
   const feedOpacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
+  const dispatch = useDispatch();
 
   const showInitialAnimation = () => {
     opacity.value = withDelay(100, withTiming(1, {
@@ -94,6 +97,21 @@ const FeedScreen = ({ navigation }) => {
       title: "Abyss"
     }
   ]
+
+  const scrollRef = useRef();
+
+  const scrollToTop = () => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  };
+
+  useEffect(() => {
+    if(activeTab.resetScroll) {
+      scrollToTop()
+      dispatch(
+        resetScroll(false)
+    );
+    }
+  }, [activeTab])
   
 
 
@@ -109,6 +127,7 @@ const FeedScreen = ({ navigation }) => {
         style={[styles.content, getAnimatedFeedStyle() ]}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
+        ref={scrollRef}
       >
 
         {Array.from({ length: 50 }).map((_, index) => (

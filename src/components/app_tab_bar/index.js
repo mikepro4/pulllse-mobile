@@ -6,6 +6,7 @@ import { useNavigation, StackActions } from "@react-navigation/native";
 import { switchTab, togglePlayer } from '../../redux/slices/tabSlice';
 import Icon from '../icon'
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
+import { resetScroll } from '../../redux/slices/tabSlice'
 
 import Theme from "../../styles/theme";
 
@@ -74,8 +75,9 @@ const AppTabBar = () => {
     return (
       <TouchableOpacity
         style={styles.button}
+        delayPressIn={0}
         activeOpacity={1}
-        onPress={() => onPress()}
+        onPressIn={() => onPress()}
       >
         {content}
       </TouchableOpacity>
@@ -92,6 +94,8 @@ const AppTabBar = () => {
           />
         }
         onPress={() => {
+          dispatch(resetScroll(true))
+
           dispatch(
             switchTab({
               name: "feed",
