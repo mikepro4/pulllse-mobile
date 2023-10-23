@@ -14,6 +14,9 @@ import X from "./x";
 import Search from "./search";
 import Profile from "./profile";
 import SignUpScreen from "./profile/SignUpScreen";
+import UserListScreen from "../screens/profile/UserListScreen";
+import UserProfileScreen from "./profile/UserProfileScreen";
+
 import { tryLocalSignIn } from "../redux";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -63,52 +66,74 @@ const MainFlow = () => {
       <Header />
       {renderPlayer()}
       {renderedScreen}
-      <AppTabBar />
     </View>
   );
 };
 
 export default MainApp = () => {
   return (
-    <Stack.Navigator
-      initialRouteName="Main"
-      screenOptions={{
-        cardStyle: {
-          backgroundColor: "transparent",
-        },
-      }}
-    >
-      <Stack.Screen
-        name="Main"
-        component={MainFlow}
-        options={{
-          headerShown: false,
+    <View style={{ flex: 1 }}>
+      <Stack.Navigator
+        initialRouteName="Main"
+        screenOptions={{
           cardStyle: {
             backgroundColor: "transparent",
           },
         }}
-      />
-      <Stack.Screen
-        name="Notifications"
-        component={Notifications}
-        options={{
-          headerShown: false,
-          cardStyle: {
-            backgroundColor: "transparent",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="SignUpScreen"
-        component={SignUpScreen}
-        options={{
-          headerShown: false,
-          cardStyle: {
-            backgroundColor: "transparent",
-          },
-        }}
-      />
-    </Stack.Navigator>
+      >
+        <Stack.Screen
+          name="Main"
+          component={MainFlow}
+          options={{
+            headerShown: false,
+            cardStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Notifications"
+          component={Notifications}
+          options={{
+            headerShown: false,
+            cardStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="SignUpScreen"
+          component={SignUpScreen}
+          options={{
+            headerShown: false,
+            cardStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="UserListScreen"
+          component={UserListScreen}
+          options={{
+            headerShown: false,
+            cardStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="UserProfileScreen"
+          component={UserProfileScreen}
+          options={{
+            headerShown: false,
+            cardStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+      </Stack.Navigator>
+      <AppTabBar />
+    </View>
   );
 };
 

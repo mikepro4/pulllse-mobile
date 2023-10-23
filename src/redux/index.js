@@ -5,13 +5,13 @@ import { recordsReducer } from "./slices/recordingsSlice";
 import { imageReducer } from "./slices/imageSlice";
 import { tabReducer } from "./slices/tabSlice";
 import { signout } from "./thunks/userThunk";
-import reduxFlipper from 'redux-flipper';
+import reduxFlipper from "redux-flipper";
 
 const rootReducer = combineReducers({
   user: userReducer,
   audio: recordsReducer,
   image: imageReducer,
-  tab: tabReducer
+  tab: tabReducer,
 });
 
 const resettableReducer = (state, action) => {
@@ -24,7 +24,7 @@ const resettableReducer = (state, action) => {
 
 let middleware;
 
-if(__DEV__) {
+if (__DEV__) {
   middleware = (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
@@ -40,14 +40,14 @@ if(__DEV__) {
 
 export const store = configureStore({
   reducer: resettableReducer,
-  middleware: middleware
+  middleware: middleware,
 });
 
 setupListeners(store.dispatch);
 
 export * from "./thunks/userThunk";
 export * from "./thunks/audioThunk";
-
+export * from "./thunks/followSubscribeThunk";
 export * from "./thunks/imageThunk";
 
 export { clearErrorMessage } from "./slices/userSlice";
