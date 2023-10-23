@@ -11,9 +11,7 @@ const ProfilePage = () => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.user);
-  useEffect(() => {
-    dispatch(tryLocalSignIn());
-  }, []);
+
   return (
     <View style={{ paddingTop: 120 }}>
       {token ? <UserPage /> : <SignIn navigate={navigate} />}

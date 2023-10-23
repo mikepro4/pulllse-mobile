@@ -14,9 +14,7 @@ const SignIn = ({ navigate }) => {
         headerText="Sing In To Your Account"
         errorMessage={errorMessage}
         submitButtonText="Sign In"
-        onSubmit={(email, password) =>
-          dispatch(signin({ email, password, navigate }))
-        }
+        onSubmit={(email, password) => dispatch(signin({ email, password }))}
       />
       <Button
         title="Go to SignUp"

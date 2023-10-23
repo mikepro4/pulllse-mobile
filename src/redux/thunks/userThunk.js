@@ -2,18 +2,15 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import userApi from "../axios/userApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const tryLocalSignIn = createAsyncThunk(
-  "user/tryLocalSignIn",
-  async ({ navigate }, { rejectWithValue }) => {
-    const token = await AsyncStorage.getItem("token");
+const tryLocalSignIn = createAsyncThunk("user/tryLocalSignIn", async () => {
+  const token = await AsyncStorage.getItem("token");
 
-    if (token) {
-      return token;
-    } else {
-      throw new Error("No token found.");
-    }
+  if (token) {
+    return token;
+  } else {
+    throw new Error("No token found.");
   }
-);
+});
 
 const signup = createAsyncThunk(
   "user/signup",
@@ -45,7 +42,7 @@ const signup = createAsyncThunk(
 
 const signin = createAsyncThunk(
   "user/signin",
-  async ({ email, password, navigate }, { rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await userApi.post("/signin", { email, password });
 
@@ -54,7 +51,6 @@ const signin = createAsyncThunk(
 
       // Set the user's ID in AsyncStorage
       await AsyncStorage.setItem("userId", response.data.userId);
-      navigate("MainFlow", { screen: "FeedScreen" });
 
       // Return the token for further processing or usage in reducers
       return response.data.token;

@@ -14,6 +14,7 @@ import X from "./x";
 import Search from "./search";
 import Profile from "./profile";
 import SignUpScreen from "./profile/SignUpScreen";
+import { tryLocalSignIn } from "../redux";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -23,6 +24,11 @@ const Stack = createNativeStackNavigator();
 const MainFlow = () => {
   const activeTab = useSelector((state) => state.tab);
   const activePlayer = useSelector((state) => state.tab.player);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(tryLocalSignIn());
+  }, []);
 
   let renderedScreen;
 
