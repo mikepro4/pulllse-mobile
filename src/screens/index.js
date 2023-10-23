@@ -59,8 +59,6 @@ const MainFlow = () => {
       break;
   }
 
-  console.log(renderedScreen);
-
   return (
     <View style={{ flex: 1, backgroundColor: "#000000" }}>
       <Header />

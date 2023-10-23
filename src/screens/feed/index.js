@@ -8,8 +8,10 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useAnimatedScrollHandler,
+  withDelay,
   withSpring,
   withTiming,
+  Easing
 } from 'react-native-reanimated';
 
 
@@ -20,9 +22,27 @@ import Tab from "../../components/tab"
 
 
 const FeedScreen = ({ navigation }) => {
+  const [initialAnimation, setInitialAnimation] = useState(true);
   const isMenuVisible = useSharedValue(true);
-  const opacity = useSharedValue(1);
+  const opacity = useSharedValue(0);
+  const feedOpacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
+
+  const showInitialAnimation = () => {
+    opacity.value = withDelay(100, withTiming(1, {
+      duration: 1000,
+      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+    }))
+    feedOpacity.value = withDelay(300, withTiming(1, {
+      duration: 1200,
+      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+    }))
+  };
+
+  useEffect(() => {
+    showInitialAnimation()
+    setInitialAnimation(false)
+  }, [])
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -44,6 +64,14 @@ const FeedScreen = ({ navigation }) => {
     });
   };
 
+  const getAnimatedFeedStyle = () => {
+    return useAnimatedStyle(() => {
+      return {
+        opacity: feedOpacity.value,
+      };
+    });
+  };
+
   const tabs = [
     {
       title: "For you"
@@ -55,6 +83,7 @@ const FeedScreen = ({ navigation }) => {
       title: "Abyss"
     }
   ]
+  
 
 
   return (
@@ -66,11 +95,11 @@ const FeedScreen = ({ navigation }) => {
       </Animated.View>}
 
       <Animated.ScrollView
-        style={styles.content}
+        style={[styles.content, getAnimatedFeedStyle() ]}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
       >
-        
+
         {Array.from({ length: 50 }).map((_, index) => (
           <Post key={index} />
         ))}
