@@ -23,6 +23,7 @@ import Tab from "../../components/tab"
 
 const FeedScreen = ({ navigation }) => {
   const [initialAnimation, setInitialAnimation] = useState(true);
+  const activeTab = useSelector((state) => state.tab);
   const isMenuVisible = useSharedValue(true);
   const opacity = useSharedValue(0);
   const feedOpacity = useSharedValue(0);
@@ -43,6 +44,16 @@ const FeedScreen = ({ navigation }) => {
     showInitialAnimation()
     setInitialAnimation(false)
   }, [])
+
+  useEffect(() => {
+    if(activeTab.player) {
+      opacity.value = 0;
+      feedOpacity.value = 0;
+      setInitialAnimation(true)
+    } else {
+      showInitialAnimation()
+    }
+  }, [activeTab])
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
