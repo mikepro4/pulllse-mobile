@@ -81,12 +81,16 @@ const Notifications = () => {
       <View style={styles.buttonContainer}>
         <Button
           title="Accept"
-          onPress={() => handleAccept(_id, item.from._id, item._id)}
+          onPress={() =>
+            handleAccept(storedUserInfo._id, item.from._id, item._id)
+          }
           color="green"
         />
         <Button
           title="Decline"
-          onPress={() => handleDecline(_id, item.from._id, item._id)}
+          onPress={() =>
+            handleDecline(storedUserInfo._id, item.from._id, item._id)
+          }
           color="red"
         />
       </View>
