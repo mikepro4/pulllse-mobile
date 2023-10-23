@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
     marginBottom: 10,
+    color: "white",
   },
   imageContainer: {
     flexDirection: "row",

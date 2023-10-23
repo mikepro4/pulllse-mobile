@@ -1,4 +1,11 @@
-import { StyleSheet, View, ScrollView, Button, TouchableOpacity, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,14 +17,12 @@ import Animated, {
   useAnimatedScrollHandler,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-
-import CustomText from "../../components/text"
-import Post from "../../components/post"
-import Theme from "../../styles/theme"
-import Tab from "../../components/tab"
-
+import CustomText from "../../components/text";
+import Post from "../../components/post";
+import Theme from "../../styles/theme";
+import Tab from "../../components/tab";
 
 const FeedScreen = ({ navigation }) => {
   const isMenuVisible = useSharedValue(true);
@@ -46,31 +51,29 @@ const FeedScreen = ({ navigation }) => {
 
   const tabs = [
     {
-      title: "For you"
+      title: "For you",
     },
     {
-      title: "Featured"
+      title: "Featured",
     },
     {
-      title: "Abyss"
-    }
-  ]
-
+      title: "Abyss",
+    },
+  ];
 
   return (
     <View style={{ backgroundColor: "black" }}>
-
-      {isMenuVisible.value && <Animated.View style={[styles.tabContainer, getAnimatedTabStyle()]}>
-        <Tab tabs={tabs} onTabChange={(position) => console.log(position)} />
-
-      </Animated.View>}
+      {isMenuVisible.value && (
+        <Animated.View style={[styles.tabContainer, getAnimatedTabStyle()]}>
+          <Tab tabs={tabs} onTabChange={(position) => console.log(position)} />
+        </Animated.View>
+      )}
 
       <Animated.ScrollView
         style={styles.content}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
       >
-        
         {Array.from({ length: 50 }).map((_, index) => (
           <Post key={index} />
         ))}
@@ -90,10 +93,10 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 2
+    zIndex: 2,
   },
   content: {
     paddingTop: 185,
     zIndex: 1,
-  }
+  },
 });
