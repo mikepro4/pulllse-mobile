@@ -2,24 +2,19 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import userApi from "../axios/userApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const tryLocalSignIn = createAsyncThunk(
-  "user/tryLocalSignIn",
-  async ({ navigate }, { rejectWithValue }) => {
-    const token = await AsyncStorage.getItem("token");
+const tryLocalSignIn = createAsyncThunk("user/tryLocalSignIn", async () => {
+  const token = await AsyncStorage.getItem("token");
 
-    if (token) {
-      navigate("MainFlow", { screen: "FeedScreen" });
-      return token;
-    } else {
-      navigate("LoginFlow");
-      throw new Error("No token found.");
-    }
+  if (token) {
+    return token;
+  } else {
+    throw new Error("No token found.");
   }
-);
+});
 
 const signup = createAsyncThunk(
   "user/signup",
-  async ({ email, password, userName, navigate }, { rejectWithValue }) => {
+  async ({ email, password, userName, navigation }, { rejectWithValue }) => {
     console.log(userName);
     try {
       const response = await userApi.post("/signup", {
@@ -34,8 +29,8 @@ const signup = createAsyncThunk(
 
       // Set the user's ID in AsyncStorage
       await AsyncStorage.setItem("userId", response.data.userId);
-      navigate("MainFlow", { screen: "FeedScreen" });
-
+      navigation.goBack();
+      console.log("response.data.token", response.data.token);
       // Return the token for further processing or usage in reducers
       return response.data.token;
     } catch (err) {
@@ -47,7 +42,7 @@ const signup = createAsyncThunk(
 
 const signin = createAsyncThunk(
   "user/signin",
-  async ({ email, password, navigate }, { rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await userApi.post("/signin", { email, password });
 
@@ -56,7 +51,6 @@ const signin = createAsyncThunk(
 
       // Set the user's ID in AsyncStorage
       await AsyncStorage.setItem("userId", response.data.userId);
-      navigate("MainFlow", { screen: "FeedScreen" });
 
       // Return the token for further processing or usage in reducers
       return response.data.token;
@@ -68,9 +62,9 @@ const signin = createAsyncThunk(
 
 const signout = createAsyncThunk(
   "user/signout",
-  async ({ navigate }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     await AsyncStorage.removeItem("token");
-    navigate("LoginFlow");
+
     return null;
   }
 );
