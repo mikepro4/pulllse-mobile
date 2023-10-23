@@ -7,27 +7,56 @@ import {
   Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  useDerivedValue,
-  useAnimatedScrollHandler,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
 
 import CustomText from "../../components/text";
 import Post from "../../components/post";
 import Theme from "../../styles/theme";
 import Tab from "../../components/tab";
 
+
+import CustomText from "../../components/text"
+import Post from "../../components/post"
+import Theme from "../../styles/theme"
+import Tab from "../../components/tab"
+
+import { resetScroll } from '../../redux/slices/tabSlice'
+
 const FeedScreen = ({ navigation }) => {
+  const [initialAnimation, setInitialAnimation] = useState(true);
+  const activeTab = useSelector((state) => state.tab);
   const isMenuVisible = useSharedValue(true);
-  const opacity = useSharedValue(1);
+  const opacity = useSharedValue(0);
+  const feedOpacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
+  const dispatch = useDispatch();
+
+  const showInitialAnimation = () => {
+    opacity.value = withDelay(100, withTiming(1, {
+      duration: 1000,
+      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+    }))
+    feedOpacity.value = withDelay(300, withTiming(1, {
+      duration: 1200,
+      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+    }))
+  };
+
+  useEffect(() => {
+    showInitialAnimation()
+    setInitialAnimation(false)
+  }, [])
+
+  useEffect(() => {
+    if(activeTab.player) {
+      opacity.value = 0;
+      feedOpacity.value = 0;
+      setInitialAnimation(true)
+    } else {
+      showInitialAnimation()
+    }
+  }, [activeTab])
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -49,6 +78,14 @@ const FeedScreen = ({ navigation }) => {
     });
   };
 
+  const getAnimatedFeedStyle = () => {
+    return useAnimatedStyle(() => {
+      return {
+        opacity: feedOpacity.value,
+      };
+    });
+  };
+
   const tabs = [
     {
       title: "For you",
@@ -61,6 +98,21 @@ const FeedScreen = ({ navigation }) => {
     },
   ];
 
+  const scrollRef = useRef();
+
+  const scrollToTop = () => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  };
+
+  useEffect(() => {
+    if(activeTab.resetScroll) {
+      scrollToTop()
+      dispatch(
+        resetScroll(false)
+    );
+    }
+  }, [activeTab])
+
   return (
     <View style={{ backgroundColor: "black" }}>
       {isMenuVisible.value && (
@@ -70,10 +122,12 @@ const FeedScreen = ({ navigation }) => {
       )}
 
       <Animated.ScrollView
-        style={styles.content}
+        style={[styles.content, getAnimatedFeedStyle() ]}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
+        ref={scrollRef}
       >
+
         {Array.from({ length: 50 }).map((_, index) => (
           <Post key={index} />
         ))}

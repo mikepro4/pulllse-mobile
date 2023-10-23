@@ -1,28 +1,21 @@
-import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { switchTab, togglePlayer } from "../../redux/slices/tabSlice";
-import {
-  useNavigation,
-  CommonActions,
-  StackActions,
-} from "@react-navigation/native";
-import Icon from "../icon";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  Easing,
-} from "react-native-reanimated";
+
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation, StackActions } from "@react-navigation/native";
+import { switchTab, togglePlayer } from '../../redux/slices/tabSlice';
+import Icon from '../icon'
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
+import { resetScroll } from '../../redux/slices/tabSlice'
 
 import Theme from "../../styles/theme";
 
 const AppTabBar = () => {
+  const [initialAnimation, setInitialAnimation] = useState(true);
   const activeTab = useSelector((state) => state.tab);
   const dispatch = useDispatch();
   const offset = useSharedValue(0);
-  const opacity = useSharedValue(1);
+  const opacity = useSharedValue(0);
   const navigation = useNavigation();
 
   const animateOut = () => {
@@ -47,16 +40,17 @@ const AppTabBar = () => {
       easing: Easing.inOut(Easing.ease),
     });
     opacity.value = withTiming(1, {
-      duration: 150,
-      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+      duration: 200,
     });
   };
 
   useEffect(() => {
-    if (activeTab.player) {
-      animateOut();
-    } else {
-      animateIn();
+    if(!initialAnimation) {
+      if (activeTab.player) {
+        animateOut();
+      } else {
+        animateIn();
+      }
     }
   }, [activeTab]); // Re-run effect when activeTab changes
 
@@ -65,12 +59,25 @@ const AppTabBar = () => {
     opacity: opacity.value,
   }));
 
+  const showInitialAnimation = () => {
+    opacity.value = withDelay(100, withTiming(1, {
+      duration: 2000,
+      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+    }))
+  };
+
+  useEffect(() => {
+    showInitialAnimation()
+    setInitialAnimation(false)
+  }, [])
+
   const Button = ({ content, onPress }) => {
     return (
       <TouchableOpacity
         style={styles.button}
+        delayPressIn={0}
         activeOpacity={1}
-        onPress={() => onPress()}
+        onPressIn={() => onPress()}
       >
         {content}
       </TouchableOpacity>
@@ -87,13 +94,15 @@ const AppTabBar = () => {
           />
         }
         onPress={() => {
+          dispatch(resetScroll(true))
+
           dispatch(
             switchTab({
               name: "feed",
               icon: "mountains",
             })
           );
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -113,7 +122,7 @@ const AppTabBar = () => {
               icon: "mountains",
             })
           );
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -144,7 +153,7 @@ const AppTabBar = () => {
             })
           );
 
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -166,7 +175,7 @@ const AppTabBar = () => {
               icon: "user",
             })
           );
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
