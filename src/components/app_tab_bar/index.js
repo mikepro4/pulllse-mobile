@@ -93,7 +93,7 @@ const AppTabBar = () => {
               icon: "mountains",
             })
           );
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -113,7 +113,7 @@ const AppTabBar = () => {
               icon: "mountains",
             })
           );
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -144,7 +144,7 @@ const AppTabBar = () => {
             })
           );
 
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -166,7 +166,7 @@ const AppTabBar = () => {
               icon: "user",
             })
           );
-          if (navigation.getState().routes.length > 1) {
+          if (navigation.getState() && navigation.getState().routes.length > 1) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
