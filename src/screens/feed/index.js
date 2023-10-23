@@ -27,7 +27,7 @@ const FeedScreen = ({ navigation }) => {
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollY.value = event.contentOffset.y;
-      console.log(scrollY.value)
+      // console.log(scrollY.value)
       if (opacity.value <= 0) {
         isMenuVisible.value = false;
       } else {

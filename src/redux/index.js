@@ -22,13 +22,25 @@ const resettableReducer = (state, action) => {
   return rootReducer(state, action);
 };
 
-export const store = configureStore({
-  reducer: resettableReducer,
-  middleware: (getDefaultMiddleware) =>
+let middleware;
+
+if(__DEV__) {
+  middleware = (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
       thunk: true,
-    }).concat(reduxFlipper()),
+    }).concat(reduxFlipper());
+} else {
+  middleware = (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      thunk: true,
+    });
+}
+
+export const store = configureStore({
+  reducer: resettableReducer,
+  middleware: middleware
 });
 
 setupListeners(store.dispatch);

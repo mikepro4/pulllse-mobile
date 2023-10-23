@@ -51,36 +51,7 @@ const App = () => (
       cardStyle: { backgroundColor: 'black' },
     }}
   >
-    <Stack.Navigator
-      initialRouteName="ResolveAuth"
-      screenOptions={{
-        animation: "none",
-        gestureEnabled: false,
-        cardStyle: { backgroundColor: 'transparent' },
-      }}
-    >
-      <Stack.Screen
-        name="ResolveAuth"
-        component={ResolveAuthScreen}
-        options={{ headerShown: false }}
-        screenOptions={{
-          cardStyle: { backgroundColor: 'transparent' },
-        }}
-      />
-      <Stack.Screen
-        name="LoginFlow"
-        component={LoginStack}
-        options={{ headerShown: false }}
-        screenOptions={{
-          cardStyle: { backgroundColor: 'transparent' },
-        }}
-      />
-      <Stack.Screen
-        name="MainFlow"
-        component={MainFlow}
-        options={{ headerShown: false, cardStyle: { backgroundColor: 'black', flex: 1 }, }}
-      />
-    </Stack.Navigator>
+    <MainFlow />
   </NavigationContainer>
 )
 
@@ -88,7 +59,6 @@ const App = () => (
 
 
 export default MainApp = () => {
-
   const [fontsLoaded] = useFonts({
     'aeonik-regular': require('./assets/fonts/Aeonik-Regular.ttf'),
     'london-regular': require('./assets/fonts/London-Regular.ttf'),
@@ -99,7 +69,6 @@ export default MainApp = () => {
       await SplashScreen.preventAutoHideAsync();
     }
     prepare();
-
   }, []);
 
   if (!fontsLoaded) {
@@ -111,7 +80,7 @@ export default MainApp = () => {
   return (
     <SafeAreaProvider>
       <Provider store={store}>
-          <FlipperAsyncStorage />
+          {__DEV__ && <FlipperAsyncStorage />}
           <StatusBar style="light" />
           <App />
 
@@ -119,16 +88,3 @@ export default MainApp = () => {
     </SafeAreaProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  appContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flex: 1,
-    color: '#ffffff',
-    backgroundColor: '#000000'
-  }
-})
