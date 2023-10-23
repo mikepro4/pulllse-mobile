@@ -1,5 +1,12 @@
-import Theme from "../../styles/theme"
-import { StyleSheet, View, ScrollView, Button, TouchableOpacity, Text } from "react-native";
+import Theme from "../../styles/theme";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,8 +19,7 @@ import Animated, {
   useAnimatedScrollHandler,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-
+} from "react-native-reanimated";
 
 const Tab = ({ navigation, tabs, onTabChange }) => {
   const [previousTab, setPreviousTab] = useState(null);
@@ -31,58 +37,58 @@ const Tab = ({ navigation, tabs, onTabChange }) => {
   const getAnimatedTextStyle = (tab) => {
     return useAnimatedStyle(() => {
       return {
-        opacity: activeTab == tab
-          ? withTiming(1, { duration: 1000, easing: Theme.easing1 })
-          : withTiming(0.5, { duration: 1000, easing: Theme.easing1 })
+        opacity:
+          activeTab == tab
+            ? withTiming(1, { duration: 1000, easing: Theme.easing1 })
+            : withTiming(0.5, { duration: 1000, easing: Theme.easing1 }),
       };
     });
   };
 
   const getLineAnimatedStyle = (tab) => {
-
     let position = -100;
-    let tabType
-    let opacity
+    let tabType;
+    let opacity;
 
     if (tab == previousTab) {
-      tabType = "previous"
+      tabType = "previous";
     } else if (tab == activeTab) {
-      tabType = "current"
+      tabType = "current";
     } else {
-      tabType = "unused"
+      tabType = "unused";
     }
 
     if (tabType == "previous" || tabType == "current") {
       if (tabType == "previous") {
         if (activeTab > previousTab) {
-          position = 100
-          opacity = 1
+          position = 100;
+          opacity = 1;
         } else {
-          position = -100
-          opacity = 1
+          position = -100;
+          opacity = 1;
         }
       }
 
       if (tabType == "current") {
         if (activeTab > previousTab) {
-          position = 0
-          opacity = 1
+          position = 0;
+          opacity = 1;
         } else {
-          position = 0
-          opacity = 1
+          position = 0;
+          opacity = 1;
         }
       }
     }
 
     if (tabType == "unused") {
-      opacity = 0
+      opacity = 0;
       if (!previousTab) {
-        position = -100
+        position = -100;
       } else {
         if (tab < activeTab) {
-          position = 100
+          position = 100;
         } else {
-          position = -100
+          position = -100;
         }
       }
     }
@@ -91,14 +97,16 @@ const Tab = ({ navigation, tabs, onTabChange }) => {
       return {
         transform: [
           {
-            translateX: withTiming(position, { duration: 500, easing: Theme.easing1 })
+            translateX: withTiming(position, {
+              duration: 500,
+              easing: Theme.easing1,
+            }),
           },
         ],
-        opacity: opacity
+        opacity: opacity,
       };
-    })
-
-  }
+    });
+  };
 
   const tab = (position, title) => {
     return (
@@ -108,33 +116,33 @@ const Tab = ({ navigation, tabs, onTabChange }) => {
         key={position}
         onPress={() => {
           if (activeTab !== position) {
-            setPreviousTab(activeTab)
-            setActiveTab(position)
-            onTabChange(position)
+            setPreviousTab(activeTab);
+            setActiveTab(position);
+            onTabChange(position);
           }
         }}
       >
-        <Animated.Text style={[styles.tabText, getAnimatedTextStyle(position)]}>{title}</Animated.Text>
+        <Animated.Text style={[styles.tabText, getAnimatedTextStyle(position)]}>
+          {title}
+        </Animated.Text>
         <View style={styles.lineContainer}>
-          <Animated.View style={[styles.line, getLineAnimatedStyle(position)]}></Animated.View>
+          <Animated.View
+            style={[styles.line, getLineAnimatedStyle(position)]}
+          ></Animated.View>
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   return (
     <View style={styles.tabGroup}>
-
-        {/* {tab(1, "For you")}
+      {/* {tab(1, "For you")}
 
         {tab(2, "Featured")}
 
         {tab(3, "Abyss")} */}
 
-        {tabs.map((item, index) => (
-          tab(index+ 1, item.title)
-        ))}
-        
+      {tabs.map((item, index) => tab(index + 1, item.title))}
     </View>
   );
 };
@@ -150,7 +158,7 @@ const styles = StyleSheet.create({
     height: 1,
     // backgroundColor: "red",
     flex: 1,
-    overflow: "hidden"
+    overflow: "hidden",
   },
   line: {
     position: "absolute",
@@ -162,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   activeTabClass: {
-    opacity: 1
+    opacity: 1,
   },
   tabTextContainer: {
     marginHorizontal: 15,
@@ -177,6 +185,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     opacity: 0.5,
     color: "#fff",
-    fontFamily: "aeonik-regular"
-  }
+    fontFamily: "aeonik-regular",
+  },
 });

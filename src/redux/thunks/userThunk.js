@@ -8,10 +8,8 @@ const tryLocalSignIn = createAsyncThunk(
     const token = await AsyncStorage.getItem("token");
 
     if (token) {
-      navigate("MainFlow", { screen: "FeedScreen" });
       return token;
     } else {
-      navigate("LoginFlow");
       throw new Error("No token found.");
     }
   }
@@ -19,7 +17,7 @@ const tryLocalSignIn = createAsyncThunk(
 
 const signup = createAsyncThunk(
   "user/signup",
-  async ({ email, password, userName, navigate }, { rejectWithValue }) => {
+  async ({ email, password, userName, navigation }, { rejectWithValue }) => {
     console.log(userName);
     try {
       const response = await userApi.post("/signup", {
@@ -34,8 +32,8 @@ const signup = createAsyncThunk(
 
       // Set the user's ID in AsyncStorage
       await AsyncStorage.setItem("userId", response.data.userId);
-      navigate("MainFlow", { screen: "FeedScreen" });
-
+      navigation.goBack();
+      console.log("response.data.token", response.data.token);
       // Return the token for further processing or usage in reducers
       return response.data.token;
     } catch (err) {
@@ -68,9 +66,9 @@ const signin = createAsyncThunk(
 
 const signout = createAsyncThunk(
   "user/signout",
-  async ({ navigate }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     await AsyncStorage.removeItem("token");
-    navigate("LoginFlow");
+
     return null;
   }
 );
