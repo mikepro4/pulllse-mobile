@@ -72,19 +72,19 @@ export default MainApp = () => {
   }, []);
 
   if (!fontsLoaded) {
-    return undefined;
+    return <View style={{flex: 1, backgroundColor: "black"}}/>;
   } else {
     SplashScreen.hideAsync();
   }
 
   return (
-    <SafeAreaProvider>
+    <View style={{flex: 1, backgroundColor: "black"}}>
       <Provider store={store}>
           {__DEV__ && <FlipperAsyncStorage />}
           <StatusBar style="light" />
           <App />
 
       </Provider>
-    </SafeAreaProvider>
+    </View>
   );
 };
