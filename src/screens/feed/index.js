@@ -147,7 +147,7 @@ const FeedScreen = ({ navigation }) => {
       <Animated.ScrollView
         style={[styles.content, getAnimatedFeedStyle()]}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
+        // scrollEventThrottle={16}
         ref={scrollRef}
         scrollEnabled={isScrollEnabled}
       >
