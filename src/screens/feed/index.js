@@ -5,12 +5,14 @@ import {
   Button,
   TouchableOpacity,
   Text,
+  FlatList
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Haptics from "expo-haptics";
-import { fetchFeed } from "../../redux/thunks/feedThunk";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import userApi from "../../redux/axios/userApi";
 
 import Animated, {
   useSharedValue,
@@ -34,6 +36,7 @@ import { resetScroll } from "../../redux/slices/tabSlice";
 const FeedScreen = ({ navigation }) => {
   const [initialAnimation, setInitialAnimation] = useState(true);
   const [isScrollEnabled, setIsScrollEnabled] = useState(true);
+  
   const activeTab = useSelector((state) => state.tab);
   const feedList = useSelector((state) => state.feed.feed);
   const isMenuVisible = useSharedValue(true);
@@ -41,7 +44,8 @@ const FeedScreen = ({ navigation }) => {
   const feedOpacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
   const dispatch = useDispatch();
-  console.log("feedList", feedList.length);
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
 
   const showInitialAnimation = () => {
     opacity.value = withDelay(
@@ -61,10 +65,27 @@ const FeedScreen = ({ navigation }) => {
     );
   };
 
+  const fetchFeed = async () => {
+    const userId = await AsyncStorage.getItem("userId");
+    try {
+      const response = await userApi.post(`/feed/fetchFeed`, {
+        userId,
+        page
+      });
+      setData(prevData => [...prevData, ...response.data]);
+      setPage(prevPage => prevPage + 1);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  }
+
   useEffect(() => {
     showInitialAnimation();
     setInitialAnimation(false);
-    dispatch(fetchFeed());
+    // dispatch(fetchFeed());
+    fetchFeed()
   }, []);
 
   useEffect(() => {
@@ -86,7 +107,7 @@ const FeedScreen = ({ navigation }) => {
       isReloading = true;
 
       console.log("reload", new Date());
-      dispatch(fetchFeed());
+      fetchFeed()
 
       setTimeout(() => {
         isReloading = false;
@@ -180,20 +201,33 @@ const FeedScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ backgroundColor: "black" }}>
+    <View style={{ backgroundColor: "black"}}>
       {renderTab()}
-
-      <Animated.ScrollView
+      {/* <Animated.ScrollView
         style={[styles.content, getAnimatedFeedStyle()]}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
         ref={scrollRef}
         scrollEnabled={isScrollEnabled}
-      >
-        {feedList.map((post, index) => (
+      > */}
+        {/* {feedList.map((post, index) => (
           <Post key={index} post={post} />
-        ))}
-      </Animated.ScrollView>
+        ))} */}
+
+        <Animated.FlatList
+          data={data}
+          style={[styles.content, getAnimatedFeedStyle()]}
+          // keyExtractor={(item) => item._id.toString()}
+          renderItem={({ item, index }) => (
+            <Post key={item._id} post={item} />
+          )}
+          onScroll={scrollHandler}
+          onEndReached={fetchFeed}
+          onEndReachedThreshold={0.5}
+          initialNumToRender={2}
+          contentContainerStyle={{ paddingBottom: 500 }}
+        />
+      {/* </Animated.ScrollView> */}
     </View>
   );
 };
@@ -203,7 +237,7 @@ export default FeedScreen;
 const styles = StyleSheet.create({
   tabContainer: {
     position: "absolute",
-    top: 120,
+    top: 125,
     flex: 1,
     left: -8,
     right: 0,
@@ -214,5 +248,11 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 185,
     zIndex: 1,
+    // flex: 1,
+    // position: "absolute",
+    // top: 0,
+    // left: 0,
+    // bottom: 0,
+    // right: 0
   },
 });
