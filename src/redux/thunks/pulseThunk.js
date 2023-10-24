@@ -19,7 +19,7 @@ const createPulse = createAsyncThunk(
   }
 );
 
-// Fetching all pulses x
+// Fetching all pulses x2
 const fetchPulses = createAsyncThunk(
   "pulse/fetch",
   async (_, { rejectWithValue }) => {
