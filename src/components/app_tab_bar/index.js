@@ -1,12 +1,18 @@
-
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation, StackActions } from "@react-navigation/native";
-import { switchTab, togglePlayer } from '../../redux/slices/tabSlice';
-import Icon from '../icon'
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
-import { resetScroll } from '../../redux/slices/tabSlice'
+import { switchTab, togglePlayer } from "../../redux/slices/tabSlice";
+import Icon from "../icon";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withDelay,
+  Easing,
+} from "react-native-reanimated";
+import { resetScroll, stopScroll } from "../../redux/slices/tabSlice";
 
 import Theme from "../../styles/theme";
 
@@ -45,7 +51,7 @@ const AppTabBar = () => {
   };
 
   useEffect(() => {
-    if(!initialAnimation) {
+    if (!initialAnimation) {
       if (activeTab.player) {
         animateOut();
       } else {
@@ -60,16 +66,21 @@ const AppTabBar = () => {
   }));
 
   const showInitialAnimation = () => {
-    opacity.value = withDelay(100, withTiming(1, {
-      duration: 2000,
-      easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
-    }))
+    opacity.value = withDelay(
+      100,
+      withTiming(1, {
+        duration: 2000,
+        easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+      })
+    );
   };
 
   useEffect(() => {
-    showInitialAnimation()
-    setInitialAnimation(false)
-  }, [])
+    showInitialAnimation();
+    setInitialAnimation(false);
+
+    dispatch(togglePlayer(true));
+  }, []);
 
   const Button = ({ content, onPress }) => {
     return (
@@ -94,7 +105,7 @@ const AppTabBar = () => {
           />
         }
         onPress={() => {
-          dispatch(resetScroll(true))
+          dispatch(resetScroll(true));
 
           dispatch(
             switchTab({
@@ -102,7 +113,10 @@ const AppTabBar = () => {
               icon: "mountains",
             })
           );
-          if (navigation.getState() && navigation.getState().routes.length > 1) {
+          if (
+            navigation.getState() &&
+            navigation.getState().routes.length > 1
+          ) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -122,7 +136,10 @@ const AppTabBar = () => {
               icon: "mountains",
             })
           );
-          if (navigation.getState() && navigation.getState().routes.length > 1) {
+          if (
+            navigation.getState() &&
+            navigation.getState().routes.length > 1
+          ) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -135,7 +152,15 @@ const AppTabBar = () => {
             style={{ strokeWidth: activeTab.name === "player" ? "2" : "1" }}
           />
         }
-        onPress={() => dispatch(togglePlayer(true))}
+        onPress={() => {
+          // dispatch(stopScroll(true));
+          dispatch(togglePlayer(true));
+
+          setTimeout(() => {
+            // dispatch(stopScroll(true));
+            // dispatch(stopScroll(false));
+          }, 100);
+        }}
       />
 
       <Button
@@ -153,7 +178,10 @@ const AppTabBar = () => {
             })
           );
 
-          if (navigation.getState() && navigation.getState().routes.length > 1) {
+          if (
+            navigation.getState() &&
+            navigation.getState().routes.length > 1
+          ) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
@@ -175,7 +203,10 @@ const AppTabBar = () => {
               icon: "user",
             })
           );
-          if (navigation.getState() && navigation.getState().routes.length > 1) {
+          if (
+            navigation.getState() &&
+            navigation.getState().routes.length > 1
+          ) {
             navigation.dispatch(StackActions.popToTop());
           }
         }}
