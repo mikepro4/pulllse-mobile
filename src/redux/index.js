@@ -3,6 +3,7 @@ import { userReducer } from "./slices/userSlice";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { recordsReducer } from "./slices/recordingsSlice";
 import { imageReducer } from "./slices/imageSlice";
+import { feedReducer } from "./slices/feedSlice";
 import { pulseReducer } from "./slices/pulseSlice";
 import { tabReducer } from "./slices/tabSlice";
 import { signout } from "./thunks/userThunk";
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   image: imageReducer,
   tab: tabReducer,
   pulse: pulseReducer,
+  feed: feedReducer,
 });
 
 const resettableReducer = (state, action) => {

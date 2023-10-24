@@ -9,7 +9,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
+import { fetchFeed } from "../../redux/thunks/feedThunk";
 
 import Animated, {
   useSharedValue,
@@ -21,7 +22,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { runOnJS } from 'react-native-reanimated';
+import { runOnJS } from "react-native-reanimated";
 
 import CustomText from "../../components/text";
 import Post from "../../components/post";
@@ -34,11 +35,13 @@ const FeedScreen = ({ navigation }) => {
   const [initialAnimation, setInitialAnimation] = useState(true);
   const [isScrollEnabled, setIsScrollEnabled] = useState(true);
   const activeTab = useSelector((state) => state.tab);
+  const feedList = useSelector((state) => state.feed.feed);
   const isMenuVisible = useSharedValue(true);
   const opacity = useSharedValue(0);
   const feedOpacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
   const dispatch = useDispatch();
+  console.log("feedList", feedList.length);
 
   const showInitialAnimation = () => {
     opacity.value = withDelay(
@@ -61,6 +64,7 @@ const FeedScreen = ({ navigation }) => {
   useEffect(() => {
     showInitialAnimation();
     setInitialAnimation(false);
+    dispatch(fetchFeed());
   }, []);
 
   useEffect(() => {
@@ -73,40 +77,37 @@ const FeedScreen = ({ navigation }) => {
     }
   }, [activeTab]);
 
-  let playHaptics = true
-  let isReloading = false
-  let triggeredValue = null
+  let playHaptics = true;
+  let isReloading = false;
+  let triggeredValue = null;
 
   const runReload = () => {
     if (!isReloading) {
-      isReloading = true
+      isReloading = true;
 
-      console.log("reload", new Date())
+      console.log("reload", new Date());
+      dispatch(fetchFeed());
 
       setTimeout(() => {
-        isReloading = false
-        playHaptics = true
-
-      }, 3000)
-
+        isReloading = false;
+        playHaptics = true;
+      }, 3000);
     }
-  }
+  };
 
   const doHaptics = (value) => {
     if (value <= -100) {
       if (!isReloading) {
-          runReload()
+        runReload();
 
         if (playHaptics) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-          playHaptics = false
-
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          playHaptics = false;
         }
       }
-
     } else {
     }
-  }
+  };
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -117,7 +118,7 @@ const FeedScreen = ({ navigation }) => {
         isMenuVisible.value = true;
       }
 
-      runOnJS(doHaptics)(event.contentOffset.y)
+      runOnJS(doHaptics)(event.contentOffset.y);
     },
   });
 
@@ -189,8 +190,8 @@ const FeedScreen = ({ navigation }) => {
         ref={scrollRef}
         scrollEnabled={isScrollEnabled}
       >
-        {Array.from({ length: 50 }).map((_, index) => (
-          <Post key={index} />
+        {feedList.map((post, index) => (
+          <Post key={index} post={post} />
         ))}
       </Animated.ScrollView>
     </View>
