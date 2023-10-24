@@ -79,7 +79,7 @@ const AppTabBar = () => {
     showInitialAnimation();
     setInitialAnimation(false);
 
-    dispatch(togglePlayer(true));
+    // dispatch(togglePlayer(true));
   }, []);
 
   const Button = ({ content, onPress }) => {
