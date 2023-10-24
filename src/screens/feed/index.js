@@ -5,7 +5,8 @@ import {
   Button,
   TouchableOpacity,
   Text,
-  FlatList
+  FlatList,
+  RefreshControl
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
@@ -139,7 +140,7 @@ const FeedScreen = ({ navigation }) => {
         isMenuVisible.value = true;
       }
 
-      runOnJS(doHaptics)(event.contentOffset.y);
+      // runOnJS(doHaptics)(event.contentOffset.y);
     },
   });
 
@@ -200,6 +201,15 @@ const FeedScreen = ({ navigation }) => {
     }
   };
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   return (
     <View style={{ backgroundColor: "black"}}>
       {renderTab()}
@@ -226,6 +236,9 @@ const FeedScreen = ({ navigation }) => {
           onEndReachedThreshold={0.5}
           initialNumToRender={2}
           contentContainerStyle={{ paddingBottom: 500 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="white" progressViewOffset={165} />
+          }
         />
       {/* </Animated.ScrollView> */}
     </View>
