@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import * as Haptics from 'expo-haptics';
 
 import Animated, {
   useSharedValue,
@@ -20,6 +21,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { runOnJS } from 'react-native-reanimated';
 
 import CustomText from "../../components/text";
 import Post from "../../components/post";
@@ -71,15 +73,51 @@ const FeedScreen = ({ navigation }) => {
     }
   }, [activeTab]);
 
+  let playHaptics = true
+  let isReloading = false
+  let triggeredValue = null
+
+  const runReload = () => {
+    if (!isReloading) {
+      isReloading = true
+
+      console.log("reload", new Date())
+
+      setTimeout(() => {
+        isReloading = false
+        playHaptics = true
+
+      }, 3000)
+
+    }
+  }
+
+  const doHaptics = (value) => {
+    if (value <= -100) {
+      if (!isReloading) {
+          runReload()
+
+        if (playHaptics) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          playHaptics = false
+
+        }
+      }
+
+    } else {
+    }
+  }
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollY.value = event.contentOffset.y;
-      // console.log(scrollY.value)
       if (opacity.value <= 0) {
         isMenuVisible.value = false;
       } else {
         isMenuVisible.value = true;
       }
+
+      runOnJS(doHaptics)(event.contentOffset.y)
     },
   });
 
@@ -147,7 +185,7 @@ const FeedScreen = ({ navigation }) => {
       <Animated.ScrollView
         style={[styles.content, getAnimatedFeedStyle()]}
         onScroll={scrollHandler}
-        // scrollEventThrottle={16}
+        scrollEventThrottle={16}
         ref={scrollRef}
         scrollEnabled={isScrollEnabled}
       >
