@@ -76,18 +76,20 @@ export default function App() {
     }
   };
 
-  const createPulse = () => {
+  const pulse = async (data) => {
+    dispatch(
+      createPulse({ name, userId: storedUserInfo._id, audioId: data._id })
+    );
+  };
+
+  const makePulse = () => {
     dispatch(
       uploadAudio({
         blob,
         duration,
-
-        callback: (data) => {
-          console.log(data._id);
-
-          dispatch(
-            createPulse({ name, userId: storedUserInfo._id, audioId: data._id })
-          );
+        callback: async (data) => {
+          console.log("here", data._id);
+          pulse(data);
         },
       })
     );
@@ -105,7 +107,7 @@ export default function App() {
       <Button title="Start Recording" onPress={startRecording} />
       <Button title="Stop Recording" onPress={stopRecording} />
       <Button title="Play Recording" onPress={playRecording} />
-      <Button title="Create Pulse" onPress={createPulse} />
+      <Button title="Create Pulse" onPress={makePulse} />
       <Text>{isRecording ? "Recording..." : "Not Recording"}</Text>
 
       <StatusBar style="auto" />

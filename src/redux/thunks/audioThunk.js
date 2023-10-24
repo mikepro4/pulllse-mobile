@@ -25,7 +25,7 @@ const uploadAudio = createAsyncThunk(
         duration,
         user,
       });
-      if (audioObject.data && callback) {
+      if (audioObject && audioObject.data && callback) {
         callback(audioObject.data);
       }
       return audioObject.data;
