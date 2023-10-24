@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const uploadAudio = createAsyncThunk(
   "audio/upload",
-  async ({ blob, name, duration }, thunkAPI) => {
+  async ({ blob, duration, callback }, thunkAPI) => {
     try {
       const user = await AsyncStorage.getItem("userId");
       // Get the preassigned S3 URL
@@ -22,10 +22,12 @@ const uploadAudio = createAsyncThunk(
         "https://my-audio-bucket-111.s3.us-east-2.amazonaws.com/" + key;
       const audioObject = await userApi.post("/api/saveAudioLink", {
         audioLink: finalUrl,
-        name,
         duration,
         user,
       });
+      if (audioObject.data && callback) {
+        callback(audioObject.data);
+      }
       return audioObject.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -53,7 +55,7 @@ const deleteAudio = createAsyncThunk(
       const user = await AsyncStorage.getItem("userId");
       await userApi.post("/api/deleteAudio", { key, user });
 
-      return link;
+      return link; // return the key of deleted audio to handle it in the reducer
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

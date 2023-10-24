@@ -17,22 +17,6 @@ const UserPage = () => {
   const audioList = useSelector((state) => state.audio.recordings);
   console.log("storedUserInfo._id", storedUserInfo._id);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      const userIdFromStorage = await AsyncStorage.getItem("userId"); // Retrieving userId from AsyncStorage
-      console.log("userIdFromStorage", userIdFromStorage);
-      if (userIdFromStorage) {
-        dispatch(fetchUserInfo({ userId: userIdFromStorage })); // Passing userId as an argument to your action
-        dispatch(fetchUserAudios({ userId: userIdFromStorage }));
-        setUserId(userIdFromStorage); // 2. Update the userId state
-      } else {
-        console.error("UserId not found in AsyncStorage");
-      }
-    };
-
-    fetchUserDetails();
-  }, [storedUserInfo._id]);
-
   return (
     <View>
       <UserWall

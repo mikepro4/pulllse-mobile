@@ -94,7 +94,8 @@ const userSlice = createSlice({
       })
       .addCase(signin.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.token = action.payload;
+        state.token = action.payload.token;
+        state.userInfo = action.payload.userInfo;
       })
       .addCase(signin.rejected, (state, action) => {
         state.isLoading = false;

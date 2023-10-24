@@ -53,7 +53,7 @@ const signin = createAsyncThunk(
       await AsyncStorage.setItem("userId", response.data.userId);
 
       // Return the token for further processing or usage in reducers
-      return response.data.token;
+      return response.data;
     } catch (err) {
       throw new Error("Something went wrong with sign in");
     }
@@ -64,6 +64,7 @@ const signout = createAsyncThunk(
   "user/signout",
   async (_, { rejectWithValue }) => {
     await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("userId");
 
     return null;
   }

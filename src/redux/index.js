@@ -3,6 +3,7 @@ import { userReducer } from "./slices/userSlice";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { recordsReducer } from "./slices/recordingsSlice";
 import { imageReducer } from "./slices/imageSlice";
+import { pulseReducer } from "./slices/pulseSlice";
 import { tabReducer } from "./slices/tabSlice";
 import { signout } from "./thunks/userThunk";
 import reduxFlipper from "redux-flipper";
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   audio: recordsReducer,
   image: imageReducer,
   tab: tabReducer,
+  pulse: pulseReducer,
 });
 
 const resettableReducer = (state, action) => {
@@ -49,6 +51,7 @@ export * from "./thunks/userThunk";
 export * from "./thunks/audioThunk";
 export * from "./thunks/followSubscribeThunk";
 export * from "./thunks/imageThunk";
+export * from "./thunks/pulseThunk";
 
 export { clearErrorMessage } from "./slices/userSlice";
 export { addRecording } from "./slices/recordingsSlice";
