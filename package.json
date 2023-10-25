@@ -10,11 +10,13 @@
   "dependencies": {
     "-": "^0.0.1",
     "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-native-community/blur": "^4.3.2",
     "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.14",
     "@react-navigation/stack": "^6.3.18",
     "@reduxjs/toolkit": "^1.9.7",
+    "@shopify/react-native-skia": "^0.1.214",
     "@viro-community/react-viro": "npm:react-viro-sw",
     "axios": "^1.5.1",
     "buffer": "^6.0.3",
