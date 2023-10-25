@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { store, fetchUserInfo, fetchUserAudios } from "./src/redux";
-import {Dimensions, StyleSheet, View, Text, TouchableOpacity, ScrollView} from "react-native";
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { togglePlayer, toggleDrawer } from "./src/redux";
 
 import Drawer from "./src/components/drawer";
+
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const App = () => {
@@ -40,27 +41,49 @@ const App = () => {
   }, [storedUserInfo._id]);
 
   useEffect(() => {
-    if(app.drawerOpen) {
+    if (app.drawerOpen) {
+
+      let destination
+
+      switch (app.drawerHeight) {
+        case 'halfScreen':
+            destination = -SCREEN_HEIGHT / 2
+            break
+        case 'fullScreen':
+            destination = -SCREEN_HEIGHT + 50
+            break
+        default:
+          if (typeof app.drawerHeight === 'number') {
+              destination = -app.drawerHeight;
+          }
+          break;
+      }
 
       const isActive = ref.current.isActive();
       if (isActive) {
         ref.current.scrollTo(0);
       } else {
-        ref.current.scrollTo(-SCREEN_HEIGHT/2);
+        ref.current.scrollTo(destination);
       }
     }
-    
+
   }, [app.drawerOpen]);
 
 
   const close = useCallback(() => {
-    dispatch(toggleDrawer({ drawerOpen: false, drawerType: null, drawerData: null }));
+    dispatch(
+      toggleDrawer({
+        drawerOpen: false,
+        drawerType: null,
+        drawerData: null,
+        drawerDraggable: false,
+        drawerHeight: null
+      })
+    );
     const isActive = ref.current.isActive();
-      if (isActive) {
-        ref.current.scrollTo(0);
-      } else {
-        ref.current.scrollTo(-200);
-      }
+    if (isActive) {
+      ref.current.scrollTo(0);
+    }
   }, []);
 
 
@@ -73,8 +96,8 @@ const App = () => {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar style="light" barStyle="dark-content" position="absolute" top={0} left={0} right={0} />
 
-        {app.drawerOpen && <TouchableOpacity style={{ flex: 1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={close} /> }
-        <Drawer ref={ref}/>
+        {app.drawerOpen && <TouchableOpacity style={{ flex: 1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }} onPress={close} />}
+        <Drawer ref={ref} />
 
         <MainFlow />
       </GestureHandlerRootView>

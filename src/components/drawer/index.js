@@ -49,7 +49,15 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
     ]);
 
     const dispatchToggleDrawer = () => {
-        dispatch(toggleDrawer({ drawerOpen: false, drawerType: null, drawerData: null, drawerDraggable: false }));
+        dispatch(
+            toggleDrawer({ 
+                drawerOpen: false, 
+                drawerType: null, 
+                drawerData: null, 
+                drawerDraggable: false,
+                drawerHeight: null
+            })
+        );
     };
 
     const context = useSharedValue({ y: 0 });
@@ -87,7 +95,6 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
                     return
             }
         }
-        
     }
 
     return (

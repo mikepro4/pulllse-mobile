@@ -4,7 +4,8 @@ const initialState = {
   drawerOpen: false,
   drawerType: null,
   drawerData: null,
-  draweDraggable: false
+  draweDraggable: false,
+  drawerHeight: null
 };
 
 const appSlice = createSlice({
@@ -16,6 +17,7 @@ const appSlice = createSlice({
       state.drawerType = action.payload.drawerType;
       state.drawerData = action.payload.drawerData;
       state.drawerDraggable = action.payload.drawerDraggable;
+      state.drawerHeight = action.payload.drawerHeight;
     },
   }
 });

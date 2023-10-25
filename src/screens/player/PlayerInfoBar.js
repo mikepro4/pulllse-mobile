@@ -57,8 +57,14 @@ const PlayerInfoBar = () => {
                 <Button
                     icon="controls"
                     onPressIn={() => {
-                        // alert("controls")
-                        dispatch(toggleDrawer({ drawerOpen: true, drawerType: "viz_settings", drawerData: null, drawerDraggable: true }));
+                        dispatch(
+                            toggleDrawer({ 
+                                drawerOpen: true, 
+                                drawerType: "viz_settings", 
+                                drawerData: null, 
+                                drawerDraggable: true,
+                                drawerHeight: "halfScreen"
+                            }));
 
                     }} />
             </View>
