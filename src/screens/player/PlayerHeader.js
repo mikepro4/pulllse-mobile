@@ -45,6 +45,7 @@ const PlayerHeader = () => {
                 <View style={styles.headerButtons}>
                     <Button
                         label="Mix"
+                        active={true}
                         icon="atom"
                         onPressIn={() => {
                             alert("Mix")

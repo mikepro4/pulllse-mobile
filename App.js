@@ -74,14 +74,7 @@ const App = () => {
         <StatusBar style="light" barStyle="dark-content" position="absolute" top={0} left={0} right={0} />
 
         {app.drawerOpen && <TouchableOpacity style={{ flex: 1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={close} /> }
-        <Drawer ref={ref}>
-          <ScrollView style={{ flex: 1, height: 3000 }} >
-
-          <Text style={{ color: "white", paddingHorizontal: 20}}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabre, nulla non pvel pellentesque ipsum tellus vitae ex. Nullam fringilla, dui vitae euismod placerat, ligula tortor aliquam urna, sit amet rutrum arcu turpis non ex.
-          </Text>
-          </ScrollView>
-        </Drawer>
+        <Drawer ref={ref}/>
 
         <MainFlow />
       </GestureHandlerRootView>

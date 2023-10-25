@@ -58,7 +58,7 @@ const PlayerInfoBar = () => {
                     icon="controls"
                     onPressIn={() => {
                         // alert("controls")
-                        dispatch(toggleDrawer({ drawerOpen: true, drawerType: "player", drawerData: null }));
+                        dispatch(toggleDrawer({ drawerOpen: true, drawerType: "viz_settings", drawerData: null, drawerDraggable: true }));
 
                     }} />
             </View>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     descriptionArea: {
-        paddingLeft: 15
+        paddingLeft: 12
     },
     infoBarRight:  {
         // backgroundColor: "blue",

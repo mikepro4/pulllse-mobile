@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   drawerOpen: false,
   drawerType: null,
-  drawerData: null
+  drawerData: null,
+  draweDraggable: false
 };
 
 const appSlice = createSlice({
@@ -14,6 +15,7 @@ const appSlice = createSlice({
       state.drawerOpen = action.payload.drawerOpen;
       state.drawerType = action.payload.drawerType;
       state.drawerData = action.payload.drawerData;
+      state.drawerDraggable = action.payload.drawerDraggable;
     },
   }
 });

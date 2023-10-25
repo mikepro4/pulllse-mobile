@@ -9,16 +9,22 @@ import Animated, {
     useSharedValue,
     withSpring,
     withTiming,
+    Easing,
 } from 'react-native-reanimated';
 import { runOnJS } from "react-native-reanimated";
 import { BlurView } from "@react-native-community/blur";
 import { toggleDrawer } from "../../redux";
+import Theme from "../../styles/theme"
+
+// Drawer views
+import VizSettings from "./views/viz_settings";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 50;
 
 const BottomSheet = React.forwardRef(({ children }, ref) => {
+    const app = useSelector((state) => state.app);
     const translateY = useSharedValue(0);
     const active = useSharedValue(false);
     const dispatch = useDispatch();
@@ -27,7 +33,10 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
         'worklet';
         active.value = destination !== 0;
 
-        translateY.value = withSpring(destination, { damping: 50 });
+        translateY.value = withTiming(destination, {
+            duration: 500,
+            easing: Theme.easing1,
+        })
     }, []);
 
     const isActive = useCallback(() => {
@@ -40,7 +49,7 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
     ]);
 
     const dispatchToggleDrawer = () => {
-        dispatch(toggleDrawer({ drawerOpen: false, drawerType: null, drawerData: null }));
+        dispatch(toggleDrawer({ drawerOpen: false, drawerType: null, drawerData: null, drawerDraggable: false }));
     };
 
     const context = useSharedValue({ y: 0 });
@@ -64,18 +73,22 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
         });
 
     const rBottomSheetStyle = useAnimatedStyle(() => {
-        const borderRadius = interpolate(
-            translateY.value,
-            [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y],
-            [25, 5],
-            Extrapolate.CLAMP
-        );
-
         return {
-            borderRadius,
             transform: [{ translateY: translateY.value }],
         };
     });
+
+    const renderDrawerContent = () => {
+        if(app.drawerOpen) {
+            switch (app.drawerType) {
+                case 'viz_settings':
+                    return <VizSettings />
+                default:
+                    return
+            }
+        }
+        
+    }
 
     return (
         <GestureDetector gesture={gesture}>
@@ -85,8 +98,9 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
                     blurType="dark"
                     blurAmount={30}
                 />
-                <View style={styles.line} />
+                {app.drawerDraggable && <View style={styles.line} /> }
                 <View style={styles.tint} />
+                {renderDrawerContent()}
                 {children}
 
 
