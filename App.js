@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { togglePlayer, toggleDrawer } from "./src/redux";
 
 import Drawer from "./src/components/drawer";
+import Overlay from "./src/components/drawer/overlay";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -58,34 +59,12 @@ const App = () => {
           }
           break;
       }
-
-      const isActive = ref.current.isActive();
-      if (isActive) {
-        ref.current.scrollTo(0);
-      } else {
-        ref.current.scrollTo(destination);
-      }
+      ref.current.scrollTo(destination);
+    } else {
+      ref.current.scrollTo(0);
     }
 
   }, [app.drawerOpen]);
-
-
-  const close = useCallback(() => {
-    dispatch(
-      toggleDrawer({
-        drawerOpen: false,
-        drawerType: null,
-        drawerData: null,
-        drawerDraggable: false,
-        drawerHeight: null
-      })
-    );
-    const isActive = ref.current.isActive();
-    if (isActive) {
-      ref.current.scrollTo(0);
-    }
-  }, []);
-
 
   return (
     <NavigationContainer
@@ -96,7 +75,7 @@ const App = () => {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar style="light" barStyle="dark-content" position="absolute" top={0} left={0} right={0} />
 
-        {app.drawerOpen && <TouchableOpacity style={{ flex: 1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }} onPress={close} />}
+        {app.drawerOpen && <Overlay/> }
         <Drawer ref={ref} />
 
         <MainFlow />

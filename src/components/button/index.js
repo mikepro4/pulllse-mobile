@@ -2,6 +2,7 @@ import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from "react
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
+import Theme from "../../styles/theme"
 
 import Icon from "../../components/icon"
 import CustomText from "../../components/text"
@@ -44,10 +45,18 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
     }
 
     const renderIcon = () => {
+
+        let iconFill
+
+        if (active == true) {
+            iconFill = Theme.green
+        } else {
+            iconFill = Theme.white
+        }
         if(label && icon) {
             return (
                 <View style={{paddingRight: 5}}>
-                    <Icon name={icon} style={{fill: "white"}}/>
+                    <Icon name={icon} style={{fill: iconFill}}/>
                 </View>
             )
         }
@@ -84,6 +93,14 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
         }
     }
 
+    let textColor
+
+    if (active == true) {
+        textColor = Theme.green
+    } else {
+        textColor = Theme.white
+    }
+
     return (
         <TouchableOpacity
             style={getButtonStyle()}
@@ -93,7 +110,7 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
 
             <View style={styles.contnetWrapper}>
                 {renderIcon()}
-                <CustomText style={{fontSize: 14}}>{label}</CustomText>
+                <CustomText style={{fontSize: 14, color: textColor}}>{label}</CustomText>
                 {renderIconRight()}
                 {renderStatusIcon()}
                 {renderActiveBackground()}
@@ -142,7 +159,7 @@ const styles = StyleSheet.create({
         left: -10,
         bottom: -10,
         right: -10,
-        backgroundColor: "red",
+        backgroundColor: Theme.backgroundGreen,
         position: "absolute",
         zIndex: -1,
         borderRadius: 6,
