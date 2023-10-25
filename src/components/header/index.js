@@ -39,16 +39,8 @@ const Header = () => {
         break;
     }
   } else {
-    renderedHeader = (
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={() => dispatch(togglePlayer(false))}
-      >
-        <CustomText>Hide</CustomText>
-      </TouchableOpacity>
-    );
+    return ;
   }
-
   return <View style={styles.header}>{renderedHeader}</View>;
 };
 

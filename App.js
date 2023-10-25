@@ -9,15 +9,19 @@ import FlipperAsyncStorage from "rn-flipper-async-storage-advanced";
 import MainFlow from "./src/screens/";
 import { NavigationContainer } from "@react-navigation/native";
 
+import { togglePlayer } from "./src/redux";
+
 const App = () => {
   const dispatch = useDispatch();
   const storedUserInfo = useSelector((state) => state.user.userInfo);
 
   const fetchUserDetails = async () => {
-    const userIdFromStorage = await AsyncStorage.getItem("userId"); // Retrieving userId from AsyncStorage
+    const userIdFromStorage = await AsyncStorage.getItem("userId");
+    // dispatch(togglePlayer(true));
+    // dispatch(togglePlayer(true));
 
     if (userIdFromStorage) {
-      dispatch(fetchUserInfo({ userId: userIdFromStorage })); // Passing userId as an argument to your action
+      dispatch(fetchUserInfo({ userId: userIdFromStorage })); 
       dispatch(fetchUserAudios({ userId: userIdFromStorage }));
     }
   };
@@ -36,6 +40,8 @@ const App = () => {
         cardStyle: { backgroundColor: "black" },
       }}
     >
+        <StatusBar style="light" barStyle="dark-content" position="absolute" top={0} left={0} right={0}/>
+
       <MainFlow />
     </NavigationContainer>
   );
@@ -55,7 +61,6 @@ export default MainApp = () => {
     <View style={{ flex: 1, backgroundColor: "black" }}>
       <Provider store={store}>
         {__DEV__ && <FlipperAsyncStorage />}
-        <StatusBar style="light" />
         <App />
       </Provider>
     </View>

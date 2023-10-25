@@ -97,7 +97,7 @@ export default function App() {
   };
 
   return (
-    <View style={{ flex: 1, paddingTop: 150 }}>
+    <View style={{ flex: 1, paddingTop: 150, position: "relative", zIndex: 1 }}>
       <TextInput
         style={styles.input}
         value={name}
@@ -110,7 +110,6 @@ export default function App() {
       <Button title="Create Pulse" onPress={makePulse} />
       <Text>{isRecording ? "Recording..." : "Not Recording"}</Text>
 
-      <StatusBar style="auto" />
     </View>
   );
 }

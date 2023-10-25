@@ -56,3 +56,4 @@ export * from "./thunks/pulseThunk";
 export { clearErrorMessage } from "./slices/userSlice";
 export { addRecording } from "./slices/recordingsSlice";
 export { addImage } from "./slices/imageSlice";
+export { togglePlayer } from "./slices/tabSlice";

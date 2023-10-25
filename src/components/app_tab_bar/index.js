@@ -82,6 +82,15 @@ const AppTabBar = () => {
     // dispatch(togglePlayer(true));
   }, []);
 
+  const resetRoutes = () => {
+    if (
+      navigation.getState() &&
+      navigation.getState().routes.length > 1
+    ) {
+      navigation.dispatch(StackActions.popToTop());
+    }
+  }
+
   const Button = ({ content, onPress }) => {
     return (
       <TouchableOpacity
@@ -109,16 +118,10 @@ const AppTabBar = () => {
 
           dispatch(
             switchTab({
-              name: "feed",
-              icon: "mountains",
+              name: "feed"
             })
           );
-          if (
-            navigation.getState() &&
-            navigation.getState().routes.length > 1
-          ) {
-            navigation.dispatch(StackActions.popToTop());
-          }
+          resetRoutes()
         }}
       />
 
@@ -132,16 +135,10 @@ const AppTabBar = () => {
         onPress={() => {
           dispatch(
             switchTab({
-              name: "x",
-              icon: "mountains",
+              name: "x"
             })
           );
-          if (
-            navigation.getState() &&
-            navigation.getState().routes.length > 1
-          ) {
-            navigation.dispatch(StackActions.popToTop());
-          }
+          resetRoutes()
         }}
       />
 
@@ -173,17 +170,11 @@ const AppTabBar = () => {
         onPress={() => {
           dispatch(
             switchTab({
-              name: "search",
-              icon: "search",
+              name: "search"
             })
           );
 
-          if (
-            navigation.getState() &&
-            navigation.getState().routes.length > 1
-          ) {
-            navigation.dispatch(StackActions.popToTop());
-          }
+          resetRoutes()
         }}
       />
 
@@ -199,16 +190,10 @@ const AppTabBar = () => {
         onPress={() => {
           dispatch(
             switchTab({
-              name: "profile",
-              icon: "user",
+              name: "profile"
             })
           );
-          if (
-            navigation.getState() &&
-            navigation.getState().routes.length > 1
-          ) {
-            navigation.dispatch(StackActions.popToTop());
-          }
+          resetRoutes()
         }}
       />
     </Animated.View>
