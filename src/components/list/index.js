@@ -18,9 +18,11 @@ import { runOnJS } from "react-native-reanimated";
 
 import userApi from "../../redux/axios/userApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// All list view items
 import Post from "./views/Post";
 
-const List = ({ limit, url, listItem, onScrollEvent }) => {
+const List = ({ limit, url, listItem, onScrollEvent, paddingTop, paddingBottom = 500 }) => {
     const [initialAnimation, setInitialAnimation] = useState(true);
     const activeTab = useSelector((state) => state.tab);
     const [data, setData] = useState([]);
@@ -54,7 +56,6 @@ const List = ({ limit, url, listItem, onScrollEvent }) => {
             });
             setData(prevData => [...prevData, ...response.data]);
             setPage(prevPage => prevPage + 1);
-            console.log(response.data)
         } catch (error) {
             console.error(error);
         } finally {
@@ -73,10 +74,16 @@ const List = ({ limit, url, listItem, onScrollEvent }) => {
         fetchData()
     }, []);
 
+
+    // Views for list items
+
     const renderListItem = (item, index) => {
-        return (
-            <Post key={item._id} post={item} />
-        )
+        switch (listItem) {
+            case 'post':
+                return <Post key={item._id} item={item} />
+            default:
+                return
+        }
     }
 
     const showInitialAnimation = () => {
@@ -106,7 +113,7 @@ const List = ({ limit, url, listItem, onScrollEvent }) => {
         <Animated.FlatList
             ref={scrollRef}
             data={data}
-            style={[styles.content, getAnimatedListStyle()]}
+            style={[{paddingTop: paddingTop}, getAnimatedListStyle()]}
             renderItem={({ item, index }) => {
                 return renderListItem(item, index);
             }}
@@ -114,20 +121,12 @@ const List = ({ limit, url, listItem, onScrollEvent }) => {
             onEndReached={fetchData}
             onEndReachedThreshold={0.5}
             initialNumToRender={2}
-            contentContainerStyle={{ paddingBottom: 500 }}
+            contentContainerStyle={{ paddingBottom: paddingBottom }}
             refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="white" progressViewOffset={165} />
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="white" progressViewOffset={paddingTop - 20} />
             }
         />
     );
 };
 
 export default List;
-
-const styles = StyleSheet.create({
-    content: {
-        paddingTop: 185,
-        zIndex: 1,
-    },
-});
-

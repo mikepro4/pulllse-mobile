@@ -85,8 +85,10 @@ const FeedScreen = ({ navigation }) => {
       {renderTab()}
       <List
         url="/feed/fetchFeed"
-        limit={2}
-        listItem="pulse"
+        limit={10}
+        listItem="post"
+        paddingTop={185}
+        paddingBottom={270}
         onScrollEvent={(value) => {
           if (!activeTab.player) {
             scrollY.value = value;
@@ -107,16 +109,12 @@ export default FeedScreen;
 const styles = StyleSheet.create({
   tabContainer: {
     position: "absolute",
-    top: 125,
+    top: 120,
     flex: 1,
     left: -8,
     right: 0,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
-  },
-  content: {
-    paddingTop: 185,
-    zIndex: 1,
-  },
+  }
 });
