@@ -60,6 +60,7 @@ const PlayerHeader = () => {
                     <Button
                         label="Save"
                         icon="save"
+                        status={true}
                         onPressIn={() => {
                             alert("Save")
                             // dispatch(togglePlayer(false))

@@ -7,7 +7,7 @@ import Icon from "../../components/icon"
 import CustomText from "../../components/text"
 
 
-const Button = ({label, onPressIn, icon, iconRight}) => {
+const Button = ({label, onPressIn, icon, iconRight, status}) => {
 
     let iconOnly
     let labelOnly
@@ -51,6 +51,14 @@ const Button = ({label, onPressIn, icon, iconRight}) => {
         }
     }
 
+    const renderStatusIcon = () => {
+        if(status) {
+            return (
+                <View style={styles.status}/>
+            )
+        }
+    }
+
     return (
         <TouchableOpacity
             style={getButtonStyle()}
@@ -60,6 +68,7 @@ const Button = ({label, onPressIn, icon, iconRight}) => {
             {renderIcon()}
             <CustomText style={{fontSize: 14}}>{label}</CustomText>
             {renderIconRight()}
+            {renderStatusIcon()}
         </TouchableOpacity>
     );
 };
@@ -74,6 +83,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         paddingHorizontal: 15,
         height: 50,
+        position: "relative",
     },
     iconOnly: {
         // backgroundColor: "red",
@@ -82,6 +92,16 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: 50,
         height: 50,
+        position: "relative",
+    },
+    status: {
+        position: "absolute",
+        width: 4,
+        height: 4,
+        right: 10,
+        top: 15,
+        borderRadius: 10,
+        backgroundColor: "#29FF7F"
     }
     
 });

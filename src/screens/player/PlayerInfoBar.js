@@ -1,13 +1,98 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Theme from "../../styles/theme"
+
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withSpring,
+    withTiming,
+    withDelay,
+    Easing,
+} from "react-native-reanimated";
+
 import CustomText from "../../components/text";
+import Button from "../../components/button"
 
 const PlayerInfoBar = () => {
+    const opacity = useSharedValue(0);
+    const dispatch = useDispatch();
+
+    const animateIn = () => {
+        opacity.value = withDelay(250, withTiming(1, {
+            duration: 1000,
+            easing: Theme.easing1,
+        }))
+    };
+
+    useEffect(() => {
+        animateIn();
+    }, []);
+
+    const animatedStyles = useAnimatedStyle(() => ({
+        opacity: opacity.value
+    }));
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <CustomText>Player Info Bar</CustomText>
-        </View>
+        <Animated.View style={[styles.infoBarContainer, animatedStyles]}>
+            <View style={styles.infoBarLeft}>
+
+                <View style={styles.playArea}>
+                    <Button
+                        icon="play"
+                        onPressIn={() => {
+                            alert("play")
+                        }} />
+                </View>
+
+                <View style={styles.descriptionArea}>
+
+                </View>
+            </View>
+
+            <View style={styles.infoBarRight}>
+                <Button
+                    icon="controls"
+                    onPressIn={() => {
+                        alert("controls")
+                    }} />
+            </View>
+        </Animated.View>
     );
 };
 
 export default PlayerInfoBar;
+
+
+const styles = StyleSheet.create({
+    playArea: {
+        width: 50,
+        height: 50,
+        backgroundColor: "white",
+        borderRadius: 45,
+        marginLeft: 25,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    infoBarLeft: {
+        flex: 1,
+        // backgroundColor: "red",
+    },
+    infoBarRight:  {
+        // backgroundColor: "blue",
+        paddingHorizontal: 15
+    },
+    infoBarContainer: {
+        position: "absolute",
+        flex: 1,
+        zIndex: 100,
+        //   backgroundColor: "red",
+        left: 0,
+        bottom: 0,
+        right: 0,
+        height: 75,
+        flexDirection: "row",
+    },
+
+});
+

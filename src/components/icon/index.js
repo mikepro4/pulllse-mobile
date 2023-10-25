@@ -14,6 +14,8 @@ import More from "./more";
 import Atom from "./atom";
 import Duplicate from "./duplicate";
 import Save from "./save";
+import Controls from "./controls";
+import Play from "./play";
 
 
 const Icon = ({ name, style }) => {
@@ -48,6 +50,10 @@ const Icon = ({ name, style }) => {
             return <Duplicate style={style} />
         case 'save':
             return <Save style={style} />
+        case 'controls':
+            return <Controls style={style} />
+        case 'play':
+            return <Play style={style} />
         default:
             return
     }

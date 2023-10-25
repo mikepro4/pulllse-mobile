@@ -8,7 +8,6 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { StatusBar } from "expo-status-bar";
 
 import { useDispatch, useSelector } from "react-redux";
 import Icon from "../../components/icon";
@@ -38,20 +37,6 @@ const Player = () => {
     animateIn();
   }, []);
 
-  const renderedHeader = () => {
-    return (
-      <View style={styles.header}>
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() =>  {
-            dispatch(togglePlayer(false))
-          }}
-        >
-          <CustomText>Hide</CustomText>
-        </TouchableOpacity>
-      </View>
-    )
-  }
 
   const animatedStyles = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -59,11 +44,9 @@ const Player = () => {
 
   return (
       <Animated.View style={[styles.playerContainer, animatedStyles]}>
-        {/* {renderedHeader()} */}
         <PlayerHeader/>
         <Viz/>
         <PlayerInfoBar/>
-        {/* <PlayerComponent /> */}
       </Animated.View>
   );
 };
@@ -74,8 +57,8 @@ const styles = StyleSheet.create({
   playerContainer: {
     position: "absolute",
     flex: 1,
-    zIndex: 1,
-    backgroundColor: "#222",
+    zIndex: 1000,
+    backgroundColor: "#000",
     top: 0,
     left: 0,
     bottom: 0,
