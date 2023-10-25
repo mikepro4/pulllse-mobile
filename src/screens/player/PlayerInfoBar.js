@@ -46,8 +46,8 @@ const PlayerInfoBar = () => {
                 </View>
 
                 <View style={styles.descriptionArea}>
-                    <CustomText style={{fontSize: 10, opacity: 0.5, marginBottom: 2, letterSpacing: 0.5 }}>DCDNT</CustomText>
-                    <CustomText style={{fontSize: 18}}>Wednesday</CustomText>  
+                    <CustomText style={{fontSize: 11, opacity: 0.5, marginBottom: 2, letterSpacing: 0.34, fontFamily: "aeonik-light" }}>DCDNT</CustomText>
+                    <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>Wednesday</CustomText>  
                 </View>
             </View>
 
