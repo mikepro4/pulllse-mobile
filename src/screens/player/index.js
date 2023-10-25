@@ -19,13 +19,17 @@ import PlayerComponent from "./PlayerComponent";
 
 import { togglePlayer } from "../../redux/slices/tabSlice";
 
+import PlayerHeader from "./PlayerHeader";
+import PlayerInfoBar from "./PlayerInfoBar";
+import Viz from "./Viz";
+
 const Player = () => {
   const dispatch = useDispatch();
   const opacity = useSharedValue(0);
 
   const animateIn = () => {
     opacity.value = withTiming(1, {
-      duration: 250,
+      duration: 1000,
       easing: Theme.easing1,
     });
   };
@@ -55,9 +59,11 @@ const Player = () => {
 
   return (
       <Animated.View style={[styles.playerContainer, animatedStyles]}>
-        {/* <CustomText>Player Render</CustomText> */}
-        {renderedHeader()}
-        <PlayerComponent />
+        {/* {renderedHeader()} */}
+        <PlayerHeader/>
+        <Viz/>
+        <PlayerInfoBar/>
+        {/* <PlayerComponent /> */}
       </Animated.View>
   );
 };
@@ -69,7 +75,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     flex: 1,
     zIndex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: "#222",
     top: 0,
     left: 0,
     bottom: 0,

@@ -109,7 +109,6 @@ export default function App() {
       <Button title="Play Recording" onPress={playRecording} />
       <Button title="Create Pulse" onPress={makePulse} />
       <Text>{isRecording ? "Recording..." : "Not Recording"}</Text>
-
     </View>
   );
 }

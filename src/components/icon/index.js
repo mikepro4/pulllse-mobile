@@ -10,6 +10,7 @@ import Pulse from "./pulse";
 import ArrowBack from "./arrowBack";
 import ArrowForward from "./arrowForward";
 import Map from "./map";
+import More from "./more";
 
 const Icon = ({ name, style }) => {
     switch (name) {
@@ -35,6 +36,8 @@ const Icon = ({ name, style }) => {
             return <ArrowForward style={style} />
         case 'map':
             return <Map style={style} />
+        case 'more':
+            return <More style={style} />
         default:
             return
     }

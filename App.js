@@ -17,8 +17,7 @@ const App = () => {
 
   const fetchUserDetails = async () => {
     const userIdFromStorage = await AsyncStorage.getItem("userId");
-    // dispatch(togglePlayer(true));
-    // dispatch(togglePlayer(true));
+    dispatch(togglePlayer(true));
 
     if (userIdFromStorage) {
       dispatch(fetchUserInfo({ userId: userIdFromStorage })); 
