@@ -8,7 +8,7 @@ import styles from './indexStyle';
 const Icon = (props) => {
     return (
         <View>
-            <Svg width="24" fill="none" height="22" viewBox="0 0 4 18">
+            <Svg width="4" fill="none" height="22" viewBox="0 0 4 18">
                 <Path
                     style={[styles.icon, props.style]}
                     d="M3.82812 2.76758C3.82812 3.76536 3.01926 4.57422 2.02148 4.57422C1.02371 4.57422 0.214844 3.76536 0.214844 2.76758C0.214844 1.7698 1.02371 0.960938 2.02148 0.960938C3.01926 0.960938 3.82812 1.7698 3.82812 2.76758Z"

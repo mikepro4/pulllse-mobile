@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView, Button, TouchableOpacity, Pressable } from "react-native";
+import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { togglePlayer } from "../../redux/slices/tabSlice";
 
 import Icon from "../../components/icon"
 import Logo from "../../components/icon/logo"
+import Button from "../../components/button"
 
 const PlayerHeader = () => {
     const navigation = useNavigation();
@@ -34,7 +35,7 @@ const PlayerHeader = () => {
     return (
         <View style={styles.header}>
             <Animated.View style={[styles.container, animatedStyles]}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={styles.buttonContainer}
                     onPressIn={() => {
                         // alert("lol")
@@ -43,7 +44,17 @@ const PlayerHeader = () => {
                     <View>
                         <Icon name="arrow_back" />
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+
+                <Button
+                    label="Back"
+                    icon="arrow_back"
+                    iconRight="more"
+                    onPressIn={() => {
+                        // alert("lol")
+                        dispatch(togglePlayer(false))
+                }}/>
+                
 
                 <View style={styles.headerButtons}>
                     {/* <Pressable
