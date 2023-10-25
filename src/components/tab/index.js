@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     opacity: 0.5,
-    color: "#fff",
+    color: "#ffffff",
     fontFamily: "aeonik-regular",
   },
 });

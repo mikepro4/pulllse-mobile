@@ -1,16 +1,9 @@
 import {
   StyleSheet,
   View,
-  ScrollView,
-  Button,
-  TouchableOpacity,
-  Text,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as Haptics from "expo-haptics";
-import { fetchFeed } from "../../redux/thunks/feedThunk";
 
 import Animated, {
   useSharedValue,
@@ -22,26 +15,30 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { runOnJS } from "react-native-reanimated";
+import List from "../../components/list"
 
-import CustomText from "../../components/text";
-import Post from "../../components/post";
-import Theme from "../../styles/theme";
 import Tab from "../../components/tab";
-
-import { resetScroll } from "../../redux/slices/tabSlice";
 
 const FeedScreen = ({ navigation }) => {
   const [initialAnimation, setInitialAnimation] = useState(true);
-  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
   const activeTab = useSelector((state) => state.tab);
-  const feedList = useSelector((state) => state.feed.feed);
   const isMenuVisible = useSharedValue(true);
   const opacity = useSharedValue(0);
-  const feedOpacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
-  const dispatch = useDispatch();
-  console.log("feedList", feedList.length);
+
+  useEffect(() => {
+    showInitialAnimation();
+    setInitialAnimation(false);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab.player) {
+      opacity.value = 0;
+      setInitialAnimation(true);
+    } else {
+      showInitialAnimation();
+    }
+  }, [activeTab]);
 
   const showInitialAnimation = () => {
     opacity.value = withDelay(
@@ -51,89 +48,12 @@ const FeedScreen = ({ navigation }) => {
         easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
       })
     );
-
-    feedOpacity.value = withDelay(
-      300,
-      withTiming(1, {
-        duration: 1200,
-        easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
-      })
-    );
   };
-
-  useEffect(() => {
-    showInitialAnimation();
-    setInitialAnimation(false);
-    dispatch(fetchFeed());
-  }, []);
-
-  useEffect(() => {
-    if (activeTab.player) {
-      opacity.value = 0;
-      feedOpacity.value = 0;
-      setInitialAnimation(true);
-    } else {
-      showInitialAnimation();
-    }
-  }, [activeTab]);
-
-  let playHaptics = true;
-  let isReloading = false;
-  let triggeredValue = null;
-
-  const runReload = () => {
-    if (!isReloading) {
-      isReloading = true;
-
-      console.log("reload", new Date());
-      dispatch(fetchFeed());
-
-      setTimeout(() => {
-        isReloading = false;
-        playHaptics = true;
-      }, 3000);
-    }
-  };
-
-  const doHaptics = (value) => {
-    if (value <= -100) {
-      if (!isReloading) {
-        runReload();
-
-        if (playHaptics) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          playHaptics = false;
-        }
-      }
-    } else {
-    }
-  };
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-      if (opacity.value <= 0) {
-        isMenuVisible.value = false;
-      } else {
-        isMenuVisible.value = true;
-      }
-
-      runOnJS(doHaptics)(event.contentOffset.y);
-    },
-  });
 
   const getAnimatedTabStyle = () => {
     return useAnimatedStyle(() => {
       return {
         opacity: opacity.value - scrollY.value / 100,
-      };
-    });
-  };
-
-  const getAnimatedFeedStyle = () => {
-    return useAnimatedStyle(() => {
-      return {
-        opacity: feedOpacity.value,
       };
     });
   };
@@ -150,25 +70,6 @@ const FeedScreen = ({ navigation }) => {
     },
   ];
 
-  const scrollRef = useRef();
-
-  const scrollToTop = () => {
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  };
-
-  const toggleScrolling = (enabled) => {
-    setIsScrollEnabled(enabled);
-  };
-
-  useEffect(() => {
-    if (activeTab.resetScroll) {
-      scrollToTop();
-      dispatch(resetScroll(false));
-    }
-
-    toggleScrolling(!activeTab.stopScroll);
-  }, [activeTab]);
-
   const renderTab = () => {
     if (isMenuVisible.value) {
       return (
@@ -182,18 +83,23 @@ const FeedScreen = ({ navigation }) => {
   return (
     <View style={{ backgroundColor: "black" }}>
       {renderTab()}
-
-      <Animated.ScrollView
-        style={[styles.content, getAnimatedFeedStyle()]}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        ref={scrollRef}
-        scrollEnabled={isScrollEnabled}
-      >
-        {feedList.map((post, index) => (
-          <Post key={index} post={post} />
-        ))}
-      </Animated.ScrollView>
+      <List
+        url="/feed/fetchFeed"
+        limit={10}
+        listItem="post"
+        paddingTop={185}
+        paddingBottom={270}
+        onScrollEvent={(value) => {
+          if (!activeTab.player) {
+            scrollY.value = value;
+            if (opacity.value <= 0) {
+              isMenuVisible.value = false;
+            } else {
+              isMenuVisible.value = true;
+            }
+          }
+        }}
+      />
     </View>
   );
 };
@@ -210,9 +116,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
-  },
-  content: {
-    paddingTop: 185,
-    zIndex: 1,
-  },
+  }
 });
