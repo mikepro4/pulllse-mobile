@@ -45,11 +45,13 @@ const PlayerHeader = () => {
                 <View style={styles.headerButtons}>
                     <Button
                         label="Mix"
+                        icon="atom"
                         onPressIn={() => {
                             dispatch(togglePlayer(false))
                         }} />
                     <Button
                         label="Duplicate"
+                        icon="duplicate"
                         onPressIn={() => {
                             dispatch(togglePlayer(false))
                         }} />

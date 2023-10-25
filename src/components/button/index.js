@@ -6,6 +6,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, wit
 import Icon from "../../components/icon"
 import CustomText from "../../components/text"
 
+
 const Button = ({label, onPressIn, icon, iconRight}) => {
 
     let iconOnly
@@ -28,7 +29,7 @@ const Button = ({label, onPressIn, icon, iconRight}) => {
     const renderIcon = () => {
         if(label && icon) {
             return (
-                <View style={{paddingRight: 10}}>
+                <View style={{paddingRight: 5}}>
                     <Icon name={icon}/>
                 </View>
             )
@@ -57,7 +58,7 @@ const Button = ({label, onPressIn, icon, iconRight}) => {
                 onPressIn()
             }}>
             {renderIcon()}
-            <CustomText style={{fontSize: 16}}>{label}</CustomText>
+            <CustomText style={{fontSize: 14}}>{label}</CustomText>
             {renderIconRight()}
         </TouchableOpacity>
     );
