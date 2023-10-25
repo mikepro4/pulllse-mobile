@@ -17,50 +17,64 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
 
     const animateIn = () => {
         const duration = 200;
-        let destination = -10
+        const destination = -10
+        const easing = Theme.easing1
+
 
         opacity.value = withTiming(1, {
           duration: duration,
+          easing: easing,
         });
 
         top.value = withTiming(destination, {
             duration: duration,
+            easing: easing,
         });
 
         bottom.value = withTiming(destination, {
             duration: duration,
+            easing: easing,
         });
 
         left.value = withTiming(destination, {
             duration: duration,
+            easing: easing,
+
         });
 
         right.value = withTiming(destination, {
             duration: duration,
+            easing: easing,
         });
     };
 
     const animateOut = () => {
         const duration = 200;
+        const easing = Theme.easing3
         
         opacity.value = withTiming(0, {
           duration: duration,
+          easing: easing,
         });
 
         top.value = withTiming(0, {
             duration: duration,
+            easing: easing,
         });
 
         bottom.value = withTiming(0, {
             duration: duration,
+            easing: easing,
         });
 
         left.value = withTiming(0, {
             duration: duration,
+            easing: easing,
         });
 
         right.value = withTiming(0, {
             duration: duration,
+            easing: easing,
         });
     };
 
@@ -115,7 +129,7 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
         }
         if(icon) {
             return (
-                <Icon name={icon}/>
+                <Icon name={icon} style={{fill: iconFill}} />
             )
         }
     }
