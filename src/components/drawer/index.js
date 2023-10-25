@@ -11,7 +11,7 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import { runOnJS } from "react-native-reanimated";
-import { VibrancyView } from "@react-native-community/blur";
+import { BlurView } from "@react-native-community/blur";
 import { toggleDrawer } from "../../redux";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -80,15 +80,16 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
     return (
         <GestureDetector gesture={gesture}>
             <Animated.View style={[styles.bottomSheetContainer, rBottomSheetStyle]}>
-                <VibrancyView 
+                <BlurView 
                     style={styles.absolute} 
                     blurType="dark"
-                    blurAmount={40}
-                >
+                    blurAmount={30}
+                />
                 <View style={styles.line} />
-
+                <View style={styles.tint} />
                 {children}
-                </VibrancyView>
+
+
 
             </Animated.View>
         </GestureDetector>
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginVertical: 15,
         borderRadius: 2,
+        opacity: 0.2,
     },
     absolute: {
         position: "absolute",
@@ -120,6 +122,16 @@ const styles = StyleSheet.create({
         bottom: 0,
         right: 0,
         borderRadius: 25,
+      },
+
+      tint: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        borderRadius: 25,
+        backgroundColor: "rgba(0,0,0,0.6)",
       }
 });
 
