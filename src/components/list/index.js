@@ -12,13 +12,15 @@ import Animated, {
     Easing,
 } from "react-native-reanimated";
 
+import { runOnJS } from "react-native-reanimated";
+
 import userApi from "../../redux/axios/userApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Post from "./views/Post";
 
 let paddingTop = 185;
 
-const List = ({ limit, url, listItem }) => {
+const List = ({ limit, url, listItem, onScrollEvent }) => {
     const [initialAnimation, setInitialAnimation] = useState(true);
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
@@ -60,6 +62,7 @@ const List = ({ limit, url, listItem }) => {
 
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
+            runOnJS(onScrollEvent)(event.contentOffset.y)
         },
     });
 

@@ -144,6 +144,7 @@ const FeedScreen = ({ navigation }) => {
           url="/feed/fetchFeed"
           limit={2}
           listItem="pulse"
+          onScrollEvent={(value) => {console.log(value)}}
         />
     </View>
   );
