@@ -26,6 +26,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { runOnJS } from "react-native-reanimated";
+import List from "../../components/list"
 
 import CustomText from "../../components/text";
 import Post from "../../components/post";
@@ -56,37 +57,11 @@ const FeedScreen = ({ navigation }) => {
         easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
       })
     );
-
-    feedOpacity.value = withDelay(
-      300,
-      withTiming(1, {
-        duration: 1200,
-        easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
-      })
-    );
   };
-
-  const fetchFeed = async () => {
-    const userId = await AsyncStorage.getItem("userId");
-    try {
-      const response = await userApi.post(`/feed/fetchFeed`, {
-        userId,
-        page
-      });
-      setData(prevData => [...prevData, ...response.data]);
-      setPage(prevPage => prevPage + 1);
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-    }
-  }
 
   useEffect(() => {
     showInitialAnimation();
     setInitialAnimation(false);
-    // dispatch(fetchFeed());
-    fetchFeed()
   }, []);
 
   useEffect(() => {
@@ -99,63 +74,24 @@ const FeedScreen = ({ navigation }) => {
     }
   }, [activeTab]);
 
-  let playHaptics = true;
-  let isReloading = false;
-  let triggeredValue = null;
 
-  const runReload = () => {
-    if (!isReloading) {
-      isReloading = true;
+  // const scrollHandler = useAnimatedScrollHandler({
+  //   onScroll: (event) => {
+  //     scrollY.value = event.contentOffset.y;
+  //     if (opacity.value <= 0) {
+  //       isMenuVisible.value = false;
+  //     } else {
+  //       isMenuVisible.value = true;
+  //     }
 
-      console.log("reload", new Date());
-      fetchFeed()
-
-      setTimeout(() => {
-        isReloading = false;
-        playHaptics = true;
-      }, 3000);
-    }
-  };
-
-  const doHaptics = (value) => {
-    if (value <= -100) {
-      if (!isReloading) {
-        runReload();
-
-        if (playHaptics) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          playHaptics = false;
-        }
-      }
-    } else {
-    }
-  };
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-      if (opacity.value <= 0) {
-        isMenuVisible.value = false;
-      } else {
-        isMenuVisible.value = true;
-      }
-
-      // runOnJS(doHaptics)(event.contentOffset.y);
-    },
-  });
+  //     // runOnJS(doHaptics)(event.contentOffset.y);
+  //   },
+  // });
 
   const getAnimatedTabStyle = () => {
     return useAnimatedStyle(() => {
       return {
         opacity: opacity.value - scrollY.value / 100,
-      };
-    });
-  };
-
-  const getAnimatedFeedStyle = () => {
-    return useAnimatedStyle(() => {
-      return {
-        opacity: feedOpacity.value,
       };
     });
   };
@@ -201,46 +137,14 @@ const FeedScreen = ({ navigation }) => {
     }
   };
 
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
-
   return (
     <View style={{ backgroundColor: "black"}}>
       {renderTab()}
-      {/* <Animated.ScrollView
-        style={[styles.content, getAnimatedFeedStyle()]}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        ref={scrollRef}
-        scrollEnabled={isScrollEnabled}
-      > */}
-        {/* {feedList.map((post, index) => (
-          <Post key={index} post={post} />
-        ))} */}
-
-        <Animated.FlatList
-          data={data}
-          style={[styles.content, getAnimatedFeedStyle()]}
-          // keyExtractor={(item) => item._id.toString()}
-          renderItem={({ item, index }) => (
-            <Post key={item._id} post={item} />
-          )}
-          onScroll={scrollHandler}
-          onEndReached={fetchFeed}
-          onEndReachedThreshold={0.5}
-          initialNumToRender={2}
-          contentContainerStyle={{ paddingBottom: 500 }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="white" progressViewOffset={165} />
-          }
+        <List 
+          url="/feed/fetchFeed"
+          limit={2}
+          listItem="pulse"
         />
-      {/* </Animated.ScrollView> */}
     </View>
   );
 };
@@ -261,11 +165,5 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 185,
     zIndex: 1,
-    // flex: 1,
-    // position: "absolute",
-    // top: 0,
-    // left: 0,
-    // bottom: 0,
-    // right: 0
   },
 });
