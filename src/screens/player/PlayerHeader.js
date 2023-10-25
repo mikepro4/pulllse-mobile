@@ -13,6 +13,7 @@ import Button from "../../components/button"
 const PlayerHeader = () => {
     const navigation = useNavigation();
     const [initialAnimation, setInitialAnimation] = useState(true);
+    const [activeMix, setActiveMix] = useState(false);
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
 
@@ -45,10 +46,11 @@ const PlayerHeader = () => {
                 <View style={styles.headerButtons}>
                     <Button
                         label="Mix"
-                        active={true}
+                        active={activeMix}
                         icon="atom"
                         onPressIn={() => {
-                            alert("Mix")
+                            setActiveMix(!activeMix)
+                            // alert("Mix")
                             // dispatch(togglePlayer(false))
                         }} />
                     <Button

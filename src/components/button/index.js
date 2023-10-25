@@ -10,22 +10,75 @@ import CustomText from "../../components/text"
 
 const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
     const opacity = useSharedValue(0);
+    const top = useSharedValue(0);
+    const left = useSharedValue(0);
+    const bottom = useSharedValue(0);
+    const right = useSharedValue(0);
 
     const animateIn = () => {
+        const duration = 200;
+        let destination = -10
+
         opacity.value = withTiming(1, {
-          duration: 1000,
+          duration: duration,
+        });
+
+        top.value = withTiming(destination, {
+            duration: duration,
+        });
+
+        bottom.value = withTiming(destination, {
+            duration: duration,
+        });
+
+        left.value = withTiming(destination, {
+            duration: duration,
+        });
+
+        right.value = withTiming(destination, {
+            duration: duration,
         });
     };
 
     const animateOut = () => {
+        const duration = 200;
+        
         opacity.value = withTiming(0, {
-          duration: 1000,
+          duration: duration,
+        });
+
+        top.value = withTiming(0, {
+            duration: duration,
+        });
+
+        bottom.value = withTiming(0, {
+            duration: duration,
+        });
+
+        left.value = withTiming(0, {
+            duration: duration,
+        });
+
+        right.value = withTiming(0, {
+            duration: duration,
         });
     };
 
-    const backgroundStyle = useAnimatedStyle(() => ({
+    useEffect(() => {
+        if(active) {
+            animateIn();
+        } else {
+            animateOut();
+        }
+    }, [active]);
+
+    const backgroundStyles = useAnimatedStyle(() => ({
         opacity: opacity.value,
-      }));
+        top: top.value,
+        left: left.value,
+        bottom: bottom.value,
+        right: right.value,
+    }));
 
     let iconOnly
     let labelOnly
@@ -86,11 +139,9 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
     }
 
     const renderActiveBackground = () => {
-        if(active) {
-            return (
-                <View style={styles.activeBackground}/>
-            )
-        }
+        return (
+            <Animated.View style={[styles.activeBackground, backgroundStyles]}/>
+        )
     }
 
     let textColor
@@ -104,6 +155,7 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
     return (
         <TouchableOpacity
             style={getButtonStyle()}
+            activeOpacity={1}
             onPressIn={() => {
                 onPressIn()
             }}>
