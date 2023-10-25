@@ -47,18 +47,22 @@ const PlayerHeader = () => {
                         label="Mix"
                         icon="atom"
                         onPressIn={() => {
-                            dispatch(togglePlayer(false))
+                            alert("Mix")
+                            // dispatch(togglePlayer(false))
                         }} />
                     <Button
                         label="Duplicate"
                         icon="duplicate"
                         onPressIn={() => {
-                            dispatch(togglePlayer(false))
+                            alert("Duplicate")
+                            // dispatch(togglePlayer(false))
                         }} />
                     <Button
                         label="Save"
+                        icon="save"
                         onPressIn={() => {
-                            dispatch(togglePlayer(false))
+                            alert("Save")
+                            // dispatch(togglePlayer(false))
                         }} />
                 </View>
 
@@ -67,7 +71,8 @@ const PlayerHeader = () => {
                 <Button
                     icon="more"
                     onPressIn={() => {
-                        dispatch(togglePlayer(false))
+                        // dispatch(togglePlayer(false))
+                        alert("More")
                     }} />
 
             </Animated.View>
@@ -90,7 +95,9 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         flex: 1,
-        paddingHorizontal: 10,
+        // paddingHorizontal: 10,
+        position: "relative",
+        left: 6
     },
     header: {
         flexDirection: "row",

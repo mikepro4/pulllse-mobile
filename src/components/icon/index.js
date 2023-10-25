@@ -13,6 +13,8 @@ import Map from "./map";
 import More from "./more";
 import Atom from "./atom";
 import Duplicate from "./duplicate";
+import Save from "./save";
+
 
 const Icon = ({ name, style }) => {
     switch (name) {
@@ -44,6 +46,8 @@ const Icon = ({ name, style }) => {
             return <Atom style={style} />
         case 'duplicate':
             return <Duplicate style={style} />
+        case 'save':
+            return <Save style={style} />
         default:
             return
     }
