@@ -35,49 +35,39 @@ const PlayerHeader = () => {
     return (
         <View style={styles.header}>
             <Animated.View style={[styles.container, animatedStyles]}>
-                {/* <TouchableOpacity
-                    style={styles.buttonContainer}
-                    onPressIn={() => {
-                        // alert("lol")
-                        dispatch(togglePlayer(false))
-                    }}>
-                    <View>
-                        <Icon name="arrow_back" />
-                    </View>
-                </TouchableOpacity> */}
-
                 <Button
-                    label="Back"
                     icon="arrow_back"
-                    iconRight="more"
                     onPressIn={() => {
-                        // alert("lol")
                         dispatch(togglePlayer(false))
-                }}/>
-                
+                    }} />
+
 
                 <View style={styles.headerButtons}>
-                    {/* <Pressable
-                        activeOpacity={1}
-                        delayPressIn={0}
+                    <Button
+                        label="Mix"
                         onPressIn={() => {
-                        }}>
-                        <Logo />
-
-                    </Pressable> */}
+                            dispatch(togglePlayer(false))
+                        }} />
+                    <Button
+                        label="Duplicate"
+                        onPressIn={() => {
+                            dispatch(togglePlayer(false))
+                        }} />
+                    <Button
+                        label="Save"
+                        onPressIn={() => {
+                            dispatch(togglePlayer(false))
+                        }} />
                 </View>
 
 
-                <TouchableOpacity
-                    style={styles.buttonContainer}
+
+                <Button
+                    icon="more"
                     onPressIn={() => {
-                        // alert("lol")
                         dispatch(togglePlayer(false))
-                    }}>
-                    <View>
-                        <Icon name="more" />
-                    </View>
-                </TouchableOpacity>
+                    }} />
+
             </Animated.View>
         </View>
     );

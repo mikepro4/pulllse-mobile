@@ -67,7 +67,7 @@ export default Button;
 
 const styles = StyleSheet.create({
     buttonContainer: {
-        backgroundColor: "blue",
+        // backgroundColor: "blue",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
