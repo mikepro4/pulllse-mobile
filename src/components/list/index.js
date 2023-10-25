@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, RefreshControl } from 'react-native';
+import { useSelector, useDispatch } from "react-redux";
+import { resetScroll } from "../../redux/slices/tabSlice";
 
 import Animated, {
     useSharedValue,
@@ -22,10 +24,12 @@ let paddingTop = 185;
 
 const List = ({ limit, url, listItem, onScrollEvent }) => {
     const [initialAnimation, setInitialAnimation] = useState(true);
+    const activeTab = useSelector((state) => state.tab);
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
     const [refreshing, setRefreshing] = useState(false);
     const feedOpacity = useSharedValue(0);
+    const dispatch = useDispatch();
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -80,16 +84,30 @@ const List = ({ limit, url, listItem, onScrollEvent }) => {
 
     const showInitialAnimation = () => {
         feedOpacity.value = withDelay(
-          300,
-          withTiming(1, {
-            duration: 1200,
-            easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
-          })
+            300,
+            withTiming(1, {
+                duration: 1200,
+                easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+            })
         );
-      };
+    };
+
+    useEffect(() => {
+        if (activeTab.resetScroll) {
+            scrollToTop();
+            dispatch(resetScroll(false));
+        }
+    }, [activeTab]);
+
+    const scrollRef = useRef();
+
+    const scrollToTop = () => {
+        scrollRef.current.scrollToOffset({ y: 0, animated: true });
+    };
 
     return (
         <Animated.FlatList
+            ref={scrollRef}
             data={data}
             style={[styles.content, getAnimatedListStyle()]}
             renderItem={({ item, index }) => {

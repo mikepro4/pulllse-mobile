@@ -1,19 +1,9 @@
 import {
   StyleSheet,
   View,
-  ScrollView,
-  Button,
-  TouchableOpacity,
-  Text,
-  FlatList,
-  RefreshControl
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as Haptics from "expo-haptics";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import userApi from "../../redux/axios/userApi";
 
 import Animated, {
   useSharedValue,
@@ -25,29 +15,17 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { runOnJS } from "react-native-reanimated";
 import List from "../../components/list"
 
-import CustomText from "../../components/text";
-import Post from "../../components/post";
-import Theme from "../../styles/theme";
 import Tab from "../../components/tab";
 
-import { resetScroll } from "../../redux/slices/tabSlice";
-
 const FeedScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [initialAnimation, setInitialAnimation] = useState(true);
-  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
-  
   const activeTab = useSelector((state) => state.tab);
-  const feedList = useSelector((state) => state.feed.feed);
   const isMenuVisible = useSharedValue(true);
   const opacity = useSharedValue(0);
-  const feedOpacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
-  const dispatch = useDispatch();
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
 
   const showInitialAnimation = () => {
     opacity.value = withDelay(
@@ -67,26 +45,12 @@ const FeedScreen = ({ navigation }) => {
   useEffect(() => {
     if (activeTab.player) {
       opacity.value = 0;
-      feedOpacity.value = 0;
       setInitialAnimation(true);
     } else {
       showInitialAnimation();
     }
   }, [activeTab]);
 
-
-  // const scrollHandler = useAnimatedScrollHandler({
-  //   onScroll: (event) => {
-  //     scrollY.value = event.contentOffset.y;
-  //     if (opacity.value <= 0) {
-  //       isMenuVisible.value = false;
-  //     } else {
-  //       isMenuVisible.value = true;
-  //     }
-
-  //     // runOnJS(doHaptics)(event.contentOffset.y);
-  //   },
-  // });
 
   const getAnimatedTabStyle = () => {
     return useAnimatedStyle(() => {
@@ -108,24 +72,6 @@ const FeedScreen = ({ navigation }) => {
     },
   ];
 
-  const scrollRef = useRef();
-
-  const scrollToTop = () => {
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  };
-
-  const toggleScrolling = (enabled) => {
-    setIsScrollEnabled(enabled);
-  };
-
-  useEffect(() => {
-    if (activeTab.resetScroll) {
-      scrollToTop();
-      dispatch(resetScroll(false));
-    }
-
-    toggleScrolling(!activeTab.stopScroll);
-  }, [activeTab]);
 
   const renderTab = () => {
     if (isMenuVisible.value) {
@@ -138,14 +84,23 @@ const FeedScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ backgroundColor: "black"}}>
+    <View style={{ backgroundColor: "black" }}>
       {renderTab()}
-        <List 
-          url="/feed/fetchFeed"
-          limit={2}
-          listItem="pulse"
-          onScrollEvent={(value) => {console.log(value)}}
-        />
+      <List
+        url="/feed/fetchFeed"
+        limit={2}
+        listItem="pulse"
+        onScrollEvent={(value) => {
+          if (!activeTab.player) {
+            scrollY.value = value;
+            if (opacity.value <= 0) {
+              isMenuVisible.value = false;
+            } else {
+              isMenuVisible.value = true;
+            }
+          }
+        }}
+      />
     </View>
   );
 };
