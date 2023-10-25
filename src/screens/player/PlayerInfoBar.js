@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Theme from "../../styles/theme"
 
+import { toggleDrawer } from "../../redux";
+
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -41,7 +43,7 @@ const PlayerInfoBar = () => {
                     <Button
                         icon="play"
                         onPressIn={() => {
-                            alert("play")
+                            // alert("play")
                         }} />
                 </View>
 
@@ -55,7 +57,9 @@ const PlayerInfoBar = () => {
                 <Button
                     icon="controls"
                     onPressIn={() => {
-                        alert("controls")
+                        // alert("controls")
+                        dispatch(toggleDrawer({ drawerOpen: true, drawerType: "player", drawerData: null }));
+
                     }} />
             </View>
         </Animated.View>

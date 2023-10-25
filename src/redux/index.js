@@ -5,10 +5,12 @@ import { recordsReducer } from "./slices/recordingsSlice";
 import { imageReducer } from "./slices/imageSlice";
 import { pulseReducer } from "./slices/pulseSlice";
 import { tabReducer } from "./slices/tabSlice";
+import { appReducer } from "./slices/appSlice";
 import { signout } from "./thunks/userThunk";
 import reduxFlipper from "redux-flipper";
 
 const rootReducer = combineReducers({
+  app: appReducer,
   user: userReducer,
   audio: recordsReducer,
   image: imageReducer,
@@ -57,3 +59,4 @@ export { clearErrorMessage } from "./slices/userSlice";
 export { addRecording } from "./slices/recordingsSlice";
 export { addImage } from "./slices/imageSlice";
 export { togglePlayer } from "./slices/tabSlice";
+export { toggleDrawer } from "./slices/appSlice";
