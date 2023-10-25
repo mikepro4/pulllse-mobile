@@ -20,22 +20,11 @@ import List from "../../components/list"
 import Tab from "../../components/tab";
 
 const FeedScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
   const [initialAnimation, setInitialAnimation] = useState(true);
   const activeTab = useSelector((state) => state.tab);
   const isMenuVisible = useSharedValue(true);
   const opacity = useSharedValue(0);
   const scrollY = useSharedValue(0);
-
-  const showInitialAnimation = () => {
-    opacity.value = withDelay(
-      100,
-      withTiming(1, {
-        duration: 1000,
-        easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
-      })
-    );
-  };
 
   useEffect(() => {
     showInitialAnimation();
@@ -51,6 +40,15 @@ const FeedScreen = ({ navigation }) => {
     }
   }, [activeTab]);
 
+  const showInitialAnimation = () => {
+    opacity.value = withDelay(
+      100,
+      withTiming(1, {
+        duration: 1000,
+        easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
+      })
+    );
+  };
 
   const getAnimatedTabStyle = () => {
     return useAnimatedStyle(() => {
@@ -71,7 +69,6 @@ const FeedScreen = ({ navigation }) => {
       title: "Abyss",
     },
   ];
-
 
   const renderTab = () => {
     if (isMenuVisible.value) {

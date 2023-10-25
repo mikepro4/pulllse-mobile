@@ -20,8 +20,6 @@ import userApi from "../../redux/axios/userApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Post from "./views/Post";
 
-let paddingTop = 185;
-
 const List = ({ limit, url, listItem, onScrollEvent }) => {
     const [initialAnimation, setInitialAnimation] = useState(true);
     const activeTab = useSelector((state) => state.tab);
@@ -62,7 +60,6 @@ const List = ({ limit, url, listItem, onScrollEvent }) => {
         } finally {
         }
     }
-
 
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
