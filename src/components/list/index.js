@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, RefreshControl } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
 import { resetScroll } from "../../redux/slices/tabSlice";
+import { updateTimeStamp } from "../../redux/";
 
 import Animated, {
     useSharedValue,
@@ -22,6 +23,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // All list view items
 import Post from "./views/Post";
 
+let time = new Date()
+
 const List = ({ limit, url, listItem, onScrollEvent, paddingTop, paddingBottom = 500 }) => {
     const [initialAnimation, setInitialAnimation] = useState(true);
     const activeTab = useSelector((state) => state.tab);
@@ -33,9 +36,10 @@ const List = ({ limit, url, listItem, onScrollEvent, paddingTop, paddingBottom =
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 2000);
+        setData([])
+        setPage(1)
+        time = new Date()
+        fetchData()
     }, []);
 
     const getAnimatedListStyle = () => {
@@ -48,14 +52,18 @@ const List = ({ limit, url, listItem, onScrollEvent, paddingTop, paddingBottom =
 
     const fetchData = async () => {
         const userId = await AsyncStorage.getItem("userId");
+        console.log(time)
         try {
+
             const response = await userApi.post(url, {
                 userId,
                 page,
-                limit
+                limit,
+                time
             });
             setData(prevData => [...prevData, ...response.data]);
             setPage(prevPage => prevPage + 1);
+            setRefreshing(false);
         } catch (error) {
             console.error(error);
         } finally {
@@ -113,7 +121,7 @@ const List = ({ limit, url, listItem, onScrollEvent, paddingTop, paddingBottom =
         <Animated.FlatList
             ref={scrollRef}
             data={data}
-            style={[{paddingTop: paddingTop}, getAnimatedListStyle()]}
+            style={[{ paddingTop: paddingTop }, getAnimatedListStyle()]}
             renderItem={({ item, index }) => {
                 return renderListItem(item, index);
             }}
