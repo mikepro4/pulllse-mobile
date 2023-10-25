@@ -46,7 +46,8 @@ const PlayerInfoBar = () => {
                 </View>
 
                 <View style={styles.descriptionArea}>
-
+                    <CustomText style={{fontSize: 10, opacity: 0.5, marginBottom: 2, letterSpacing: 0.5 }}>DCDNT</CustomText>
+                    <CustomText style={{fontSize: 18}}>Wednesday</CustomText>  
                 </View>
             </View>
 
@@ -70,17 +71,24 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: "white",
         borderRadius: 45,
-        marginLeft: 25,
+        marginLeft: 20,
         justifyContent: "center",
         alignItems: "center",
     },
     infoBarLeft: {
         flex: 1,
         // backgroundColor: "red",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    descriptionArea: {
+        paddingLeft: 15
     },
     infoBarRight:  {
         // backgroundColor: "blue",
-        paddingHorizontal: 15
+        paddingHorizontal: 10,
+        flexDirection: "row",
+        alignItems: "center",
     },
     infoBarContainer: {
         position: "absolute",
@@ -90,7 +98,7 @@ const styles = StyleSheet.create({
         left: 0,
         bottom: 0,
         right: 0,
-        height: 75,
+        height: 110,
         flexDirection: "row",
     },
 
