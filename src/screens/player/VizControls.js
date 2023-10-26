@@ -1,37 +1,67 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+
+import { useDispatch, useSelector, } from "react-redux";
+import { View, Text, StyleSheet, Pressable, TouchableOpacity, AnimationFrame } from 'react-native';
 import CustomText from "../../components/text";
+
+import {
+    changeLayerParam
+} from "../../redux"
+
+let animationFrameId;
 
 const VizControls = ({ preview }) => {
     const [time, setTime] = useState(0);
+    const [paramName, setParamName] = useState(null);
+    const [direction, setDirection] = useState(null);
+    const [incrementDivider, setIncrementDivider] = useState(null);
+    const dispatch = useDispatch();
     const [timeInterval, setTimeInterval] = useState(null);
 
-    const startInterval = ({ paramName, direction}) => {
-        const timeUpdater = setInterval(() => {
-            setTime(prevTime => prevTime + 100);
+    // const startInterval = ({ paramName, direction}) => {
+    //     const timeUpdater = setInterval(() => {
+    //         setTime(prevTime => prevTime + 100);
 
-        }, 1)
-        setTimeInterval(timeUpdater)
+    //     }, 1)
+    //     setTimeInterval(timeUpdater)
+    // }
+
+    // const stopInterval = () => {
+    //     clearInterval(timeInterval);
+    //     setTime(0)
+    // }
+
+
+    const startInterval = ({ paramName, direction, incrementDivider }) => {
+        setParamName(paramName)
+        setDirection(direction)
+        setIncrementDivider(incrementDivider)
+        const update = () => {
+            // cons newValue = time + 100;
+            setTime(prevTime => prevTime + 100);
+            
+            animationFrameId = requestAnimationFrame(update)
+        }
+        
+        requestAnimationFrame(update);
     }
+
+    useEffect(() => {
+        dispatch(
+            changeLayerParam({
+                paramName: paramName,
+                direction: direction,
+                valueChange: time / incrementDivider
+            }));
+    }, [time]);
 
     const stopInterval = () => {
-        clearInterval(timeInterval);
+        setParamName(null)
+        setDirection(null)
+        setIncrementDivider(null)
         setTime(0)
+        cancelAnimationFrame(animationFrameId);
     }
-
-
-        // dispatch(
-    //     toggleDrawer({
-    //         drawerOpen: true,
-    //         drawerType: "layer_settings",
-    //         drawerData: {
-    //             layerName: "Layer 4"
-    //         },
-    //         drawerDraggable: true,
-    //         drawerHeight: "halfScreen"
-    //     }));
-
-  
 
     return (
         <View style={styles.controlsContainer}>
@@ -41,14 +71,13 @@ const VizControls = ({ preview }) => {
             <View style={styles.row}>
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
                         startInterval({ 
                             paramName: "frequency",
                             direction: "down",
+                            incrementDivider: 10000000
                         })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
                         stopInterval()
                     }}
                     activeOpacity={1}
@@ -58,10 +87,14 @@ const VizControls = ({ preview }) => {
 
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
+                        startInterval({ 
+                            paramName: "frequency",
+                            direction: "up",
+                            incrementDivider: 1000000
+                        })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
+                        stopInterval()
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
@@ -72,10 +105,14 @@ const VizControls = ({ preview }) => {
             <View style={styles.row}>
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
+                        startInterval({ 
+                            paramName: "step",
+                            direction: "down",
+                            incrementDivider: 10000
+                        })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
+                        stopInterval()
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
@@ -84,10 +121,14 @@ const VizControls = ({ preview }) => {
 
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
+                        startInterval({ 
+                            paramName: "step",
+                            direction: "up",
+                            incrementDivider: 10000
+                        })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
+                        stopInterval()
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
@@ -98,10 +139,14 @@ const VizControls = ({ preview }) => {
             <View style={styles.row}>
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
+                        startInterval({ 
+                            paramName: "rotation",
+                            direction: "down",
+                            incrementDivider: 10000
+                        })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
+                        stopInterval()
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
@@ -110,10 +155,14 @@ const VizControls = ({ preview }) => {
 
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
+                        startInterval({ 
+                            paramName: "rotation",
+                            direction: "up",
+                            incrementDivider: 10000
+                        })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
+                        stopInterval()
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
@@ -124,10 +173,14 @@ const VizControls = ({ preview }) => {
             <View style={styles.row}>
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
+                        startInterval({ 
+                            paramName: "bold",
+                            direction: "down",
+                            incrementDivider: 10000
+                        })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
+                        stopInterval()
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
@@ -136,10 +189,14 @@ const VizControls = ({ preview }) => {
 
                 <TouchableOpacity
                     onPressIn={() => {
-                        console.log("press in")
+                        startInterval({ 
+                            paramName: "bold",
+                            direction: "down",
+                            incrementDivider: 10000
+                        })
                     }}
                     onPressOut={() => {
-                        console.log("press out")
+                        stopInterval()
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>

@@ -70,8 +70,9 @@ const playerSlice = createSlice({
     setEditedLayers: (state, action) => {
         state.editedLayers = action.payload;
     },
-    updateLayer: (state, action) => {
-      state.mixEnabled = action.payload;
+    changeLayerParam: (state, action) => {
+      console.log(action.payload)
+      // state.mixEnabled = action.payload;
     },
   }
 });
@@ -81,7 +82,8 @@ export const {
     togglePostScreen,
     togglePostScreenSuccess,
     setOriginalLayers, 
-    setEditedLayers 
+    setEditedLayers,
+    changeLayerParam
 } = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;
