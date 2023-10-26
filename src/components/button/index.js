@@ -2,12 +2,99 @@ import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from "react
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
+import Theme from "../../styles/theme"
 
 import Icon from "../../components/icon"
 import CustomText from "../../components/text"
 
+import Loader from "../../components/loader"
 
-const Button = ({label, onPressIn, icon, iconRight, status}) => {
+
+const Button = ({label, onPressIn, icon, iconRight, status, active, loading, activeOpacity}) => {
+    const opacity = useSharedValue(0);
+    const top = useSharedValue(0);
+    const left = useSharedValue(0);
+    const bottom = useSharedValue(0);
+    const right = useSharedValue(0);
+
+    const animateIn = () => {
+        const duration = 100;
+        const destination = -10
+        const easing = Theme.easing1
+
+
+        opacity.value = withTiming(1, {
+          duration: duration,
+          easing: easing,
+        });
+
+        top.value = withTiming(destination, {
+            duration: duration,
+            easing: easing,
+        });
+
+        bottom.value = withTiming(destination, {
+            duration: duration,
+            easing: easing,
+        });
+
+        left.value = withTiming(destination, {
+            duration: duration,
+            easing: easing,
+
+        });
+
+        right.value = withTiming(destination, {
+            duration: duration,
+            easing: easing,
+        });
+    };
+
+    const animateOut = () => {
+        const duration = 100;
+        const easing = Theme.easing3
+        
+        opacity.value = withTiming(0, {
+          duration: duration,
+          easing: easing,
+        });
+
+        top.value = withTiming(0, {
+            duration: duration,
+            easing: easing,
+        });
+
+        bottom.value = withTiming(0, {
+            duration: duration,
+            easing: easing,
+        });
+
+        left.value = withTiming(0, {
+            duration: duration,
+            easing: easing,
+        });
+
+        right.value = withTiming(0, {
+            duration: duration,
+            easing: easing,
+        });
+    };
+
+    useEffect(() => {
+        if(active) {
+            animateIn();
+        } else {
+            animateOut();
+        }
+    }, [active]);
+
+    const backgroundStyles = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+        top: top.value,
+        left: left.value,
+        bottom: bottom.value,
+        right: right.value,
+    }));
 
     let iconOnly
     let labelOnly
@@ -27,16 +114,33 @@ const Button = ({label, onPressIn, icon, iconRight, status}) => {
     }
 
     const renderIcon = () => {
+
+        let iconFill
+
+        if (active == true) {
+            iconFill = Theme.green
+        } else {
+            iconFill = Theme.white
+        }
+
+        let iconRender
+
+        if(!loading) {
+            iconRender = <Icon name={icon} style={{fill: iconFill}}/>
+        } else {
+            iconRender = <Loader />
+        }
+
         if(label && icon) {
             return (
                 <View style={{paddingRight: 5}}>
-                    <Icon name={icon}/>
+                    {iconRender}
                 </View>
             )
         }
         if(icon) {
             return (
-                <Icon name={icon}/>
+                <Icon name={icon} style={{fill: iconFill}} />
             )
         }
     }
@@ -59,16 +163,36 @@ const Button = ({label, onPressIn, icon, iconRight, status}) => {
         }
     }
 
+    const renderActiveBackground = () => {
+        return (
+            <Animated.View style={[styles.activeBackground, backgroundStyles]}/>
+        )
+    }
+
+    let textColor
+
+    if (active == true) {
+        textColor = Theme.green
+    } else {
+        textColor = Theme.white
+    }
+
     return (
         <TouchableOpacity
             style={getButtonStyle()}
+            activeOpacity={activeOpacity ? activeOpacity : 1}
             onPressIn={() => {
                 onPressIn()
             }}>
-            {renderIcon()}
-            <CustomText style={{fontSize: 14}}>{label}</CustomText>
-            {renderIconRight()}
-            {renderStatusIcon()}
+
+            <View style={styles.contnetWrapper}>
+                {renderIcon()}
+                <CustomText style={{fontSize: 14, color: textColor}}>{label}</CustomText>
+                {renderIconRight()}
+                {renderStatusIcon()}
+                {renderActiveBackground()}
+            </View>
+            
         </TouchableOpacity>
     );
 };
@@ -76,6 +200,10 @@ const Button = ({label, onPressIn, icon, iconRight, status}) => {
 export default Button;
 
 const styles = StyleSheet.create({
+    contnetWrapper: {
+        position: "relative", 
+        flexDirection: "row"
+    },
     buttonContainer: {
         // backgroundColor: "blue",
         alignItems: "center",
@@ -98,10 +226,19 @@ const styles = StyleSheet.create({
         position: "absolute",
         width: 4,
         height: 4,
-        right: 10,
-        top: 15,
+        right: -5,
+        top: -4,
         borderRadius: 10,
         backgroundColor: "#29FF7F"
+    },
+    activeBackground: {
+        top: -10,
+        left: -10,
+        bottom: -10,
+        right: -10,
+        backgroundColor: Theme.backgroundGreen,
+        position: "absolute",
+        zIndex: -1,
+        borderRadius: 6,
     }
-    
 });

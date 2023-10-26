@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
 import { togglePlayer } from "../../redux/slices/tabSlice";
+import { toggleMix, toggleNotification } from "../../redux";
 
 import Icon from "../../components/icon"
 import Logo from "../../components/icon/logo"
@@ -13,6 +14,9 @@ import Button from "../../components/button"
 const PlayerHeader = () => {
     const navigation = useNavigation();
     const [initialAnimation, setInitialAnimation] = useState(true);
+    const [activeMix, setActiveMix] = useState(false);
+    const [duplicating, setDuplicating] = useState(false);
+    const [saving, setSaving] = useState(false);
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
 
@@ -38,6 +42,7 @@ const PlayerHeader = () => {
                 <Button
                     icon="arrow_back"
                     onPressIn={() => {
+                        dispatch(toggleMix(false))
                         dispatch(togglePlayer(false))
                     }} />
 
@@ -45,24 +50,45 @@ const PlayerHeader = () => {
                 <View style={styles.headerButtons}>
                     <Button
                         label="Mix"
+                        active={activeMix}
                         icon="atom"
                         onPressIn={() => {
-                            alert("Mix")
+                            setActiveMix(!activeMix)
+                            dispatch(toggleMix(!activeMix))
+                            // alert("Mix")
                             // dispatch(togglePlayer(false))
                         }} />
                     <Button
                         label="Duplicate"
                         icon="duplicate"
+                        loading={duplicating}
+                        activeOpacity={0.1}
                         onPressIn={() => {
-                            alert("Duplicate")
+                            // alert("Duplicate")
+                            setDuplicating(true)
+                            setTimeout(() => {
+                                dispatch(
+                                    toggleNotification({ 
+                                        notificationActive: true, 
+                                        notificationMessage: "Pulse duplicated", 
+                                        notificationIntent: "success", 
+                                    }));
+                                setDuplicating(false)
+                            }, 500)
+
                             // dispatch(togglePlayer(false))
                         }} />
                     <Button
                         label="Save"
                         icon="save"
                         status={true}
+                        loading={saving}
                         onPressIn={() => {
-                            alert("Save")
+                            // alert("Save")
+                            setSaving(true)
+                            setTimeout(() => {
+                                setSaving(false)
+                            }, 2000)
                             // dispatch(togglePlayer(false))
                         }} />
                 </View>

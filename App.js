@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { store, fetchUserInfo, fetchUserAudios } from "./src/redux";
-import {Dimensions, StyleSheet, View, Text, TouchableOpacity, ScrollView} from "react-native";
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +13,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { togglePlayer, toggleDrawer } from "./src/redux";
 
 import Drawer from "./src/components/drawer";
+import Overlay from "./src/components/drawer/overlay";
+import Notification from "./src/components/notification";
+
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const App = () => {
@@ -40,29 +43,29 @@ const App = () => {
   }, [storedUserInfo._id]);
 
   useEffect(() => {
-    if(app.drawerOpen) {
+    if (app.drawerOpen) {
 
-      const isActive = ref.current.isActive();
-      if (isActive) {
-        ref.current.scrollTo(0);
-      } else {
-        ref.current.scrollTo(-SCREEN_HEIGHT/2);
+      let destination
+
+      switch (app.drawerHeight) {
+        case 'halfScreen':
+            destination = -SCREEN_HEIGHT / 2
+            break
+        case 'fullScreen':
+            destination = -SCREEN_HEIGHT + 50
+            break
+        default:
+          if (typeof app.drawerHeight === 'number') {
+              destination = -app.drawerHeight;
+          }
+          break;
       }
+      ref.current.scrollTo(destination);
+    } else {
+      ref.current.scrollTo(0);
     }
-    
+
   }, [app.drawerOpen]);
-
-
-  const close = useCallback(() => {
-    dispatch(toggleDrawer({ drawerOpen: false, drawerType: null, drawerData: null }));
-    const isActive = ref.current.isActive();
-      if (isActive) {
-        ref.current.scrollTo(0);
-      } else {
-        ref.current.scrollTo(-200);
-      }
-  }, []);
-
 
   return (
     <NavigationContainer
@@ -73,15 +76,9 @@ const App = () => {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar style="light" barStyle="dark-content" position="absolute" top={0} left={0} right={0} />
 
-        {app.drawerOpen && <TouchableOpacity style={{ flex: 1, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10}} onPress={close} /> }
-        <Drawer ref={ref}>
-          <ScrollView style={{ flex: 1, height: 3000 }} >
-
-          <Text style={{ color: "white", paddingHorizontal: 20}}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabre, nulla non pvel pellentesque ipsum tellus vitae ex. Nullam fringilla, dui vitae euismod placerat, ligula tortor aliquam urna, sit amet rutrum arcu turpis non ex.
-          </Text>
-          </ScrollView>
-        </Drawer>
+        {app.drawerOpen && <Overlay/> }
+        <Drawer ref={ref} />
+        <Notification />
 
         <MainFlow />
       </GestureHandlerRootView>
@@ -95,7 +92,7 @@ export default MainApp = () => {
     "aeonik-regular": require("./assets/fonts/Aeonik-Regular.ttf"),
     "aeonik-medium": require("./assets/fonts/Aeonik-Medium.ttf"),
     "aeonik-light": require("./assets/fonts/Aeonik-Light.ttf"),
-    "london-regular": require("./assets/fonts/London-Regular.ttf"),
+    "london": require("./assets/fonts/London-Regular.ttf"),
   });
 
   if (!fontsLoaded) {

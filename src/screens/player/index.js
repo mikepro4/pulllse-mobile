@@ -21,8 +21,10 @@ import { togglePlayer } from "../../redux/slices/tabSlice";
 import PlayerHeader from "./PlayerHeader";
 import PlayerInfoBar from "./PlayerInfoBar";
 import Viz from "./Viz";
+import Mixer from "./Mixer";
 
 const Player = () => {
+  const player = useSelector((state) => state.player);
   const dispatch = useDispatch();
   const opacity = useSharedValue(0);
 
@@ -42,10 +44,22 @@ const Player = () => {
     opacity: opacity.value,
   }));
 
+  const renderMainArea = () => {
+    if(!player.mixEnabled) {
+      return(
+        <Viz/>
+      )
+    } else {
+      return(
+        <Mixer/>
+      )
+    }
+  }
+
   return (
       <Animated.View style={[styles.playerContainer, animatedStyles]}>
         <PlayerHeader/>
-        <Viz/>
+        {renderMainArea()}
         <PlayerInfoBar/>
       </Animated.View>
   );
