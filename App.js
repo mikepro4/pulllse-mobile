@@ -28,6 +28,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const App = () => {
   const [showView, setShowView] = useState(false);
+  const [message, setMessage] = useState("");
 
   const dispatch = useDispatch();
   const storedUserInfo = useSelector((state) => state.user.userInfo);
@@ -47,7 +48,7 @@ const App = () => {
   useEffect(() => {
     fetchUserDetails();
 
-    const socket = io("http://192.168.1.198:4000/");
+    const socket = io(config.apiURL);
 
     socket.on("connect_error", (error) => {
       console.error("Socket Connection Error:", error);
@@ -55,6 +56,7 @@ const App = () => {
 
     socket.on("notification", (message) => {
       setShowView(true);
+      setMessage(message.message);
       setTimeout(() => {
         setShowView(false);
       }, 5000); // Hide the view after 5 seconds
@@ -96,22 +98,7 @@ const App = () => {
         cardStyle: { backgroundColor: "black" },
       }}
     >
-      {showView && (
-        <View
-          style={{
-            position: "absolute",
-            top: 50,
-            left: 0,
-            right: 0,
-            padding: 20,
-            backgroundColor: "red",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <Notification />
-        </View>
-      )}
+      {showView && <Notification message={message} callback={setShowView} />}
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar
