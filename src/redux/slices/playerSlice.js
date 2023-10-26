@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  mixEnabled: false,
+  mixEnabled: true,
   postScreen: false,
   postScreenSuccess: false,
   originalLayers: [],

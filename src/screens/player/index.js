@@ -21,6 +21,7 @@ import { togglePlayer } from "../../redux/slices/tabSlice";
 import PlayerHeader from "./PlayerHeader";
 import PlayerInfoBar from "./PlayerInfoBar";
 import Viz from "./Viz";
+import Mixer from "./Mixer";
 
 const Player = () => {
   const player = useSelector((state) => state.player);
@@ -50,7 +51,7 @@ const Player = () => {
       )
     } else {
       return(
-        <CustomText>mix enabled</CustomText>
+        <Mixer/>
       )
     }
   }

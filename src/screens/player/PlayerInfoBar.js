@@ -29,12 +29,12 @@ const PlayerInfoBar = () => {
             easing: Theme.easing1,
         }))
 
-        offset.value = withSpring(0, {
+        offset.value = withDelay(250,withSpring(0, {
             mass: 1,
             damping: 57,
             stiffness: 450,
             easing: Easing.inOut(Easing.ease),
-        });
+        }))
     };
 
     const animateOut= () => {
@@ -55,13 +55,15 @@ const PlayerInfoBar = () => {
         if(!player.mixEnabled) {
             animateIn();
         } else {
-            animateOut();
+            // animateOut();
         }
     }, [player.mixEnabled]);
 
 
     useEffect(() => {
-        animateIn();
+        if(!player.mixEnabled) {
+            animateIn();
+        }
     }, []);
 
     const animatedStyles = useAnimatedStyle(() => ({

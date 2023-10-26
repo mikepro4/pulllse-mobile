@@ -40,6 +40,7 @@ const PlayerHeader = () => {
                 <Button
                     icon="arrow_back"
                     onPressIn={() => {
+                        dispatch(toggleMix(false))
                         dispatch(togglePlayer(false))
                     }} />
 
