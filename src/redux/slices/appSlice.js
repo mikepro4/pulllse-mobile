@@ -5,7 +5,11 @@ const initialState = {
   drawerType: null,
   drawerData: null,
   draweDraggable: false,
-  drawerHeight: null
+  drawerHeight: null,
+  notificationActive: false,
+  notificationMessage: null,
+  notificationIntent: null,
+  notificationDuration: null
 };
 
 const appSlice = createSlice({
@@ -19,9 +23,15 @@ const appSlice = createSlice({
       state.drawerDraggable = action.payload.drawerDraggable;
       state.drawerHeight = action.payload.drawerHeight;
     },
+    toggleNotification: (state, action) => {
+      state.notificationActive = action.payload.notificationActive;
+      state.notificationMessage = action.payload.notificationMessage;
+      state.notificationIntent = action.payload.notificationIntent;
+      state.notificationDuration = action.payload.notificationDuration;
+    }
   }
 });
 
-export const { toggleDrawer } = appSlice.actions;
+export const { toggleDrawer, toggleNotification } = appSlice.actions;
 
 export const appReducer = appSlice.reducer;

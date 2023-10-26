@@ -61,7 +61,7 @@ export { clearErrorMessage } from "./slices/userSlice";
 export { addRecording } from "./slices/recordingsSlice";
 export { addImage } from "./slices/imageSlice";
 export { togglePlayer } from "./slices/tabSlice";
-export { toggleDrawer } from "./slices/appSlice";
+export { toggleDrawer, toggleNotification } from "./slices/appSlice";
 
 export {
   toggleMix,

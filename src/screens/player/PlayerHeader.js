@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
 import { togglePlayer } from "../../redux/slices/tabSlice";
-import { toggleMix } from "../../redux";
+import { toggleMix, toggleNotification } from "../../redux";
 
 import Icon from "../../components/icon"
 import Logo from "../../components/icon/logo"
@@ -67,8 +67,14 @@ const PlayerHeader = () => {
                             // alert("Duplicate")
                             setDuplicating(true)
                             setTimeout(() => {
+                                dispatch(
+                                    toggleNotification({ 
+                                        notificationActive: true, 
+                                        notificationMessage: "Pulse duplicated", 
+                                        notificationIntent: "success", 
+                                    }));
                                 setDuplicating(false)
-                            }, 2000)
+                            }, 500)
 
                             // dispatch(togglePlayer(false))
                         }} />

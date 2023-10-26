@@ -14,6 +14,7 @@ import { togglePlayer, toggleDrawer } from "./src/redux";
 
 import Drawer from "./src/components/drawer";
 import Overlay from "./src/components/drawer/overlay";
+import Notification from "./src/components/notification";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -77,6 +78,7 @@ const App = () => {
 
         {app.drawerOpen && <Overlay/> }
         <Drawer ref={ref} />
+        <Notification />
 
         <MainFlow />
       </GestureHandlerRootView>
