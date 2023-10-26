@@ -61,9 +61,7 @@ const PlayerInfoBar = () => {
 
 
     useEffect(() => {
-        if(!player.mixEnabled) {
-            animateIn();
-        }
+        animateIn();
     }, []);
 
     const animatedStyles = useAnimatedStyle(() => ({

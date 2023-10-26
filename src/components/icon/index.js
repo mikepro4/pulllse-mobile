@@ -16,6 +16,7 @@ import Duplicate from "./duplicate";
 import Save from "./save";
 import Controls from "./controls";
 import Play from "./play";
+import Loader from "./loader";
 
 
 const Icon = ({ name, style }) => {
@@ -54,6 +55,8 @@ const Icon = ({ name, style }) => {
             return <Controls style={style} />
         case 'play':
             return <Play style={style} />
+        case 'loader':
+            return <Loader style={style} />
         default:
             return
     }

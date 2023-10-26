@@ -7,8 +7,10 @@ import Theme from "../../styles/theme"
 import Icon from "../../components/icon"
 import CustomText from "../../components/text"
 
+import Loader from "../../components/loader"
 
-const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
+
+const Button = ({label, onPressIn, icon, iconRight, status, active, loading, activeOpacity}) => {
     const opacity = useSharedValue(0);
     const top = useSharedValue(0);
     const left = useSharedValue(0);
@@ -16,7 +18,7 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
     const right = useSharedValue(0);
 
     const animateIn = () => {
-        const duration = 200;
+        const duration = 100;
         const destination = -10
         const easing = Theme.easing1
 
@@ -49,7 +51,7 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
     };
 
     const animateOut = () => {
-        const duration = 200;
+        const duration = 100;
         const easing = Theme.easing3
         
         opacity.value = withTiming(0, {
@@ -120,10 +122,19 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
         } else {
             iconFill = Theme.white
         }
+
+        let iconRender
+
+        if(!loading) {
+            iconRender = <Icon name={icon} style={{fill: iconFill}}/>
+        } else {
+            iconRender = <Loader />
+        }
+
         if(label && icon) {
             return (
                 <View style={{paddingRight: 5}}>
-                    <Icon name={icon} style={{fill: iconFill}}/>
+                    {iconRender}
                 </View>
             )
         }
@@ -169,7 +180,7 @@ const Button = ({label, onPressIn, icon, iconRight, status, active}) => {
     return (
         <TouchableOpacity
             style={getButtonStyle()}
-            activeOpacity={1}
+            activeOpacity={activeOpacity ? activeOpacity : 1}
             onPressIn={() => {
                 onPressIn()
             }}>
@@ -230,6 +241,4 @@ const styles = StyleSheet.create({
         zIndex: -1,
         borderRadius: 6,
     }
-    
-    
 });

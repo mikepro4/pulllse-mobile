@@ -15,6 +15,7 @@ const PlayerHeader = () => {
     const navigation = useNavigation();
     const [initialAnimation, setInitialAnimation] = useState(true);
     const [activeMix, setActiveMix] = useState(false);
+    const [duplicating, setDuplicating] = useState(false);
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
 
@@ -59,8 +60,15 @@ const PlayerHeader = () => {
                     <Button
                         label="Duplicate"
                         icon="duplicate"
+                        loading={duplicating}
+                        activeOpacity={0.1}
                         onPressIn={() => {
-                            alert("Duplicate")
+                            // alert("Duplicate")
+                            setDuplicating(true)
+                            setTimeout(() => {
+                                setDuplicating(false)
+                            }, 2000)
+
                             // dispatch(togglePlayer(false))
                         }} />
                     <Button

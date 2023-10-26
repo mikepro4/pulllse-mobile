@@ -20,10 +20,10 @@ const PlayerHeader = () => {
     const dispatch = useDispatch();
 
     const showInitialAnimation = () => {
-        opacity.value = withDelay(100, withTiming(1, {
+        opacity.value = withTiming(1, {
             duration: 1000,
             easing: Easing.bezier(0.18, 0.26, 0.04, 1.06),
-        }))
+        })
     };
 
     const animatedStyles = useAnimatedStyle(() => ({
