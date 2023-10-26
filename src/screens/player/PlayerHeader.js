@@ -16,6 +16,7 @@ const PlayerHeader = () => {
     const [initialAnimation, setInitialAnimation] = useState(true);
     const [activeMix, setActiveMix] = useState(false);
     const [duplicating, setDuplicating] = useState(false);
+    const [saving, setSaving] = useState(false);
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
 
@@ -75,8 +76,13 @@ const PlayerHeader = () => {
                         label="Save"
                         icon="save"
                         status={true}
+                        loading={saving}
                         onPressIn={() => {
-                            alert("Save")
+                            // alert("Save")
+                            setSaving(true)
+                            setTimeout(() => {
+                                setSaving(false)
+                            }, 2000)
                             // dispatch(togglePlayer(false))
                         }} />
                 </View>
