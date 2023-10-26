@@ -137,12 +137,36 @@ const Notifications = () => {
     }
   };
 
+  const humanReadableDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+
+    yesterday.setDate(today.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return "today";
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return "yesterday";
+    } else {
+      // Here, you can format the date as desired for dates other than today and yesterday
+      // For simplicity, this example returns the date in the format 'DD/MM/YYYY'
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    }
+  };
+
   const NotificationItem = ({ item }) => (
     <View style={styles.notificationContainer}>
-      {console.log(item)}
-      <Image source={{ uri: item.from.imageLink }} style={styles.userImage} />
-      <View style={styles.textContainer}>{textSwitch(item)}</View>
+      <View style={styles.userIconWithTextContainer}>
+        <Image source={{ uri: item.from.imageLink }} style={styles.userImage} />
+        <View style={styles.textContainer}>{textSwitch(item)}</View>
+      </View>
       <View style={styles.buttonContainer}>{buttonSwitch(item)}</View>
+      <View style={styles.textContainer}>
+        <CustomText style={{ color: "#fff696" }}>
+          {humanReadableDate(item.date)}
+        </CustomText>
+      </View>
     </View>
   );
 
@@ -163,11 +187,18 @@ const Notifications = () => {
 export default Notifications;
 
 const styles = StyleSheet.create({
+  userIconWithTextContainer: {
+    alignItems: "center", // centers items horizontally
+    justifyContent: "center", // centers items vertically
+    flexDirection: "row",
+  },
+  userImage: { width: 30, height: 30, borderRadius: 1000 },
   textContainer: {
     paddingLeft: 10,
   },
   notificationContainer: {
     marginHorizontal: 20,
+    marginBottom: 40,
   },
   buttonContainer: {
     flexDirection: "row",
