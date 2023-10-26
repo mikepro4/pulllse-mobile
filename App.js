@@ -76,6 +76,7 @@ const App = () => {
     fetchUserDetails();
     const socket = io(config.apiURL);
     socketConnection(socket);
+    return () => socket.disconnect();
   }, [storedUserInfo._id]);
 
   useEffect(() => {
