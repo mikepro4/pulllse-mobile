@@ -18,6 +18,7 @@ import Theme from "../../styles/theme"
 
 // Drawer views
 import VizSettings from "./views/viz_settings";
+import LayerSettings from "./views/layer_settings";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -91,6 +92,8 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
             switch (app.drawerType) {
                 case 'viz_settings':
                     return <VizSettings />
+                case 'layer_settings':
+                    return <LayerSettings />
                 default:
                     return
             }

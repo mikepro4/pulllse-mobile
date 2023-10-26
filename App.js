@@ -90,7 +90,7 @@ export default MainApp = () => {
     "aeonik-regular": require("./assets/fonts/Aeonik-Regular.ttf"),
     "aeonik-medium": require("./assets/fonts/Aeonik-Medium.ttf"),
     "aeonik-light": require("./assets/fonts/Aeonik-Light.ttf"),
-    "london-regular": require("./assets/fonts/London-Regular.ttf"),
+    "london": require("./assets/fonts/London-Regular.ttf"),
   });
 
   if (!fontsLoaded) {

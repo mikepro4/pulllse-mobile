@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import { toggleDrawer } from "../../redux";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
 import { toggleMix } from "../../redux";
 
@@ -10,6 +11,7 @@ import Icon from "../../components/icon"
 import Logo from "../../components/icon/logo"
 import Button from "../../components/button"
 import CustomText from "../../components/text"
+import Viz from "./Viz"
 
 const PlayerHeader = () => {
     const navigation = useNavigation();
@@ -37,17 +39,77 @@ const PlayerHeader = () => {
         <View style={styles.mixerWrapper}>
             <Animated.View style={[styles.container, animatedStyles]}>
                 <View style={styles.row}>
-                    <View style={styles.gridItem}>
-                        <CustomText>LAYER 1</CustomText>
-                    </View>
+                    <TouchableOpacity
+                        onPress={() => {
+                            dispatch(
+                                toggleDrawer({
+                                    drawerOpen: true,
+                                    drawerType: "layer_settings",
+                                    drawerData: {
+                                        layerName: "Layer 1"
+                                    },
+                                    drawerDraggable: true,
+                                    drawerHeight: "halfScreen"
+                                }));
+                        }}
+                        style={styles.gridItem}>
+                        <CustomText style={styles.layerTitle}>LAYER 1</CustomText>
+                        <Viz preview={true} />
+                    </TouchableOpacity>
 
-                    <View style={styles.gridItem}>
-                        <CustomText>LAYER 2</CustomText>
-                    </View>
+                    <TouchableOpacity
+                        onPress={() => {
+                            dispatch(
+                                toggleDrawer({
+                                    drawerOpen: true,
+                                    drawerType: "layer_settings",
+                                    drawerData: {
+                                        layerName: "Layer 2"
+                                    },
+                                    drawerDraggable: true,
+                                    drawerHeight: "halfScreen"
+                                }));
+                        }}
+                        style={styles.gridItem}>
+                        <CustomText style={styles.layerTitle}>LAYER 2</CustomText>
+                        <Viz preview={true} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.row}>
-                    <View style={styles.gridItem}><CustomText>LAYER 3</CustomText></View>
-                    <View style={styles.gridItem}><CustomText>LAYER 4</CustomText></View>
+                    <TouchableOpacity
+                        onPress={() => {
+                            dispatch(
+                                toggleDrawer({
+                                    drawerOpen: true,
+                                    drawerType: "layer_settings",
+                                    drawerData: {
+                                        layerName: "Layer 3"
+                                    },
+                                    drawerDraggable: true,
+                                    drawerHeight: "halfScreen"
+                                }));
+                        }}
+                        style={styles.gridItem}>
+                        <CustomText style={styles.layerTitle}>LAYER 3</CustomText>
+                        <Viz preview={true} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            dispatch(
+                                toggleDrawer({
+                                    drawerOpen: true,
+                                    drawerType: "layer_settings",
+                                    drawerData: {
+                                        layerName: "Layer 4"
+                                    },
+                                    drawerDraggable: true,
+                                    drawerHeight: "halfScreen"
+                                }));
+                        }}
+                        style={styles.gridItem}>
+                        <CustomText style={styles.layerTitle}>LAYER 4</CustomText>
+                        <Viz preview={true} />
+                    </TouchableOpacity>
                 </View>
             </Animated.View>
         </View>
@@ -62,8 +124,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         // marginBottom: 10,
         flex: 1
-      },
-      gridItem: {
+    },
+    gridItem: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -91,5 +153,13 @@ const styles = StyleSheet.create({
         bottom: 0,
         paddingBottom: 100,
         paddingTop: 120
+    },
+    layerTitle: {
+        position: "absolute",
+        top: 15,
+        left: 15,
+        fontSize: 7,
+        fontFamily: "london",
+        opacity: 0.4
     }
 });
