@@ -137,7 +137,10 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: Theme.green,
         position: "relative",
-        top: 1
+        top: 1,
+        textShadowColor: '#0F0', // Same color as the text or a brighter version
+        textShadowOffset: { width: 0, height: 0 },
+        textShadowRadius: 10, 
     },
 
     notificationContainer: {
