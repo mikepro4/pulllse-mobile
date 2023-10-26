@@ -18,7 +18,9 @@ import CustomText from "../../components/text";
 import Button from "../../components/button"
 
 const PlayerInfoBar = () => {
+    const player = useSelector((state) => state.player);
     const opacity = useSharedValue(0);
+    const offset = useSharedValue(0);
     const dispatch = useDispatch();
 
     const animateIn = () => {
@@ -26,14 +28,45 @@ const PlayerInfoBar = () => {
             duration: 1000,
             easing: Theme.easing1,
         }))
+
+        offset.value = withSpring(0, {
+            mass: 1,
+            damping: 57,
+            stiffness: 450,
+            easing: Easing.inOut(Easing.ease),
+        });
     };
+
+    const animateOut= () => {
+        opacity.value = withTiming(0, {
+            duration: 1000,
+            easing: Theme.easing1,
+        })
+
+        offset.value = withSpring(85, {
+            mass: 1,
+            damping: 57,
+            stiffness: 450,
+            easing: Easing.inOut(Easing.ease),
+        });
+    };
+
+    useEffect(() => {
+        if(!player.mixEnabled) {
+            animateIn();
+        } else {
+            animateOut();
+        }
+    }, [player.mixEnabled]);
+
 
     useEffect(() => {
         animateIn();
     }, []);
 
     const animatedStyles = useAnimatedStyle(() => ({
-        opacity: opacity.value
+        opacity: opacity.value,
+        transform: [{ translateY: offset.value }],
     }));
     return (
         <Animated.View style={[styles.infoBarContainer, animatedStyles]}>

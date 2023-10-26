@@ -23,6 +23,7 @@ import PlayerInfoBar from "./PlayerInfoBar";
 import Viz from "./Viz";
 
 const Player = () => {
+  const player = useSelector((state) => state.player);
   const dispatch = useDispatch();
   const opacity = useSharedValue(0);
 
@@ -42,10 +43,22 @@ const Player = () => {
     opacity: opacity.value,
   }));
 
+  const renderMainArea = () => {
+    if(!player.mixEnabled) {
+      return(
+        <Viz/>
+      )
+    } else {
+      return(
+        <CustomText>mix enabled</CustomText>
+      )
+    }
+  }
+
   return (
       <Animated.View style={[styles.playerContainer, animatedStyles]}>
         <PlayerHeader/>
-        <Viz/>
+        {renderMainArea()}
         <PlayerInfoBar/>
       </Animated.View>
   );

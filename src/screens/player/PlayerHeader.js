@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
 import { togglePlayer } from "../../redux/slices/tabSlice";
+import { toggleMix } from "../../redux";
 
 import Icon from "../../components/icon"
 import Logo from "../../components/icon/logo"
@@ -50,6 +51,7 @@ const PlayerHeader = () => {
                         icon="atom"
                         onPressIn={() => {
                             setActiveMix(!activeMix)
+                            dispatch(toggleMix(!activeMix))
                             // alert("Mix")
                             // dispatch(togglePlayer(false))
                         }} />
