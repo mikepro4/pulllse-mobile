@@ -22,6 +22,7 @@ import PlayerHeader from "./PlayerHeader";
 import PlayerInfoBar from "./PlayerInfoBar";
 import Viz from "./Viz";
 import Mixer from "./Mixer";
+import VizControls from "./VizControls";
 
 const Player = () => {
   const player = useSelector((state) => state.player);
@@ -47,7 +48,10 @@ const Player = () => {
   const renderMainArea = () => {
     if(!player.mixEnabled) {
       return(
-        <Viz/>
+        <>
+          <VizControls/>
+          <Viz/>
+        </>
       )
     } else {
       return(

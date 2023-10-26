@@ -4,8 +4,51 @@ const initialState = {
   mixEnabled: false,
   postScreen: false,
   postScreenSuccess: false,
-  originalLayers: [],
-  editedLayers: []
+  activeLayer: 0,
+  originalLayers: [
+  ],
+  editedLayers: [
+    {
+      algorithm: 1,
+      position: 0,
+      params: {
+        frequency: 0.1,
+        step: 0.1,
+        rotation: 0.1,
+        boldness: 0.1
+      }
+    },
+    {
+      algorithm: 1,
+      position: 1,
+      params: {
+        frequency: 0.2,
+        step: 0.2,
+        rotation: 0.2,
+        boldness: 0.2
+      }
+    },
+    {
+      algorithm: 1,
+      position: 2,
+      params: {
+        frequency: 0.3,
+        step: 0.3,
+        rotation: 0.3,
+        boldness: 0.3
+      }
+    },
+    {
+      algorithm: 1,
+      position: 3,
+      params: {
+        frequency: 0.4,
+        step: 0.4,
+        rotation: 0.4,
+        boldness: 0.4
+      }
+    }
+  ]
 };
 
 const playerSlice = createSlice({
@@ -26,6 +69,9 @@ const playerSlice = createSlice({
     },
     setEditedLayers: (state, action) => {
         state.editedLayers = action.payload;
+    },
+    updateLayer: (state, action) => {
+      state.mixEnabled = action.payload;
     },
   }
 });
