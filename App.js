@@ -45,10 +45,11 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserDetails();
-
-    const socket = io(config.apiURL);
+  const socketConnection = async (socket) => {
+    const userIdFromStorage = await AsyncStorage.getItem("userId");
+    socket.on("connect", () => {
+      socket.emit("setUserId", userIdFromStorage);
+    });
 
     socket.on("connect_error", (error) => {
       console.error("Socket Connection Error:", error);
@@ -61,12 +62,20 @@ const App = () => {
         setShowView(false);
       }, 5000); // Hide the view after 5 seconds
     });
+  };
 
+  useEffect(() => {
+    fetchUserDetails();
+
+    const socket = io(config.apiURL);
+    socketConnection(socket);
     return () => socket.disconnect();
   }, []);
 
   useEffect(() => {
     fetchUserDetails();
+    const socket = io(config.apiURL);
+    socketConnection(socket);
   }, [storedUserInfo._id]);
 
   useEffect(() => {

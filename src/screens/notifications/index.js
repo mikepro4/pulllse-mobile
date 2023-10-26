@@ -74,12 +74,10 @@ const Notifications = () => {
 
   const handleSeen = async (notificationId) => {
     try {
-      // Sending a PUT request to mark the notification as seen
       await userApi.post("/markNotificationSeen", {
         notificationId,
       });
 
-      // Updating the notifications state by setting the 'seen' property of the marked notification
       setNotifications((prevNotifications) =>
         prevNotifications.filter(
           (notification) => notification._id !== notificationId
@@ -189,7 +187,7 @@ export default Notifications;
 const styles = StyleSheet.create({
   userIconWithTextContainer: {
     alignItems: "center", // centers items horizontally
-    justifyContent: "center", // centers items vertically
+    justifyContent: "start", // centers items vertically
     flexDirection: "row",
   },
   userImage: { width: 30, height: 30, borderRadius: 1000 },
