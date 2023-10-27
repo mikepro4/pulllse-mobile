@@ -36,96 +36,32 @@ import CustomText from '../../../../components/text';
 function Ethereal() {
     const clock = useClockValue();
     const player = useSelector((state) => state.player);
-    const [points, setPoints] = useState([]);
-    // const [width, setWidth] = useState(null);
+    const [width, setWidth] = useState(null);
     const [layout, setLayout] = useState({ width: 0, height: 0 });
-
-    let viz = {
-        shape: {
-            rotateSpeed: -0.016000000000000007,
-            friction: 0.01,
-            rotatePointSpeed: 0.01,
-            step: 16.500159999999994,
-            frequency: 8.400099999999998,
-            boldRate: 0.72,
-            math: "cos",
-            backgroundColor: "#000000"
-        },
-        point: {
-            pointSize: 1.3,
-            pointOpacity: 1,
-            pointCount: 1024,
-            pointColor: "#ffffff"
-        },
-        overlay: {
-            visible: false,
-            blur: 222,
-            color: "#000000",
-            colorOpacity: 0.6
-        },
-    }
 
     let activeLayer = player.editedLayers.filter(item => item.position === 1);
 
-    // calculateRadius = (, i) => {
-    //     let radius = Math[this.state.math](this.state.rotate + this.state.freq * i) * this.state.radius * this.state.bold_rate +
-    //         this.state.radius;
-
-    //     return radius
-    // }
-
     const path = useComputedValue(() => {
         const circles = Skia.Path.Make();
-
+        // console.log(clock.current / 1000 * -0.01)
         console.log(activeLayer[0]?.params.boldness)
-
-        for (let i = 0; i < points.length; i++) {
-            circles.addCircle(points[i].x, points[i].y, 0.7);
-        }
-
+        circles.addCircle(clock.current / 100 + 100, activeLayer[0]?.params.boldness * 3 + 100, 1.3);
         return circles
     }, [clock, activeLayer])
 
 
-   const generatePoints = () => {
-        let generatedPoints = []
-        for (var i = 0; i < viz.point.pointCount; i++) {
-            var pt = createPoint(
-                Math.random(1) * width,
-                Math.random(1) * height,
-                i
-            );
-            generatedPoints.push(pt)
-        }
-
-        setPoints(generatedPoints)
-
-        // return points
-    }
-
-    const createPoint = (x, y, i) => {
-
-        let point = {
-            x: x,
-            y: y,
-            vx: 0,
-            vy: 0,
-            color: "#ffffff",
-        }
-
-        return point
-    }
-
-    
-
     const handleLayout = (event) => {
         const { width, height } = event.nativeEvent.layout;
         setLayout({ width, height });
-    }
 
-    useEffect(() => {
-        generatePoints()
-    }, []);
+        // setDimensions({
+        //     width: width,
+        //     height: height,
+        //     radius: 1,
+        //     x: (width) / 10,
+        //     y: (height) / 10
+        // })
+    }
 
     const renderParam = (name, value) => {
         return (
@@ -150,7 +86,14 @@ function Ethereal() {
             // onTouch={touchHandler}
             >
                 <Group
-                   
+                    transform={[
+                        {
+                            translateX: width / 2,
+                        },
+                        {
+                            translateY: height / 2,
+                        },
+                    ]}
                 >
                     <Path path={path} />
 
