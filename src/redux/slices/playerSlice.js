@@ -5,50 +5,8 @@ const initialState = {
   postScreen: false,
   postScreenSuccess: false,
   activeLayer: 0,
-  originalLayers: [
-  ],
-  editedLayers: [
-    {
-      algorithm: 1,
-      position: 0,
-      params: {
-        frequency: 0.1,
-        step: 0.1,
-        rotation: 0.1,
-        boldness: 0.1
-      }
-    },
-    {
-      algorithm: 1,
-      position: 1,
-      params: {
-        frequency: 0.2,
-        step: 0.2,
-        rotation: 0.2,
-        boldness: 0.2
-      }
-    },
-    {
-      algorithm: 1,
-      position: 2,
-      params: {
-        frequency: 0.3,
-        step: 0.3,
-        rotation: 0.3,
-        boldness: 0.3
-      }
-    },
-    {
-      algorithm: 1,
-      position: 3,
-      params: {
-        frequency: 0.4,
-        step: 0.4,
-        rotation: 0.4,
-        boldness: 0.4
-      }
-    }
-  ]
+  originalLayers: [],
+  editedLayers: []
 };
 
 const playerSlice = createSlice({
@@ -72,6 +30,9 @@ const playerSlice = createSlice({
       console.log(action.payload)
       // state.mixEnabled = action.payload;
     },
+    setActiveLayer: (state, action) => {
+      state.activeLayer = action.payload;
+  },
   }
 });
 
@@ -80,7 +41,8 @@ export const {
     togglePostScreen,
     togglePostScreenSuccess,
     setLayers,
-    changeLayerParam
+    changeLayerParam,
+    setActiveLayer
 } = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;

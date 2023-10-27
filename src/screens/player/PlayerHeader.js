@@ -13,6 +13,7 @@ import Button from "../../components/button"
 
 const PlayerHeader = () => {
     const navigation = useNavigation();
+    const player = useSelector((state) => state.player);
     const [initialAnimation, setInitialAnimation] = useState(true);
     const [activeMix, setActiveMix] = useState(false);
     const [duplicating, setDuplicating] = useState(false);
@@ -35,6 +36,10 @@ const PlayerHeader = () => {
         showInitialAnimation()
         setInitialAnimation(false)
     }, [])
+
+    useEffect(() => {
+        setActiveMix(player.mixEnabled)
+    }, [player.mixEnabled])
 
     return (
         <View style={styles.header}>

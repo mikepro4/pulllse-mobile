@@ -18,7 +18,7 @@ const VizLogger = () => {
     useEffect(() => {
         const activeLayer = player.editedLayers.filter(item => item.position === player.activeLayer);
         setLayer(activeLayer[0])
-    }, [])
+    }, [player.editedLayers])
 
     const renderParam = (name, value) => {
        return (
