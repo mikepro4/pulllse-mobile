@@ -11,11 +11,11 @@ const Ethereal = ({ preview, layer }) => {
     } else {
         size = 200
     }
-    return (
+    return (    
         <View style={styles.container}>
-            <View style={{ width: size, height: size, backgroundColor: "#333", borderRadius: 100}}>
+            <View style={{ width: size, height: size, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 100, alignItems: "center", justifyContent: "center"}}>
                 <CustomText>
-                    {layer.position}
+                    {layer.position + 1}
                 </CustomText>
             </View>
         </View>

@@ -38,9 +38,9 @@ const VizLogger = () => {
         return (
             <View style={styles.loggerWrapper}>
                 <View style={{ marginVertical: 10 }}>
-                    {renderParam("Active layer", player.activeLayer)}
+                    {renderParam("Active layer", player.activeLayer + 1)}
                     {renderParam("Algorithm", layer.algorithm)}
-                    {renderParam("Position", layer.position)}
+                    {/* {renderParam("Position", layer.position + 1)} */}
                     {renderParam("Frequency", layer.params.frequency)}
                     {renderParam("Step", layer.params.step)}
                     {renderParam("Rotation", layer.params.rotation)}
