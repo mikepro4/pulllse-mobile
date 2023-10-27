@@ -50,6 +50,13 @@ function Ethereal() {
     }, [clock, activeLayer])
 
 
+    createPoint = (x, y, i) => {
+    }
+
+    generatePoints = () => {
+    }
+
+
     const handleLayout = (event) => {
         const { width, height } = event.nativeEvent.layout;
         setLayout({ width, height });

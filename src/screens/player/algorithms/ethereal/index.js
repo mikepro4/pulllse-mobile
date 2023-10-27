@@ -31,10 +31,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import CustomText from '../../../../components/text';
 
-
+// let rotate = 0
 
 function Ethereal() {
     const clock = useClockValue();
+    const rotate = useSharedValue(0);
     const player = useSelector((state) => state.player);
     const [points, setPoints] = useState([]);
     // const [width, setWidth] = useState(null);
@@ -74,20 +75,57 @@ function Ethereal() {
     //     return radius
     // }
 
+    calculateRadius = (i) => {
+        let radius = Math[viz.shape.math](clock.current * viz.shape.rotateSpeed + viz.shape.frequency * i) * (width / 2) * viz.shape.boldRate +
+            (width / 2);
+
+        return radius
+    }
+
     const path = useComputedValue(() => {
         const circles = Skia.Path.Make();
 
         console.log(activeLayer[0]?.params.boldness)
 
-        for (let i = 0; i < points.length; i++) {
-            circles.addCircle(points[i].x, points[i].y, 0.7);
+        let allPoints = points
+
+        for (let i = 0; i < allPoints.length; i++) {
+            let point = allPoints[i];
+
+            let x = (width * 4) / 8
+            let y = (height * 4) / 8
+
+            if (point) {
+                let t_radius = calculateRadius(i)
+
+                let tx = x + Math.cos(clock.current/1000 * viz.shape.rotateSpeed + viz.shape.step * i ) * t_radius;
+                let ty = y + Math.sin(clock.current/1000 * viz.shape.rotateSpeed + viz.shape.step * i ) * t_radius;
+
+                point.vx += (tx - point.x) * viz.shape.rotatePointSpeed;
+                point.vy += (ty - point.y) * viz.shape.rotatePointSpeed;
+
+                point.x += point.vx;
+                point.y += point.vy;
+
+
+                // point.x += Math.cos(clock.current / 100 * 0.01)
+                point.vx *= viz.shape.friction;
+                point.vy *= viz.shape.friction;
+                
+                circles.addCircle(point.x, point.y, 0.7);
+
+
+            }
+
+
+
         }
 
         return circles
-    }, [clock, activeLayer])
+    }, [clock, activeLayer, rotate])
 
 
-   const generatePoints = () => {
+    const generatePoints = () => {
         let generatedPoints = []
         for (var i = 0; i < viz.point.pointCount; i++) {
             var pt = createPoint(
@@ -116,7 +154,7 @@ function Ethereal() {
         return point
     }
 
-    
+
 
     const handleLayout = (event) => {
         const { width, height } = event.nativeEvent.layout;
@@ -124,8 +162,34 @@ function Ethereal() {
     }
 
     useEffect(() => {
+        startClock()
         generatePoints()
     }, []);
+
+    const startClock = () => {
+        const update = () => {
+            // cons newValue = time + 100;
+            // setTime(prevTime => prevTime + 100);
+            // renderOnce()
+            rotate.value = rotate.value + viz.shape.rotateSpeed
+            etherealClockId = requestAnimationFrame(update)
+        }
+
+        requestAnimationFrame(update);
+        // const timeUpdater = setInterval(() => {
+        //     // setTime(prevTime => prevTime + 100);
+        //     time = time + 100
+
+        // }, 1)
+        // setTimeInterval(timeUpdater)
+    }
+
+    const stopClock = () => {
+        // clearInterval(timeInterval);
+        rotate.value = 0
+        cancelAnimationFrame(etherealClockId);
+    }
+
 
     const renderParam = (name, value) => {
         return (
@@ -150,7 +214,7 @@ function Ethereal() {
             // onTouch={touchHandler}
             >
                 <Group
-                   
+
                 >
                     <Path path={path} />
 

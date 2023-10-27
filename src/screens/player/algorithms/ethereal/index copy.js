@@ -67,7 +67,6 @@ const Ethereal = ({ preview, layer }) => {
     useEffect(() => {
         // startClock()
         generatePoints()
-        
 
         return () => {
             console.log("unmounted")
