@@ -2,15 +2,19 @@ import React from 'react';
 import { View, Text , StyleSheet} from 'react-native';
 import CustomText from "../../components/text";
 import Algorithms from './algorithms';
+import Ethereal from './algorithms/ethereal';
 
 const Viz = ({ preview, layers }) => {
+    const activeLayer = layers.filter(item => item.position === 2);
     return (
         <View style={styles.container}>
-            {layers.map((layer, index) => {
+            {/* {layers.map((layer, index) => {
                 return (
                     <Algorithms key={index} layer={layer} preview={preview}/>
                 )
-            })}
+            })} */}
+
+            <Ethereal layer={activeLayer[0]} preview={preview}/>
         </View>
     );
 };

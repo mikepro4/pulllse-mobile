@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 10,
         padding: 32,
+        overflow: "hidden"
     },
     container: {
         justifyContent: 'center',

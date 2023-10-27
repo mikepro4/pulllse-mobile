@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 1,
         top: 120,
+        left: 20,
         flex: 1
     },
     paramContainer:{

@@ -16,7 +16,6 @@ const VizControls = ({ preview }) => {
     const [direction, setDirection] = useState(null);
     const [incrementDivider, setIncrementDivider] = useState(null);
     const dispatch = useDispatch();
-    const [timeInterval, setTimeInterval] = useState(null);
 
     // const startInterval = ({ paramName, direction}) => {
     //     const timeUpdater = setInterval(() => {
