@@ -64,10 +64,8 @@ const playerSlice = createSlice({
     togglePostScreenSuccess: (state, action) => {
         state.postScreenSuccess = action.payload;
     },
-    setOriginalLayers: (state, action) => {
+    setLayers: (state, action) => {
         state.originalLayers = action.payload;
-    },
-    setEditedLayers: (state, action) => {
         state.editedLayers = action.payload;
     },
     changeLayerParam: (state, action) => {
@@ -81,8 +79,7 @@ export const {
     toggleMix, 
     togglePostScreen,
     togglePostScreenSuccess,
-    setOriginalLayers, 
-    setEditedLayers,
+    setLayers,
     changeLayerParam
 } = playerSlice.actions;
 

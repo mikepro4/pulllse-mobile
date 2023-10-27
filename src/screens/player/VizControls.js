@@ -65,9 +65,9 @@ const VizControls = ({ preview }) => {
 
     return (
         <View style={styles.controlsContainer}>
-            <View style={styles.log}>
+            {/* <View style={styles.log}>
                 <CustomText>time: {time}</CustomText>
-            </View>
+            </View> */}
             <View style={styles.row}>
                 <TouchableOpacity
                     onPressIn={() => {
@@ -82,7 +82,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control -</CustomText>
+                    <CustomText>-</CustomText>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -98,7 +98,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control +</CustomText>
+                    <CustomText>+</CustomText>
                 </TouchableOpacity>
             </View>
 
@@ -116,7 +116,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control -</CustomText>
+                    <CustomText>-</CustomText>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -132,7 +132,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control +</CustomText>
+                    <CustomText>+</CustomText>
                 </TouchableOpacity>
             </View>
 
@@ -150,7 +150,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control -</CustomText>
+                    <CustomText>-</CustomText>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -166,7 +166,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control +</CustomText>
+                    <CustomText>+</CustomText>
                 </TouchableOpacity>
             </View>
 
@@ -184,7 +184,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control -</CustomText>
+                    <CustomText>-</CustomText>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -200,7 +200,7 @@ const VizControls = ({ preview }) => {
                     }}
                     activeOpacity={1}
                     style={styles.gridItem}>
-                    <CustomText>Control +</CustomText>
+                    <CustomText>+</CustomText>
                 </TouchableOpacity>
             </View>
 
