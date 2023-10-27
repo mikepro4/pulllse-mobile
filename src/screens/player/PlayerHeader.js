@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
 import { togglePlayer } from "../../redux/slices/tabSlice";
-import { toggleMix, toggleNotification } from "../../redux";
+import { toggleMix, toggleNotification, setEdited } from "../../redux";
 
 import Icon from "../../components/icon"
 import Logo from "../../components/icon/logo"
@@ -49,6 +49,7 @@ const PlayerHeader = () => {
                     onPressIn={() => {
                         dispatch(toggleMix(false))
                         dispatch(togglePlayer(false))
+                        dispatch(setEdited(false))
                     }} />
 
 
@@ -86,7 +87,7 @@ const PlayerHeader = () => {
                     <Button
                         label="Save"
                         icon="save"
-                        status={true}
+                        status={player.edited}
                         loading={saving}
                         onPressIn={() => {
                             // alert("Save")

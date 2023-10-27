@@ -6,13 +6,17 @@ const initialState = {
   postScreenSuccess: false,
   activeLayer: 0,
   originalLayers: [],
-  editedLayers: []
+  editedLayers: [],
+  edited: false,
 };
 
 const playerSlice = createSlice({
   name: "player",
   initialState,
   reducers: {
+    setEdited: (state, action) => {
+      state.edited = action.payload;
+    },
     toggleMix: (state, action) => {
       state.mixEnabled = action.payload;
     },
@@ -27,6 +31,9 @@ const playerSlice = createSlice({
         state.editedLayers = action.payload;
     },
     changeLayerParam: (state, action) => {
+      if(action.payload.valueChange) {
+        state.edited = true;
+      }
       const layers = state.editedLayers
       const activeLayer = state.editedLayers.filter(item => item.position === state.activeLayer);
       let newLayer
@@ -64,7 +71,8 @@ export const {
     togglePostScreenSuccess,
     setLayers,
     changeLayerParam,
-    setActiveLayer
+    setActiveLayer,
+    setEdited
 } = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;

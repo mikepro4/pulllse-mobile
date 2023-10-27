@@ -191,7 +191,7 @@ const VizControls = ({ preview }) => {
                     onPressIn={() => {
                         startInterval({ 
                             paramName: "boldness",
-                            direction: "down",
+                            direction: "up",
                             incrementDivider: 10000
                         })
                     }}

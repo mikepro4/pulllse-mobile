@@ -69,5 +69,6 @@ export {
   togglePostScreenSuccess,
   setLayers,
   changeLayerParam,
-  setActiveLayer
+  setActiveLayer,
+  setEdited
 } from "./slices/playerSlice";
