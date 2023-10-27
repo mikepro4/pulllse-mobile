@@ -10,11 +10,12 @@ import Icon from "../../components/icon"
 import Button from "../../components/button"
 import CustomText from "../../components/text"
 import Viz from "./Viz"
+import Algorithms from "./algorithms";
 
 import { toggleDrawer, setActiveLayer, toggleMix } from "../../redux";
 
 
-const PlayerHeader = () => {
+const Mixer = () => {
     const player = useSelector((state) => state.player);
     const navigation = useNavigation();
     const [initialAnimation, setInitialAnimation] = useState(true);
@@ -38,6 +39,7 @@ const PlayerHeader = () => {
     }, [])
 
     const renderLayer = (layer) => {
+        const activeLayer = player.editedLayers.filter(item => item.position === layer.position);
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -66,7 +68,7 @@ const PlayerHeader = () => {
                     textShadowOffset: { width: 0, height: 0 },
                     textShadowRadius: 2, 
                 }: {}]}>{layer.layerName}</CustomText>
-                <Viz preview={true} />
+                <Algorithms layer={activeLayer[0]} preview={true}/>
             </TouchableOpacity>
         )
     }
@@ -88,7 +90,7 @@ const PlayerHeader = () => {
     );
 };
 
-export default PlayerHeader;
+export default Mixer;
 
 const styles = StyleSheet.create({
     row: {

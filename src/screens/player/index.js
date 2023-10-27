@@ -42,7 +42,7 @@ const Player = () => {
     dispatch(setLayers(
       [
         {
-          algorithm: 1,
+          algorithm: "ethereal",
           position: 0,
           params: {
             frequency: 0.1,
@@ -52,7 +52,7 @@ const Player = () => {
           }
         },
         {
-          algorithm: 1,
+          algorithm: "ethereal",
           position: 1,
           params: {
             frequency: 0.2,
@@ -62,7 +62,7 @@ const Player = () => {
           }
         },
         {
-          algorithm: 1,
+          algorithm: "ethereal",
           position: 2,
           params: {
             frequency: 0.3,
@@ -72,7 +72,7 @@ const Player = () => {
           }
         },
         {
-          algorithm: 1,
+          algorithm: "ethereal",
           position: 3,
           params: {
             frequency: 0.4,
@@ -95,7 +95,7 @@ const Player = () => {
         <>
           <VizLogger/>
           <VizControls/>
-          <Viz/>
+          <Viz layers={player.editedLayers}/>
         </>
       )
     } else {

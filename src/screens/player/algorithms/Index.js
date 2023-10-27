@@ -1,13 +1,12 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import CustomText from "../../components/text";
+import Ethereal from "./ethereal";
 
-const Viz = () => {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <CustomText>Viz</CustomText>
-        </View>
-    );
-};
+const Algorithms = ({ layer, preview }) => {
+    switch (layer.algorithm) {
+        case 'ethereal':
+            return <Ethereal layer={layer} preview={preview} />
+        default:
+            return
+    }
+}
 
-export default Viz;
+export default Algorithms;

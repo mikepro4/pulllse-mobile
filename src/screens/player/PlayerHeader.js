@@ -94,6 +94,7 @@ const PlayerHeader = () => {
                             setSaving(true)
                             setTimeout(() => {
                                 setSaving(false)
+                                dispatch(setEdited(false))
                             }, 2000)
                             // dispatch(togglePlayer(false))
                         }} />

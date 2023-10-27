@@ -1,22 +1,31 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text , StyleSheet} from 'react-native';
 import CustomText from "../../components/text";
+import Algorithms from './algorithms';
 
-const Viz = ({ preview }) => {
-
-    let size 
-
-    if (preview) {
-        size = 100
-    } else {
-        size = 200
-    }
+const Viz = ({ preview, layers }) => {
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <View style={{ width: size, height: size, backgroundColor: "#333", borderRadius: 100}}>
-            </View>
+        <View style={styles.container}>
+            {layers.map((layer, index) => {
+                return (
+                    <Algorithms key={index} layer={layer} preview={preview}/>
+                )
+            })}
         </View>
     );
 };
 
 export default Viz;
+
+const styles = StyleSheet.create({
+    container: {
+      position: "absolute",
+      flex: 1,
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+})  

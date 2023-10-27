@@ -16,6 +16,7 @@ const Button = ({label, onPressIn, icon, iconRight, status, active, loading, act
     const left = useSharedValue(0);
     const bottom = useSharedValue(0);
     const right = useSharedValue(0);
+    const scale = useSharedValue(0);
 
     const animateIn = () => {
         const duration = 100;
@@ -155,12 +156,48 @@ const Button = ({label, onPressIn, icon, iconRight, status, active, loading, act
         }
     }
 
-    const renderStatusIcon = () => {
+
+    const animateStatusIn = () => {
+        const duration = 500;
+        const destination = -10
+        const easing = Theme.easing1
+
+
+        scale.value = withTiming(1, {
+          duration: duration,
+          easing: easing,
+        });
+    };
+
+
+    const animateStatusOut = () => {
+        const duration = 500;
+        const destination = -10
+        const easing = Theme.easing1
+
+
+        scale.value = withTiming(0, {
+          duration: duration,
+          easing: easing,
+        });
+    };
+
+    useEffect(() => {
         if(status) {
-            return (
-                <View style={styles.status}/>
-            )
+            animateStatusIn();
+        } else {
+            animateStatusOut();
         }
+    }, [status]);
+
+    const statusIconStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+    }));
+
+    const renderStatusIcon = () => {
+        return (
+            <Animated.View style={[styles.status, statusIconStyle]}/>
+        )
     }
 
     const renderActiveBackground = () => {
