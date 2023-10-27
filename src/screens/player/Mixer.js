@@ -52,6 +52,9 @@ const PlayerHeader = () => {
                     //         drawerHeight: "halfScreen"
                     //     }));
                     dispatch(setActiveLayer(layer.position))
+                    if(player.activeLayer == layer.position) {
+                        dispatch(toggleMix(false))
+                    }
                     // dispatch(toggleMix(false))
                 }}
                 activeOpacity={1}

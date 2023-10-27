@@ -174,7 +174,7 @@ const VizControls = ({ preview }) => {
                 <TouchableOpacity
                     onPressIn={() => {
                         startInterval({ 
-                            paramName: "bold",
+                            paramName: "boldness",
                             direction: "down",
                             incrementDivider: 10000
                         })
@@ -190,7 +190,7 @@ const VizControls = ({ preview }) => {
                 <TouchableOpacity
                     onPressIn={() => {
                         startInterval({ 
-                            paramName: "bold",
+                            paramName: "boldness",
                             direction: "down",
                             incrementDivider: 10000
                         })

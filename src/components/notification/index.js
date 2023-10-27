@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         color: Theme.green,
         position: "relative",
         top: 1,
-        textShadowColor: '#0F0', // Same color as the text or a brighter version
+        textShadowColor: '#0F0',
         textShadowOffset: { width: 0, height: 0 },
         textShadowRadius: 10, 
     },

@@ -27,8 +27,30 @@ const playerSlice = createSlice({
         state.editedLayers = action.payload;
     },
     changeLayerParam: (state, action) => {
-      console.log(action.payload)
-      // state.mixEnabled = action.payload;
+      const layers = state.editedLayers
+      const activeLayer = state.editedLayers.filter(item => item.position === state.activeLayer);
+      let newLayer
+      if(activeLayer[0]) {
+        newLayer = {
+          ...activeLayer[0],
+          params: {
+            ...activeLayer[0].params,
+            [action.payload.paramName]: 
+              action.payload.direction === "up" ? activeLayer[0].params[action.payload.paramName] + action.payload.valueChange 
+              : activeLayer[0].params[action.payload.paramName] - action.payload.valueChange
+          }
+        }
+      }
+
+      const updatedLayers = layers.map(layer => {
+        if (layer.position === state.activeLayer) {
+            return newLayer;
+        }
+        return layer;
+      });
+
+      state.editedLayers = updatedLayers;
+
     },
     setActiveLayer: (state, action) => {
       state.activeLayer = action.payload;
