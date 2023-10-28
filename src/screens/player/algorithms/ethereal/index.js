@@ -1,5 +1,6 @@
 import {
     BlurMask,
+    Blur,
     Canvas,
     Extrapolate,
     Group,
@@ -23,21 +24,40 @@ import {
     useSharedValue,
     withRepeat,
     withTiming,
-    useDerivedValue
+    useDerivedValue,
+    runOnUI,
+    runOnJS
 } from "react-native-reanimated";
 
 const { width, height } = Dimensions.get('window');
 import { useDispatch, useSelector } from "react-redux";
 
+import {
+    setParams
+} from "../../../../redux"
+
 import CustomText from '../../../../components/text';
+
+// import { Worker } frnom 'react-native-workers';
+
+// const worker = new Worker("./worker.js");
+
+/* stop worker */
+// worker.terminate();
 
 // let rotate = 0
 
 function Ethereal() {
     const clock = useClockValue();
+    const dispatch = useDispatch();
+    const text = useSharedValue("");
+
     const rotate = useSharedValue(0);
-    const player = useSelector((state) => state.player);
+    // const player = useSelector((state) => state.player);
+    const shape = useSelector((state) => state.shape);
     const [points, setPoints] = useState([]);
+    const [shapeInternal, setShapeInternal] = useState(null);
+    const [startShape, setStartShape] = useState(null);
     // const [width, setWidth] = useState(null);
     const [layout, setLayout] = useState({ width: 0, height: 0 });
 
@@ -66,7 +86,7 @@ function Ethereal() {
         },
     }
 
-    let activeLayer = player.editedLayers.filter(item => item.position === 1);
+    // let activeLayer = player.editedLayers.filter(item => item.position === 1);
 
     // calculateRadius = (, i) => {
     //     let radius = Math[this.state.math](this.state.rotate + this.state.freq * i) * this.state.radius * this.state.bold_rate +
@@ -76,20 +96,56 @@ function Ethereal() {
     // }
 
     calculateRadius = (i) => {
-        let radius = Math[viz.shape.math](clock.current * viz.shape.rotateSpeed + viz.shape.frequency * i) * (width / 2) * viz.shape.boldRate +
+        let radius = Math[viz.shape.math](clock.current/500 * viz.shape.rotateSpeed + viz.shape.frequency * i) * (width / 2) * shape?.params?.boldness +
             (width / 2);
 
         return radius
     }
 
+            /* post message to worker. String only ! */
+       
+
+        /* get message from worker. String only ! */
+        // worker.onmessage = (message) => {
+
+        // }
+
+    const sayHello = (
+        cb
+        ) => {
+        "worklet";
+        text.value = `hiiiii}`;
+        // console.log("hello")
+        // return ("HIIIIII")
+
+        // runOnJS(cb)("hiii");
+    };
+
+    const sayHelloOnTheJSThread = (text) =>{ 
+        return(text)
+    }
+
+
     const path = useComputedValue(() => {
         const circles = Skia.Path.Make();
 
-        console.log(activeLayer[0]?.params.boldness)
+        // console.log(activeLayer[0]?.params.boldness)
 
         let allPoints = points
 
+      
+
         for (let i = 0; i < allPoints.length; i++) {
+            // if(worker) {
+            //     worker.postMessage("hello from application");
+            // }
+
+            // const variable = runOnUI(sayHello)(
+            // )
+
+            // console.log(variable)
+
+
             let point = allPoints[i];
 
             let x = (width * 4) / 8
@@ -98,8 +154,8 @@ function Ethereal() {
             if (point) {
                 let t_radius = calculateRadius(i)
 
-                let tx = x + Math.cos(clock.current/1000 * viz.shape.rotateSpeed + viz.shape.step * i ) * t_radius;
-                let ty = y + Math.sin(clock.current/1000 * viz.shape.rotateSpeed + viz.shape.step * i ) * t_radius;
+                let tx = x + Math.cos(clock.current/ 100 * viz.shape.rotateSpeed* 0.2 + 0.03 + viz.shape.step * i ) * t_radius;
+                let ty = y + Math.sin(clock.current/100 * viz.shape.rotateSpeed* 0.2 + 0.03 + viz.shape.step * i ) * t_radius;
 
                 point.vx += (tx - point.x) * viz.shape.rotatePointSpeed;
                 point.vy += (ty - point.y) * viz.shape.rotatePointSpeed;
@@ -122,7 +178,7 @@ function Ethereal() {
         }
 
         return circles
-    }, [clock, activeLayer, rotate])
+    }, [clock,shape, rotate])
 
 
     const generatePoints = () => {
@@ -138,7 +194,6 @@ function Ethereal() {
 
         setPoints(generatedPoints)
 
-        // return points
     }
 
     const createPoint = (x, y, i) => {
@@ -164,6 +219,17 @@ function Ethereal() {
     useEffect(() => {
         startClock()
         generatePoints()
+
+        setTimeout(() => {
+            dispatch(setParams({
+                frequency: 0.3,
+                step: 0.3,
+                rotation: 0.3,
+                boldness: 0.72
+              }))
+        },1)
+        
+
     }, []);
 
     const startClock = () => {
@@ -209,22 +275,21 @@ function Ethereal() {
             {/* <View style={styles.etherealLogger}>
                 {renderParam("Clock", clock.value)}
             </View> */}
-            {activeLayer[0] && activeLayer[0].params && <Canvas
+            <Canvas
                 style={{ flex: 1, position: "absolute", top: 0, left: 0, bottom: 0, right: 0 }}
-            // onTouch={touchHandler}
             >
-                <Group
+               
 
-                >
                     <Path path={path} />
 
                     <SweepGradient
                         c={vec(0, 0)}
-                        colors={['cyan', 'magenta', 'yellow', 'cyan']}
+                        colors={['red', 'magenta', 'yellow', 'cyan']}
                     />
-                    {/* <BlurMask blur={5} style="solid" /> */}
-                </Group>
-            </Canvas>}
+                    {/* <BlurMask blur={30} style="solid" / */}
+                    {/* <Blur blur={230} /> */}
+
+            </Canvas>
         </View>
     );
 

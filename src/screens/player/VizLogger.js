@@ -10,15 +10,17 @@ import Viz from "./Viz"
 
 const VizLogger = () => {
     const player = useSelector((state) => state.player);
+    const shape = useSelector((state) => state.shape);
     const [layer, setLayer] = useState(null);
     const navigation = useNavigation();
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const activeLayer = player.editedLayers.filter(item => item.position === player.activeLayer);
-        setLayer(activeLayer[0])
-    }, [player.editedLayers])
+        // const activeLayer = player.editedLayers.filter(item => item.position === player.activeLayer);
+        // setLayer(activeLayer[0])
+        setLayer(shape)
+    }, [shape])
 
     const renderParam = (name, value) => {
        return (
@@ -34,12 +36,12 @@ const VizLogger = () => {
        )
     }
 
-    if(layer) {
+    if(layer && layer.params) {
         return (
             <View style={styles.loggerWrapper}>
                 <View style={{ marginVertical: 10 }}>
-                    {renderParam("Active layer", player.activeLayer + 1)}
-                    {renderParam("Algorithm", layer.algorithm)}
+                    {/* {renderParam("Active layer", player.activeLayer + 1)} */}
+                    {/* {renderParam("Algorithm", layer.algorithm)} */}
                     {/* {renderParam("Position", layer.position + 1)} */}
                     {renderParam("Frequency", layer.params.frequency)}
                     {renderParam("Step", layer.params.step)}

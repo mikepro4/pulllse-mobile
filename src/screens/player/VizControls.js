@@ -5,13 +5,15 @@ import { View, Text, StyleSheet, Pressable, TouchableOpacity, AnimationFrame } f
 import CustomText from "../../components/text";
 
 import {
-    changeLayerParam
+    changeLayerParam,
+    setParams
 } from "../../redux"
 
 let animationFrameId;
 
 const VizControls = ({ preview }) => {
     const [time, setTime] = useState(0);
+    const shape = useSelector((state) => state.shape);
     const [paramName, setParamName] = useState(null);
     const [direction, setDirection] = useState(null);
     const [incrementDivider, setIncrementDivider] = useState(null);
@@ -46,12 +48,27 @@ const VizControls = ({ preview }) => {
     }
 
     useEffect(() => {
-        dispatch(
-            changeLayerParam({
-                paramName: paramName,
-                direction: direction,
-                valueChange: time / incrementDivider
-            }));
+        // dispatch(
+        //     changeLayerParam({
+        //         paramName: paramName,
+        //         direction: direction,
+        //         valueChange: time / incrementDivider
+        //     }));
+        let valueChange
+        if(direction && direction === "up") {
+            valueChange = shape.params[paramName] + time / incrementDivider
+        } else if(direction === "down") {
+            valueChange = shape.params[paramName] - time / incrementDivider
+        }
+        if(paramName && valueChange !== null) {
+            dispatch(
+                setParams({
+                    ...shape.params,
+                    [paramName]: valueChange
+                })
+            )
+        }
+       
     }, [time]);
 
     const stopInterval = () => {
@@ -175,7 +192,7 @@ const VizControls = ({ preview }) => {
                         startInterval({ 
                             paramName: "boldness",
                             direction: "down",
-                            incrementDivider: 10000
+                            incrementDivider: 100000
                         })
                     }}
                     onPressOut={() => {
