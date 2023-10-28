@@ -8,10 +8,11 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, wit
 import Icon from "../icon"
 import Logo from "../icon/logo"
 
-import { resetScroll } from '../../redux/slices/tabSlice'
+import { resetScroll, toggleMap } from '../../redux'
 
 const Header = () => {
     const navigation = useNavigation();
+    const tab = useSelector((state) => state.tab);
     const [initialAnimation, setInitialAnimation] = useState(true);
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
@@ -35,7 +36,16 @@ const Header = () => {
     return (
         <Animated.View style={[styles.container, animatedStyles]}>
             <View>
-                <Icon name="map" />
+                <Pressable
+                    activeOpacity={1}
+                    delayPressIn={0}
+                    onPressIn={() => {
+                        dispatch(
+                            toggleMap(!tab.map)
+                        );
+                    }}>
+                    <Icon name={tab.map ? "feed" : "map"} />
+                </Pressable>
             </View>
 
             <View>

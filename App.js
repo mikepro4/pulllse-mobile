@@ -70,13 +70,13 @@ const App = () => {
     });
   };
 
-  useEffect(() => {
-    fetchUserDetails();
+  // useEffect(() => {
+  //   fetchUserDetails();
 
-    const socket = io(config.apiURL);
-    socketConnection(socket);
-    return () => socket.disconnect();
-  }, []);
+  //   const socket = io(config.apiURL);
+  //   socketConnection(socket);
+  //   return () => socket.disconnect();
+  // }, []);
 
   useEffect(() => {
     fetchUserDetails();

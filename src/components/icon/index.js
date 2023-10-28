@@ -17,6 +17,7 @@ import Save from "./save";
 import Controls from "./controls";
 import Play from "./play";
 import Loader from "./loader";
+import Feed from "./feed";
 
 
 const Icon = ({ name, style }) => {
@@ -57,6 +58,8 @@ const Icon = ({ name, style }) => {
             return <Play style={style} />
         case 'loader':
             return <Loader style={style} />
+        case 'feed':
+            return <Feed style={style} />
         default:
             return
     }

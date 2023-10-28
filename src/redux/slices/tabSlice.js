@@ -5,6 +5,7 @@ const tabSlice = createSlice({
   initialState: {
     name: "feed",
     player: false,
+    map: false,
     resetSroll: false,
   },
   reducers: {
@@ -17,9 +18,12 @@ const tabSlice = createSlice({
     togglePlayer: (state, action) => {
       state.player = action.payload;
     },
+    toggleMap: (state, action) => {
+      state.map = action.payload;
+    },
   },
 });
 
-export const { switchTab, togglePlayer, resetScroll } =
+export const { switchTab, togglePlayer, resetScroll, toggleMap } =
   tabSlice.actions;
 export const tabReducer = tabSlice.reducer;
