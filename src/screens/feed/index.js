@@ -18,6 +18,9 @@ import Animated, {
 import List from "../../components/list"
 
 import Tab from "../../components/tab";
+import Map from "../map";
+import CustomText from "../../components/text";
+import MapContainer from "../map";
 
 const FeedScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -73,7 +76,8 @@ const FeedScreen = ({ navigation }) => {
   const getAnimatedFeedStyle = () => {
     return useAnimatedStyle(() => {
       return {
-        opacity: feedOpacity.value
+        opacity: feedOpacity.value,
+        position: "relative"
       };
     });
   };
@@ -100,28 +104,41 @@ const FeedScreen = ({ navigation }) => {
     }
   };
 
-  return (
-    <View style={{ backgroundColor: "black" }}>
-      {renderTab()}
-      <Animated.View style={[getAnimatedFeedStyle()]}>
-        <List
-          url="/feed/fetchFeed"
-          limit={2}
-          listItem="post"
-          paddingTop={185}
-          paddingBottom={270}
-          onScrollEvent={(value) => {
-            if (!activeTab.player) {
-              scrollY.value = value;
-              if (opacity.value <= 0) {
-                isMenuVisible.value = false;
-              } else {
-                isMenuVisible.value = true;
+  const renderContent = () => {
+    if (activeTab.map) {
+      return (<MapContainer />)
+    } else {
+      return (
+          <List
+            url="/feed/fetchFeed"
+            limit={2}
+            listItem="post"
+            paddingTop={185}
+            paddingBottom={270}
+            onScrollEvent={(value) => {
+              if (!activeTab.player) {
+                scrollY.value = value;
+                if (opacity.value <= 0) {
+                  isMenuVisible.value = false;
+                } else {
+                  isMenuVisible.value = true;
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+      )
+    }
+  }
+
+  return (
+    <View style={{ backgroundColor: "black", position: "relative" }}>
+      {renderTab()}
+
+      <Animated.View style={[getAnimatedFeedStyle()]}>
+        {renderContent()}
       </Animated.View>
+
+
 
     </View>
   );
