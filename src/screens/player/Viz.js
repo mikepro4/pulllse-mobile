@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text , StyleSheet} from 'react-native';
 import CustomText from "../../components/text";
-import Algorithms from './algorithms';
+// import Algorithms from './algorithms';
 import Ethereal from './algorithms/ethereal';
 
 const Viz = ({ preview, layers }) => {
