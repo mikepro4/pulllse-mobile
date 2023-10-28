@@ -17,7 +17,7 @@ import MainFlow from "./src/screens/";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import Notification from "./src/components/notification";
+import Notification from "./src/components/alert";
 import config from "./config";
 import io from "socket.io-client";
 
