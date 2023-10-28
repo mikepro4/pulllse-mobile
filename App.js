@@ -92,6 +92,7 @@ const App = () => {
         ref.current.scrollTo(0);
       } else {
         ref.current.scrollTo(-SCREEN_HEIGHT / 2);
+      }
 
 
       let destination
@@ -127,8 +128,6 @@ const App = () => {
     } else {
       ref.current.scrollTo(-200);
     }
-  }, []);
-
 
   }, [app.drawerOpen]);
 
