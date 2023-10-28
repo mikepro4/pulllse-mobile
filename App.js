@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { store, fetchUserInfo, fetchUserAudios } from "./src/redux";
+
 import {
   Dimensions,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,14 +19,18 @@ import MainFlow from "./src/screens/";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import Notification from "./src/components/alert";
+import Alert from "./src/components/alert";
 import config from "./config";
 import io from "socket.io-client";
 
 import { togglePlayer, toggleDrawer } from "./src/redux";
 
 import Drawer from "./src/components/drawer";
+
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+import Overlay from "./src/components/drawer/overlay";
+import Notification from "./src/components/notification";
 
 const App = () => {
   const [showView, setShowView] = useState(false);
@@ -86,8 +92,29 @@ const App = () => {
         ref.current.scrollTo(0);
       } else {
         ref.current.scrollTo(-SCREEN_HEIGHT / 2);
+
+
+      let destination
+
+      switch (app.drawerHeight) {
+        case 'halfScreen':
+            destination = -SCREEN_HEIGHT / 2
+            break
+        case 'fullScreen':
+            destination = -SCREEN_HEIGHT + 50
+            break
+        default:
+          if (typeof app.drawerHeight === 'number') {
+              destination = -app.drawerHeight;
+          }
+          break;
+
       }
+      ref.current.scrollTo(destination);
+    } else {
+      ref.current.scrollTo(0);
     }
+
   }, [app.drawerOpen]);
 
   const close = useCallback(() => {
@@ -102,13 +129,18 @@ const App = () => {
     }
   }, []);
 
+
+  }, [app.drawerOpen]);
+
+
   return (
     <NavigationContainer
       screenOptions={{
         cardStyle: { backgroundColor: "black" },
       }}
     >
-      {showView && <Notification message={message} callback={setShowView} />}
+      {showView && <Alert message={message} callback={setShowView} />}
+
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar
@@ -145,6 +177,11 @@ const App = () => {
           </ScrollView>
         </Drawer>
 
+        {app.drawerOpen && <Overlay/> }
+        <Drawer ref={ref} />
+        <Notification />
+
+
         <MainFlow />
       </GestureHandlerRootView>
     </NavigationContainer>
@@ -156,7 +193,7 @@ export default MainApp = () => {
     "aeonik-regular": require("./assets/fonts/Aeonik-Regular.ttf"),
     "aeonik-medium": require("./assets/fonts/Aeonik-Medium.ttf"),
     "aeonik-light": require("./assets/fonts/Aeonik-Light.ttf"),
-    "london-regular": require("./assets/fonts/London-Regular.ttf"),
+    "london": require("./assets/fonts/London-Regular.ttf"),
   });
 
   if (!fontsLoaded) {
