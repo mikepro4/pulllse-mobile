@@ -95,12 +95,7 @@ function Ethereal() {
     //     return radius
     // }
 
-    calculateRadius = (i) => {
-        let radius = Math[viz.shape.math](clock.current/500 * viz.shape.rotateSpeed + viz.shape.frequency * i) * (width / 2) * shape?.params?.boldness +
-            (width / 2);
-
-        return radius
-    }
+    
 
             /* post message to worker. String only ! */
        
@@ -123,6 +118,13 @@ function Ethereal() {
 
     const sayHelloOnTheJSThread = (text) =>{ 
         return(text)
+    }
+
+    calculateRadius = (i) => {
+        let radius = Math[viz.shape.math](clock.current/500 * viz.shape.rotateSpeed + viz.shape.frequency * i) * (width / 2) * shape?.params?.boldness +
+            (width / 2);
+
+        return radius
     }
 
 
