@@ -16,6 +16,7 @@ import Profile from "./profile";
 import SignUpScreen from "./profile/SignUpScreen";
 import UserListScreen from "../screens/profile/UserListScreen";
 import UserProfileScreen from "./profile/UserProfileScreen";
+import Settings from "./settings";
 
 import { tryLocalSignIn } from "../redux";
 
@@ -92,6 +93,16 @@ export default MainApp = () => {
         <Stack.Screen
           name="Notifications"
           component={Notifications}
+          options={{
+            headerShown: false,
+            cardStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={Settings}
           options={{
             headerShown: false,
             cardStyle: {

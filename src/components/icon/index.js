@@ -18,6 +18,7 @@ import Controls from "./controls";
 import Play from "./play";
 import Loader from "./loader";
 import Feed from "./feed";
+import Cog from "./cog";
 
 
 const Icon = ({ name, style }) => {
@@ -60,6 +61,8 @@ const Icon = ({ name, style }) => {
             return <Loader style={style} />
         case 'feed':
             return <Feed style={style} />
+        case 'cog':
+            return <Cog style={style} />
         default:
             return
     }

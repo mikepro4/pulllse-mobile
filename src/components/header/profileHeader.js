@@ -19,15 +19,15 @@ const ProfileHeader = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Icon name="map" />
+        {/* <Icon name="map" /> */}
       </View>
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Notifications");
+          navigation.navigate("Settings");
         }}
       >
-        <Icon name="notification" />
+        <Icon name="cog" />
       </TouchableOpacity>
     </View>
   );
