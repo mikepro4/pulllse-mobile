@@ -3,17 +3,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { toggleDrawer } from "../../redux";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
-import { toggleMix } from "../../redux";
 
+import Theme from "../../styles/theme"
 import Icon from "../../components/icon"
-import Logo from "../../components/icon/logo"
 import Button from "../../components/button"
 import CustomText from "../../components/text"
 import Viz from "./Viz"
+import Algorithms from "./algorithms";
 
-const PlayerHeader = () => {
+import { toggleDrawer, setActiveLayer, toggleMix } from "../../redux";
+
+
+const Mixer = () => {
+    const player = useSelector((state) => state.player);
     const navigation = useNavigation();
     const [initialAnimation, setInitialAnimation] = useState(true);
     const opacity = useSharedValue(0);
@@ -35,88 +38,59 @@ const PlayerHeader = () => {
         setInitialAnimation(false)
     }, [])
 
+    const renderLayer = (layer) => {
+        const activeLayer = player.editedLayers.filter(item => item.position === layer.position);
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    // dispatch(
+                    //     toggleDrawer({
+                    //         drawerOpen: true,
+                    //         drawerType: "layer_settings",
+                    //         drawerData: {
+                    //             layerName: layer.layerName
+                    //         },
+                    //         drawerDraggable: true,
+                    //         drawerHeight: "halfScreen"
+                    //     }));
+                    dispatch(setActiveLayer(layer.position))
+                    if(player.activeLayer == layer.position) {
+                        dispatch(toggleMix(false))
+                    }
+                    // dispatch(toggleMix(false))
+                }}
+                activeOpacity={1}
+                style={[styles.gridItem,layer.position == player.activeLayer ? {borderColor: Theme.green }: {}]}>
+                <CustomText style={[styles.layerTitle, layer.position == player.activeLayer ? {
+                    color: Theme.green, 
+                    opacity: 1,
+                    textShadowColor: '#0F0',
+                    textShadowOffset: { width: 0, height: 0 },
+                    textShadowRadius: 2, 
+                }: {}]}>{layer.layerName}</CustomText>
+                <Algorithms layer={activeLayer[0]} preview={true}/>
+            </TouchableOpacity>
+        )
+    }
+
     return (
         <View style={styles.mixerWrapper}>
             <Animated.View style={[styles.container, animatedStyles]}>
                 <View style={styles.row}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            dispatch(
-                                toggleDrawer({
-                                    drawerOpen: true,
-                                    drawerType: "layer_settings",
-                                    drawerData: {
-                                        layerName: "Layer 1"
-                                    },
-                                    drawerDraggable: true,
-                                    drawerHeight: "halfScreen"
-                                }));
-                        }}
-                        style={styles.gridItem}>
-                        <CustomText style={styles.layerTitle}>LAYER 1</CustomText>
-                        <Viz preview={true} />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            dispatch(
-                                toggleDrawer({
-                                    drawerOpen: true,
-                                    drawerType: "layer_settings",
-                                    drawerData: {
-                                        layerName: "Layer 2"
-                                    },
-                                    drawerDraggable: true,
-                                    drawerHeight: "halfScreen"
-                                }));
-                        }}
-                        style={styles.gridItem}>
-                        <CustomText style={styles.layerTitle}>LAYER 2</CustomText>
-                        <Viz preview={true} />
-                    </TouchableOpacity>
+                    {renderLayer({ layerName: "LAYER 1", position: 0 })}
+                    {renderLayer({ layerName: "LAYER 2", position: 1 })}
                 </View>
+
                 <View style={styles.row}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            dispatch(
-                                toggleDrawer({
-                                    drawerOpen: true,
-                                    drawerType: "layer_settings",
-                                    drawerData: {
-                                        layerName: "Layer 3"
-                                    },
-                                    drawerDraggable: true,
-                                    drawerHeight: "halfScreen"
-                                }));
-                        }}
-                        style={styles.gridItem}>
-                        <CustomText style={styles.layerTitle}>LAYER 3</CustomText>
-                        <Viz preview={true} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => {
-                            dispatch(
-                                toggleDrawer({
-                                    drawerOpen: true,
-                                    drawerType: "layer_settings",
-                                    drawerData: {
-                                        layerName: "Layer 4"
-                                    },
-                                    drawerDraggable: true,
-                                    drawerHeight: "halfScreen"
-                                }));
-                        }}
-                        style={styles.gridItem}>
-                        <CustomText style={styles.layerTitle}>LAYER 4</CustomText>
-                        <Viz preview={true} />
-                    </TouchableOpacity>
+                    {renderLayer({ layerName: "LAYER 3", position: 2 })}
+                    {renderLayer({ layerName: "LAYER 4", position: 3 })}
                 </View>
             </Animated.View>
         </View>
     );
 };
 
-export default PlayerHeader;
+export default Mixer;
 
 const styles = StyleSheet.create({
     row: {
@@ -134,6 +108,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 10,
         padding: 32,
+        overflow: "hidden"
     },
     container: {
         justifyContent: 'center',

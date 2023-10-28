@@ -5,56 +5,18 @@ const initialState = {
   postScreen: false,
   postScreenSuccess: false,
   activeLayer: 0,
-  originalLayers: [
-  ],
-  editedLayers: [
-    {
-      algorithm: 1,
-      position: 0,
-      params: {
-        frequency: 0.1,
-        step: 0.1,
-        rotation: 0.1,
-        boldness: 0.1
-      }
-    },
-    {
-      algorithm: 1,
-      position: 1,
-      params: {
-        frequency: 0.2,
-        step: 0.2,
-        rotation: 0.2,
-        boldness: 0.2
-      }
-    },
-    {
-      algorithm: 1,
-      position: 2,
-      params: {
-        frequency: 0.3,
-        step: 0.3,
-        rotation: 0.3,
-        boldness: 0.3
-      }
-    },
-    {
-      algorithm: 1,
-      position: 3,
-      params: {
-        frequency: 0.4,
-        step: 0.4,
-        rotation: 0.4,
-        boldness: 0.4
-      }
-    }
-  ]
+  originalLayers: [],
+  editedLayers: [],
+  edited: false,
 };
 
 const playerSlice = createSlice({
   name: "player",
   initialState,
   reducers: {
+    setEdited: (state, action) => {
+      state.edited = action.payload;
+    },
     toggleMix: (state, action) => {
       state.mixEnabled = action.payload;
     },
@@ -64,15 +26,42 @@ const playerSlice = createSlice({
     togglePostScreenSuccess: (state, action) => {
         state.postScreenSuccess = action.payload;
     },
-    setOriginalLayers: (state, action) => {
+    setLayers: (state, action) => {
         state.originalLayers = action.payload;
-    },
-    setEditedLayers: (state, action) => {
         state.editedLayers = action.payload;
     },
-    updateLayer: (state, action) => {
-      state.mixEnabled = action.payload;
+    changeLayerParam: (state, action) => {
+      if(action.payload.valueChange) {
+        state.edited = true;
+      }
+      const layers = state.editedLayers
+      const activeLayer = state.editedLayers.filter(item => item.position === state.activeLayer);
+      let newLayer
+      if(activeLayer[0]) {
+        newLayer = {
+          ...activeLayer[0],
+          params: {
+            ...activeLayer[0].params,
+            [action.payload.paramName]: 
+              action.payload.direction === "up" ? activeLayer[0].params[action.payload.paramName] + action.payload.valueChange 
+              : activeLayer[0].params[action.payload.paramName] - action.payload.valueChange
+          }
+        }
+      }
+
+      const updatedLayers = layers.map(layer => {
+        if (layer.position === state.activeLayer) {
+            return newLayer;
+        }
+        return layer;
+      });
+
+      state.editedLayers = updatedLayers;
+
     },
+    setActiveLayer: (state, action) => {
+      state.activeLayer = action.payload;
+  },
   }
 });
 
@@ -80,8 +69,10 @@ export const {
     toggleMix, 
     togglePostScreen,
     togglePostScreenSuccess,
-    setOriginalLayers, 
-    setEditedLayers 
+    setLayers,
+    changeLayerParam,
+    setActiveLayer,
+    setEdited
 } = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;

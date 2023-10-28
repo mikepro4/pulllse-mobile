@@ -7,6 +7,7 @@ import { pulseReducer } from "./slices/pulseSlice";
 import { tabReducer } from "./slices/tabSlice";
 import { appReducer } from "./slices/appSlice";
 import { playerReducer } from "./slices/playerSlice";
+import { shapeReducer } from "./slices/shapeSlice";
 import { signout } from "./thunks/userThunk";
 import reduxFlipper from "redux-flipper";
 
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
   image: imageReducer,
   tab: tabReducer,
   pulse: pulseReducer,
-  player: playerReducer
+  player: playerReducer,
+  shape: shapeReducer
 });
 
 const resettableReducer = (state, action) => {
@@ -62,11 +64,14 @@ export { addRecording } from "./slices/recordingsSlice";
 export { addImage } from "./slices/imageSlice";
 export { togglePlayer } from "./slices/tabSlice";
 export { toggleDrawer, toggleNotification } from "./slices/appSlice";
+export { setParams } from "./slices/shapeSlice";
 
 export {
   toggleMix,
   togglePostScreen,
   togglePostScreenSuccess,
-  setOriginalLayers,
-  setEditedLayers
+  setLayers,
+  changeLayerParam,
+  setActiveLayer,
+  setEdited
 } from "./slices/playerSlice";

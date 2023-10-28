@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay, Easing } from 'react-native-reanimated';
 import { togglePlayer } from "../../redux/slices/tabSlice";
-import { toggleMix, toggleNotification } from "../../redux";
+import { toggleMix, toggleNotification, setEdited } from "../../redux";
 
 import Icon from "../../components/icon"
 import Logo from "../../components/icon/logo"
@@ -13,6 +13,7 @@ import Button from "../../components/button"
 
 const PlayerHeader = () => {
     const navigation = useNavigation();
+    const player = useSelector((state) => state.player);
     const [initialAnimation, setInitialAnimation] = useState(true);
     const [activeMix, setActiveMix] = useState(false);
     const [duplicating, setDuplicating] = useState(false);
@@ -36,6 +37,10 @@ const PlayerHeader = () => {
         setInitialAnimation(false)
     }, [])
 
+    useEffect(() => {
+        setActiveMix(player.mixEnabled)
+    }, [player.mixEnabled])
+
     return (
         <View style={styles.header}>
             <Animated.View style={[styles.container, animatedStyles]}>
@@ -44,6 +49,7 @@ const PlayerHeader = () => {
                     onPressIn={() => {
                         dispatch(toggleMix(false))
                         dispatch(togglePlayer(false))
+                        dispatch(setEdited(false))
                     }} />
 
 
@@ -81,13 +87,14 @@ const PlayerHeader = () => {
                     <Button
                         label="Save"
                         icon="save"
-                        status={true}
+                        status={player.edited}
                         loading={saving}
                         onPressIn={() => {
                             // alert("Save")
                             setSaving(true)
                             setTimeout(() => {
                                 setSaving(false)
+                                dispatch(setEdited(false))
                             }, 2000)
                             // dispatch(togglePlayer(false))
                         }} />

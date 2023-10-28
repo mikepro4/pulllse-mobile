@@ -11,6 +11,8 @@ import CustomText from "../../components/text";
 
 import Theme from "../../styles/theme"
 
+import Viz from "../../screens/player/Viz";
+
 const Post = (props) => {
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
@@ -37,7 +39,8 @@ const Post = (props) => {
                 activeOpacity={1}
                 style={styles.mainClickableArea}
                 onPress={() => dispatch(togglePlayer(true))}
-            ></TouchableOpacity>
+            >
+            </TouchableOpacity>
 
             <TouchableOpacity
                 activeOpacity={1}
