@@ -31,6 +31,7 @@ import {
 
 const { width, height } = Dimensions.get('window');
 import { useDispatch, useSelector } from "react-redux";
+import CRT from "../crt"
 
 import {
     setParams
@@ -121,10 +122,12 @@ function Ethereal() {
     }
 
     calculateRadius = (i) => {
+        if(shape) {
         let radius = Math[viz.shape.math](clock.current/500 * viz.shape.rotateSpeed + viz.shape.frequency * i) * (width / 2) * shape?.params?.boldness +
             (width / 2);
 
         return radius
+        }
     }
 
 
@@ -170,7 +173,7 @@ function Ethereal() {
                 point.vx *= viz.shape.friction;
                 point.vy *= viz.shape.friction;
                 
-                circles.addCircle(point.x, point.y, 0.7);
+                circles.addCircle(point.x, point.y, 20.7);
 
 
             }
@@ -277,21 +280,22 @@ function Ethereal() {
             {/* <View style={styles.etherealLogger}>
                 {renderParam("Clock", clock.value)}
             </View> */}
-            <Canvas
+            {shape && <Canvas
                 style={{ flex: 1, position: "absolute", top: 0, left: 0, bottom: 0, right: 0 }}
             >
                
-
+                    <CRT shape={shape}>
                     <Path path={path} />
 
                     <SweepGradient
                         c={vec(0, 0)}
                         colors={['red', 'magenta', 'yellow', 'cyan']}
                     />
+                    </CRT>
                     {/* <BlurMask blur={30} style="solid" / */}
                     {/* <Blur blur={230} /> */}
 
-            </Canvas>
+            </Canvas>}
         </View>
     );
 

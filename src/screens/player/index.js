@@ -95,7 +95,7 @@ const Player = () => {
         <>
           {/* <VizLogger/> */}
           <VizControls/>
-          <Viz layers={player.editedLayers}/>
+          <Viz/>
         </>
       )
     } else {
