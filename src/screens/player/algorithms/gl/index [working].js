@@ -7,22 +7,10 @@ import {
   setParams
 } from "../../../../redux"
 
-import {
-  Canvas,
-  Fill,
-  Shader,
-  Skia,
-  useClockValue,
-  useComputedValue
-} from "@shopify/react-native-skia";
-
-
 
 // THIS WOOOOOOOOORKS
 
 function App() {
-  const clock = useClockValue();
-  const timeValue = useComputedValue(() => ( clock.current ), [clock]);
   const [color, setColor] = useState([1.0, 0.5, 0.0, 1.0]); // Initial color
   const [animating, setAnimating] = useState(false);
   const shape = useSelector((state) => state.shape);
@@ -80,12 +68,8 @@ function App() {
     gl.shaderSource(fragShader, `
       precision highp float;
       uniform vec4 u_color;
-      uniform float time;
       void main() {
-        float r = sin(time / 2000.0) * 0.5 + 0.5;  // Dividing by a larger number slows down the color changes
-        float g = sin((time + 2000.0) / 2000.0) * 0.5 + 0.5;  // Phase shifted sine wave
-        float b = sin((time + 4000.0) / 2000.0) * 0.5 + 0.5;  // Phase shifted sine wave
-        gl_FragColor = vec4(r, g, b, 1.0);  // Set the output color
+        gl_FragColor = u_color;
       }
     `);
     gl.compileShader(fragShader);
@@ -97,6 +81,9 @@ function App() {
     gl.linkProgram(program);
     gl.useProgram(program);
     programRef.current = program; // Store the program in the re
+
+    // Get uniform location
+    const colorLocation = gl.getUniformLocation(program, 'u_color');
 
     // Buffer
     const buffer = gl.createBuffer();
@@ -119,10 +106,8 @@ function App() {
 
       // Get the location of the color uniform
       const colorLocation = gl.getUniformLocation(program, 'u_color');
-      const timeLocation = gl.getUniformLocation(program, 'time');
       // Set uniform color
       gl.uniform4fv(colorLocation, color);
-      gl.uniform1f(timeLocation, timeValue.current);
 
       // Render
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -145,11 +130,8 @@ function App() {
 
       const program = programRef.current;
       const colorLocation = gl.getUniformLocation(program, 'u_color');
-      const timeLocation = gl.getUniformLocation(program, 'time');
       // Set the value of the color uniform
       gl.uniform4fv(colorLocation, colorRef.current);
-      gl.uniform1f(timeLocation, timeValue.current);
-
       frameValue.current += Math.PI / 600;
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
