@@ -1,41 +1,20 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { View, Button } from 'react-native';
 import { GLView } from 'expo-gl';
-import { Asset } from 'expo-asset';
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import CustomText from '../../../../components/text';
 
-const vertShader = `
-  precision highp float;
-  uniform vec2 u_rotation;
-  attribute vec2 a_position;
-  varying vec2 uv;
-  void main () {
-  
-    vec2 rotatedPosition = vec2(
-      a_position.x * u_rotation.y + a_position.y * u_rotation.x,
-      a_position.y * u_rotation.y - a_position.x * u_rotation.x
-    );
-    
-    uv = a_position;
-    gl_Position = vec4(rotatedPosition, 0, 1);
-  }
-`;
-
-const fragShader = `
-  precision highp float;
-  uniform sampler2D u_texture;
-  varying vec2 uv;
-  void main () {
-    gl_FragColor = texture2D(u_texture, vec2(uv.y, uv.x));
-  }
-`;
-
-export default function HelloExpoGL() {
-
+function App() {
+  const [color, setColor] = useState([1.0, 0.5, 0.0, 1.0]); // Initial color
   const [animating, setAnimating] = useState(false);
   const contextRef = useRef(null);
   const textureRef = useRef(null);
   const rotationRef = useRef(null);
+  const programRef = useRef(null);
+  const glRef = useRef(null);
+  const colorRef = useRef(color); 
+
+  useEffect(() => {
+    colorRef.current = color
+  }, [color])
 
   const vertices = new Float32Array([
     0.0,  0.0,
@@ -46,78 +25,99 @@ export default function HelloExpoGL() {
     1.0,  1.0,
   ]);
 
-  const onTestContextCreate = useCallback(async (gl) => {
-    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-    const vert = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vert, vertShader);
-    gl.compileShader(vert);
+  const onContextCreate = (gl) => {
+    glRef.current = gl
 
-    const frag = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(frag, fragShader);
-    gl.compileShader(frag);
+    // Vertex Shader
+    const vertShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertShader, `
+      attribute vec2 position;
+      void main() {
+        gl_Position = vec4(position, 0, 1);
+      }
+    `);
+    gl.compileShader(vertShader);
 
+    // Fragment Shader
+    const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragShader, `
+      precision highp float;
+      uniform vec4 u_color;
+      void main() {
+        gl_FragColor = u_color;
+      }
+    `);
+    gl.compileShader(fragShader);
+
+    // Program
     const program = gl.createProgram();
-    gl.attachShader(program, vert);
-    gl.attachShader(program, frag);
+    gl.attachShader(program, vertShader);
+    gl.attachShader(program, fragShader);
     gl.linkProgram(program);
     gl.useProgram(program);
+    programRef.current = program; // Store the program in the re
 
+    // Get uniform location
+    const colorLocation = gl.getUniformLocation(program, 'u_color');
+
+    // Buffer
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    const positionAttrib = gl.getAttribLocation(program, 'a_position');
-    gl.enableVertexAttribArray(positionAttrib);
-    gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -0.5, -0.5,
+       0.5, -0.5,
+       0.0,  0.5,
+    ]), gl.STATIC_DRAW);
 
-    const asset = Asset.fromModule(require('./coin.png'));
-    await asset.downloadAsync();
+    // Attribute
+    const position = gl.getAttribLocation(program, 'position');
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
-    const texture = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, asset);
+    // Define a render function to update the uniform and render
+    const render = () => {
 
-    const textureLocation = gl.getUniformLocation(program, 'u_texture');
-    const rotationLocation = gl.getUniformLocation(program, 'u_rotation');
+      gl.useProgram(program);
 
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      // Get the location of the color uniform
+      const colorLocation = gl.getUniformLocation(program, 'u_color');
+      // Set uniform color
+      gl.uniform4fv(colorLocation, color);
 
-    gl.uniform1i(textureLocation, 0);
-    gl.uniform2fv(rotationLocation, [Math.cos(0), Math.sin(0)]);
+      // Render
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.flush();
+      gl.endFrameEXP();
+    };
 
-    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
-    gl.flush();
-    gl.endFrameEXP();
-
-    contextRef.current = gl;
-    textureRef.current = textureLocation;
-    rotationRef.current = rotationLocation;
-
-  }, []);
+    // Set up a function to re-render whenever color changes
+    render();  // Initial render
+  };
 
   const frameTimer = useRef(0);
   const frameValue = useRef(0);
   const frameHandle = useRef(null);
   const frameTicker = useCallback((time) => {
     // console.log("here")
-    if (contextRef.current) {
-      const gl = contextRef.current;
+    // if (contextRef.current) {
+      const gl = glRef.current;
 
+      const program = programRef.current;
+      const colorLocation = gl.getUniformLocation(program, 'u_color');
+      // Set the value of the color uniform
+      gl.uniform4fv(colorLocation, colorRef.current);
       frameValue.current += Math.PI / 600;
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.uniform2fv(rotationRef.current, [Math.cos(frameValue.current), Math.sin(frameValue.current)]);
+     
+
       gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
       gl.flush();
       gl.endFrameEXP();
       frameTimer.current = time;
-    }
+    // }
     frameHandle.current = requestAnimationFrame(frameTicker);
   }, []);
 
@@ -131,21 +131,16 @@ export default function HelloExpoGL() {
     }
   }, [animating]);
 
+  useEffect(() => {
+    handleToggleAnimation()
+  }, [])
+
   return (
-    <View style={styles.fill}>
-      <GLView style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0,  justifyContent: 'center', alignItems: 'center', zIndex:1, flex: 1}} onContextCreate={onTestContextCreate} />
-      <TouchableOpacity style={{zIndex: 2, position: "absolute"}} onPress={handleToggleAnimation}>
-        <CustomText >{animating ? 'Stop' : 'Animate'}</CustomText>
-      </TouchableOpacity>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <GLView style={{ width: 300, height: 300 }} onContextCreate={onContextCreate} />
+      <Button title="Change Color" onPress={() => setColor([0.0, 1.0, 0.0, 1.0])} /> 
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  fill: {
-    position: "absolute", top: 0, bottom: 0, left: 0, right: 0,  justifyContent: 'center', alignItems: 'center', zIndex:1, flex: 1
-  },
-  gl: {
-    position: "absolute", top: 0, bottom: 0, left: 0, right: 0,  justifyContent: 'center', alignItems: 'center', zIndex:1, flex: 1
-  },
-});
+export default App;
