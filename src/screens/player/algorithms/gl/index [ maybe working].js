@@ -199,7 +199,6 @@ function App() {
         const timeLocation = gl.getUniformLocation(program, 'time');
         const prevFrameLocation = gl.getUniformLocation(program, 'u_prevFrame');
         const resolutionLocation = gl.getUniformLocation(program, 'resolution');
-        console.log(gl.drawingBufferWidth, gl.drawingBufferHeight)
         // Set uniform color
         gl.uniform4fv(colorLocation, color);
         gl.uniform1f(timeLocation, timeValue.current);
@@ -248,6 +247,8 @@ function App() {
     gl.activeTexture(gl.TEXTURE0 + textureUnit);
     gl.bindTexture(gl.TEXTURE_2D, textures.current[textureUnit]);
     gl.uniform1i(prevFrameLocation, textureUnit);  // This line sets the uniform value
+
+
 
     // Swap framebuffers and textures for next frame
     setCurrentIdx(textureUnit);

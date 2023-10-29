@@ -192,27 +192,22 @@ function App() {
     //     gl_FragColor = fragColor;
     // }
 
+    //   void main() {
+  //     ivec2 coord = ivec2(gl_FragCoord.xy) / getCellSize();
+  //     int value = initialValue(coord);
+  //     vec3 color = colorFromValue(value);
+  //     gl_FragColor = vec4(color, 1.0);  // Set alpha to 1.0 for full opacity
+  // }
+
+
+
       void main() {
-      ivec2 coord = ivec2(gl_FragCoord.xy) / getCellSize();
-      int value = initialValue(coord);
-      vec3 color = colorFromValue(value);
-
-      float r = sin(time) * 0.5 + 0.5;
-      float g = sin(time + 2.0) * 0.5 + 0.5;
-      float b = sin(time + 4.0) * 0.5 + 0.5;
-      gl_FragColor = vec4(r, g, b, 1.0) + vec4(color, 1.0);
-      // gl_FragColor = vec4(color, 1.0);  // Set alpha to 1.0 for full opacity
-  }
-
-
-
-      // void main() {
-      //   vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/vec2(300.0,300.0));
-      //   float r = sin(time) * 0.5 + 0.5;
-      //   float g = sin(time + 2.0) * 0.5 + 0.5;
-      //   float b = sin(time + 4.0) * 0.5 + 0.5;
-      //   gl_FragColor = vec4(r, g, b, 1.0) - prevFrameColor*0.9;
-      // }
+        vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/vec2(300.0,300.0));
+        float r = sin(time) * 0.5 + 0.5;
+        float g = sin(time + 2.0) * 0.5 + 0.5;
+        float b = sin(time + 4.0) * 0.5 + 0.5;
+        gl_FragColor = vec4(r, g, b, 1.0) - prevFrameColor*0.9;
+      }
 
     `);
     gl.compileShader(fragShader);
@@ -333,8 +328,8 @@ function App() {
 
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}>
-      <GLView style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0}} onContextCreate={onContextCreate} />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <GLView style={{ width: 300, height: 300 }} onContextCreate={onContextCreate} />
     </View>
   );
 }
