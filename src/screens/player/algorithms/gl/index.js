@@ -1,11 +1,22 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Button } from 'react-native';
+import { useDispatch, useSelector } from "react-redux";
 import { GLView } from 'expo-gl';
+
+import {
+  setParams
+} from "../../../../redux"
+
+
+// THIS WOOOOOOOOORKS
 
 function App() {
   const [color, setColor] = useState([1.0, 0.5, 0.0, 1.0]); // Initial color
   const [animating, setAnimating] = useState(false);
+  const shape = useSelector((state) => state.shape);
   const contextRef = useRef(null);
+  const dispatch = useDispatch();
+
   const textureRef = useRef(null);
   const rotationRef = useRef(null);
   const programRef = useRef(null);
@@ -15,6 +26,20 @@ function App() {
   useEffect(() => {
     colorRef.current = color
   }, [color])
+
+   useEffect(() => {
+    // This will be called every time `color` changes.
+    if(shape && shape.params) {
+      console.log("here")
+      colorRef.current = [
+        colorRef.current[0],
+        shape.params.boldness,
+        colorRef.current[2],
+        colorRef.current[3],
+      ]
+    }
+
+  }, [shape]);
 
   const vertices = new Float32Array([
     0.0,  0.0,
@@ -131,8 +156,25 @@ function App() {
     }
   }, [animating]);
 
+  // useEffect(() => {
+    
+  // }, [])
+
   useEffect(() => {
+    setTimeout(() => {
     handleToggleAnimation()
+    }, 1000)
+
+    setTimeout(() => {
+        dispatch(setParams({
+            frequency: 0.3,
+            step: 0.3,
+            rotation: 0.3,
+            boldness: 0.01
+          }))
+    },1)
+
+    
   }, [])
 
   return (
