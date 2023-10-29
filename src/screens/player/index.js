@@ -94,7 +94,7 @@ const Player = () => {
       return(
         <>
           {/* <VizLogger/> */}
-          <VizControls/>
+          {/* <VizControls/> */}
           <Viz/>
         </>
       )

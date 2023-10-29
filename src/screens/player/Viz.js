@@ -3,6 +3,7 @@ import { View, Text , StyleSheet} from 'react-native';
 import CustomText from "../../components/text";
 // import Algorithms from './algorithms';
 import Ethereal from './algorithms/ethereal';
+import GL from './algorithms/gl';
 
 const Viz = ({ preview, layers }) => {
     // const activeLayer = layers.filter(item => item.position === 2);
@@ -14,7 +15,7 @@ const Viz = ({ preview, layers }) => {
                 )
             })} */}
 
-            <Ethereal preview={preview}/>
+            <GL preview={preview}/>
         </View>
     );
 };
