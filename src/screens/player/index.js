@@ -93,7 +93,7 @@ const Player = () => {
     if(!player.mixEnabled) {
       return(
         <>
-          {/* <VizLogger/> */}
+          <VizLogger/>
           <VizControls/>
           <Viz/>
         </>

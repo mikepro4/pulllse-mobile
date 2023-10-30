@@ -26,8 +26,6 @@ function App() {
   const programRef = useRef(null);
   const glRef = useRef(null);
   const framebuffers = useRef([null, null]);
-  const framebuffer = useRef(null);
-  const texture = useRef(null);
   const textures = useRef([null, null]);
   const currentIdx = useRef(0)
   const boldness = useRef(0)
@@ -74,10 +72,8 @@ function App() {
           }
 
       }
-
-      vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
 			
-      gl_FragColor = vec4(color[0],color[1],color[2],1.0) - prevFrameColor * 0.5;
+      gl_FragColor = vec4(color[0],color[1],color[2],1.0);
   }
 
     `);
@@ -111,25 +107,26 @@ function App() {
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
     // Framebuffer and Texture Setup
-    const fb = gl.createFramebuffer();
-    const tex = gl.createTexture();
-    
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.drawingBufferWidth, gl.drawingBufferHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-  
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-  
-    framebuffer.current = fb;
-    texture.current = tex;
-  
+    for (let i = 0; i < 2; i++) {
+      const fb = gl.createFramebuffer();
+      const tex = gl.createTexture();
+
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.drawingBufferWidth, gl.drawingBufferHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+
+      framebuffers.current[i] = fb;
+      textures.current[i] = tex;
+    }
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.bindTexture(gl.TEXTURE_2D, null);
-  
 
     frameTicker()
   };
@@ -138,6 +135,7 @@ function App() {
 
     const gl = glRef.current;
     const program = programRef.current;
+    const textureUnit = 1 - currentIdx.current;
 
 
     gl.useProgram(program);
@@ -146,33 +144,40 @@ function App() {
     const colorLocation = gl.getUniformLocation(program, 'u_color');
     const boldnessLocation = gl.getUniformLocation(program, 'boldness');
     const timeLocation = gl.getUniformLocation(program, 'time');
+    const prevFrameLocation = gl.getUniformLocation(program, 'u_prevFrame');
     const resolutionLocation = gl.getUniformLocation(program, 'resolution');
 
     // Set uniform values
     gl.uniform4fv(colorLocation, color);
     gl.uniform1f(timeLocation, timeValue.current / 1000);  // Convert ms to seconds
     gl.uniform2f(resolutionLocation, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    if(boldness && boldness.current) {
-      gl.uniform1f(boldnessLocation, boldness.current);
-    }
+    gl.uniform1f(boldnessLocation, boldness.current);
+    console.log(shape.params.boldness)
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture.current);
-    gl.uniform1i(gl.getUniformLocation(program, 'u_prevFrame'), 0);
+    // Activate the texture unit, bind the texture, and set the uniform value
+    gl.activeTexture(gl.TEXTURE0 + textureUnit);
+    gl.bindTexture(gl.TEXTURE_2D, textures.current[textureUnit]);
+    gl.uniform1i(prevFrameLocation, textureUnit);
 
-    // Render to default framebuffer (null)
+
+
+    // Bind the current framebuffer
+
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffers.current[currentIdx.current ]);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+
+    // Render
     gl.clear(gl.COLOR_BUFFER_BIT);
+
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
 
-     // Now copy the rendered data to your texture for use in the next frame
-    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer.current);
-    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  
 
-    gl.clearColor(1.0, 0.0, 0.0, 1.0);  // clear to red
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    // Swap framebuffers and textures for next frame
+    currentIdx.current = textureUnit;
+
+
     gl.flush();
     gl.endFrameEXP();
 
@@ -193,9 +198,8 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if(boldness && shape && shape.params && shape.params.boldness) {
-      boldness.current = shape.params.boldness
-    }
+
+    boldness.current = shape.params.boldness
 
   }, [shape])
 
