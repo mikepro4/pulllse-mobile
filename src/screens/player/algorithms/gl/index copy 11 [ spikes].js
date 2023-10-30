@@ -45,10 +45,8 @@ function App() {
     const vertShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertShader, `
       attribute vec2 position;
-      varying vec2 vUv;
       void main() {
         gl_Position = vec4(position, 0, 1);
-        vUv = position * 0.5 + 0.5; 
       }
     `);
     gl.compileShader(vertShader);
@@ -60,9 +58,7 @@ function App() {
 
     uniform vec2 resolution;
     uniform float time;
-    varying vec2 vUv;
-
-
+      varying vec2 vUv;
      
     const float PI = 3.1415926535897932384626433832795;
     const float TAU = PI * 2.;
@@ -276,7 +272,7 @@ function App() {
     
       
     void main() {
-      vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+      vec2 uv = (gl_FragCoord.xy - resolution * .5) / resolution.yy + 0.5;
       
       float vTime = time * .5 ;
       float t = (time * .25) + length(uv -.5) ;
@@ -345,6 +341,7 @@ function App() {
       
       
         gl_FragColor = vec4(vec3(color.r, color.g, color.b), 1.0);
+      // gl_FragColor = prevFrameColor;
   }
 
     `);
