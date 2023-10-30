@@ -48,7 +48,7 @@ function App() {
       varying vec2 vUv;
       void main() {
         gl_Position = vec4(position, 0, 1);
-        vUv = position * 0.5 + 0.5; 
+        vUv = position * .5 + .5;; 
       }
     `);
     gl.compileShader(vertShader);
@@ -56,10 +56,13 @@ function App() {
     // Fragment Shader
     const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragShader, `
+    
     precision highp float;
-
-    uniform vec2 resolution;
+    uniform vec4 u_color;
     uniform float time;
+    uniform float boldness;
+    uniform sampler2D u_prevFrame;
+    uniform vec2 resolution;
     varying vec2 vUv;
 
 
@@ -342,9 +345,24 @@ function App() {
            color = mix(color, 1.-color, tri3);
       
            color = mix(color, 1.-color, tri4);
+
+      // float t = time*0.1;
+      float lineWidth = 0.002;
+      
+
+      // vec3 color = vec3(0.0);
+      for(int j = 0; j < 3; j++){
+        for(int i=0; i < 5; i++){
+          color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
+        }
+      }
+
+      vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
+			
+      gl_FragColor = vec4(color[0],color[1],color[2],1.0) - vec4(prevFrameColor[2], prevFrameColor[2], prevFrameColor[2], 1.0)*0.6;
       
       
-        gl_FragColor = vec4(vec3(color.r, color.g, color.b), 1.0);
+        // gl_FragColor = vec4(vec3(color.r, color.g, color.b), 1.0);
   }
 
     `);
