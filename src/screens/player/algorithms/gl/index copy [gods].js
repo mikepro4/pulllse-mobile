@@ -325,9 +325,9 @@ function App() {
       
     
       
-       tri1 = step(shape(rote, 3., sin(vTime)),  .5*boldness);
+       tri1 = step(shape(rote, 3., sin(vTime)),  .5);
       
-         tri2 = step(shape(roteC, 3., cos(vTime)), .5*boldness);
+         tri2 = step(shape(roteC, 3., cos(vTime)), .5);
       
       
       tri3 = step(shape(rote * 1.3, 3., sin(vTime * .65)),  .5);
@@ -351,18 +351,18 @@ function App() {
       
 
       // vec3 color = vec3(0.0);
-      // for(int j = 0; j < 3; j++){
-      //   for(int i=0; i < 5; i++){
-      //     color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
-      //   }
-      // }
+      for(int j = 0; j < 3; j++){
+        for(int i=0; i < 5; i++){
+          color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
+        }
+      }
 
       vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
 			
-      // gl_FragColor = vec4(color[0],color[1],color[2],1.0) - vec4(prevFrameColor[2], prevFrameColor[2], prevFrameColor[2], 1.0)*0.6;
+      gl_FragColor = vec4(color[0],color[1],color[2],1.0) - vec4(prevFrameColor[2], prevFrameColor[2], prevFrameColor[2], 1.0)*0.6;
       
       
-        gl_FragColor = vec4(vec3(color.r, color.g, color.b), 1.0);
+        // gl_FragColor = vec4(vec3(color.r, color.g, color.b), 1.0);
   }
 
     `);
