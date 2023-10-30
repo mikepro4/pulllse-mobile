@@ -77,7 +77,8 @@ function App() {
 
       vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
 			
-      gl_FragColor = vec4(color[0],color[1],color[2],1.0) - prevFrameColor * 0.5;
+      gl_FragColor = vec4(color[0],color[1],color[2],1.0) - prevFrameColor * 0.9;
+      // gl_FragColor = prevFrameColor;
   }
 
     `);
@@ -129,6 +130,10 @@ function App() {
   
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.bindTexture(gl.TEXTURE_2D, null);
+
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+      console.error('Framebuffer is not complete:', gl.checkFramebufferStatus(gl.FRAMEBUFFER));
+    }
   
 
     frameTicker()
@@ -157,22 +162,23 @@ function App() {
     }
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture.current);
-    gl.uniform1i(gl.getUniformLocation(program, 'u_prevFrame'), 0);
-
+   
     // Render to default framebuffer (null)
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
+    //  // Now copy the rendered data to your texture for use in the next frame
+    gl.uniform1i(gl.getUniformLocation(program, 'u_prevFrame'), 0);
 
-     // Now copy the rendered data to your texture for use in the next frame
     gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer.current);
-    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  
 
-    gl.clearColor(1.0, 0.0, 0.0, 1.0);  // clear to red
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.bindTexture(gl.TEXTURE_2D, texture.current);
+    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    // gl.clearColor(1.0, 1.0, 0.0, 0.0);  // clear to yellow
+    // gl.clear(gl.COLOR_BUFFER_BIT);
+
+   
     gl.flush();
     gl.endFrameEXP();
 
