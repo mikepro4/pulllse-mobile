@@ -78,7 +78,8 @@ function App() {
       // uv = rotation(sin(time)) * (uv - pivot) + pivot;
 
       vec2 pivot = vec2(0.0, 0.0);  // Center of the screen
-      uv = rotation(sin(time)) * (uv - pivot) + pivot;
+      // uv = rotation(sin(time)) * (uv - pivot) + pivot;
+      uv = rotation(0.9) * (uv - pivot) + pivot;
     	float t = time*0.1;
       float lineWidth = 0.0002;
       
