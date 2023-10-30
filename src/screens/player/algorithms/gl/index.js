@@ -74,10 +74,14 @@ function App() {
 
     	void main(void) {
     	vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-      vec2 pivot = gl_FragCoord.xy/resolution;
+      // vec2 pivot = gl_FragCoord.xy/resolution;
+      // uv = rotation(sin(time)) * (uv - pivot) + pivot;
+
+      vec2 pivot = vec2(0.0, 0.0);  // Center of the screen
       uv = rotation(sin(time)) * (uv - pivot) + pivot;
     	float t = time*0.1;
       float lineWidth = 0.0002;
+      
 
       vec3 color = vec3(0.0);
       for(int j = 0; j < 3; j++){
