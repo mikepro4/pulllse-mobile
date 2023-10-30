@@ -192,7 +192,7 @@ const VizControls = ({ preview }) => {
                         startInterval({ 
                             paramName: "boldness",
                             direction: "down",
-                            incrementDivider: 100000000
+                            incrementDivider: 100000
                         })
                     }}
                     onPressOut={() => {
@@ -208,7 +208,7 @@ const VizControls = ({ preview }) => {
                         startInterval({ 
                             paramName: "boldness",
                             direction: "up",
-                            incrementDivider: 100000000
+                            incrementDivider: 100000
                         })
                     }}
                     onPressOut={() => {

@@ -64,18 +64,31 @@ function App() {
       #define TWO_PI 6.2831853072
     	#define PI 3.14159265359
 
-    	precision highp float;
+
+      mat2 rotation(float angle) {
+        float s = sin(angle);
+        float c = cos(angle);
+        return mat2(c, -s, s, c);
+      }
+    
 
     	void main(void) {
     	vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-    	float t = time*0.05;
-        float lineWidth = boldness + 0.002;
+      vec2 pivot = gl_FragCoord.xy/resolution;
+      uv = rotation(sin(time)) * (uv - pivot) + pivot;
+    	float t = time*0.1;
+      float lineWidth = 0.0002;
 
-        vec3 color = vec3(0.0);
-        for(int j = 0; j < 3; j++){
-          for(int i=0; i < 5; i++){
-            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.6));
-          }
+      vec3 color = vec3(0.0);
+      for(int j = 0; j < 3; j++){
+        for(int i=0; i < 5; i++){
+          // color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(uv.x+uv.y, boldness);
+          // color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(uv.x + uv.y, boldness);
+          // color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
+          color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(uv.x + uv.y, boldness);
+          // color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
+          // color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*3.0 - length(uv) + mod(uv.x+uv.y, boldness));
+        }
 
       }
 
@@ -174,7 +187,7 @@ function App() {
     if(boldness && boldness.current) {
       gl.uniform1f(boldnessLocation, boldness.current);
     }
-    console.log(timeValue.current)
+    // console.log(timeValue.current)
 
     gl.activeTexture(gl.TEXTURE0);
 
@@ -213,7 +226,7 @@ function App() {
         frequency: 0.3,
         step: 0.3,
         rotation: 0.3,
-        boldness: 0.001
+        boldness: 0.01
       }))
     }, 1)
 
