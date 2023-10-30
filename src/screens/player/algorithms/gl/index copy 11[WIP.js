@@ -17,8 +17,6 @@ import {
   useComputedValue
 } from "@shopify/react-native-skia";
 
-// goddamin it works
-
 function App() {
   const clock = useClockValue();
   const dispatch = useDispatch();
@@ -71,6 +69,8 @@ function App() {
         for(int j = 0; j < 3; j++){
           for(int i=0; i < 5; i++){
             color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
+            
+            
           }
 
       }
@@ -112,24 +112,24 @@ function App() {
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
     // Framebuffer and Texture Setup
-    for (let i = 0; i < 2; i++) {
-      const fb = gl.createFramebuffer();
-      const tex = gl.createTexture();
-      
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.drawingBufferWidth, gl.drawingBufferHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    const fb = gl.createFramebuffer();
+    const tex = gl.createTexture();
     
-      gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-    
-      framebuffers.current[i] = fb;
-      textures.current[i] = tex;
-    }
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.drawingBufferWidth, gl.drawingBufferHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
   
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  
+    framebuffer.current = fb;
+    texture.current = tex;
+  
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
 
     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
       console.error('Framebuffer is not complete:', gl.checkFramebufferStatus(gl.FRAMEBUFFER));
@@ -143,12 +143,6 @@ function App() {
 
     const gl = glRef.current;
     const program = programRef.current;
-
-    const currIdx = currentIdx.current;
-    const prevIdx = (currentIdx.current + 1) % 2;
-
-    currentIdx.current = prevIdx;
-
 
 
     gl.useProgram(program);
@@ -168,20 +162,21 @@ function App() {
     }
 
     gl.activeTexture(gl.TEXTURE0);
-
-     // Render to default framebuffer (null)
+   
+    // Render to default framebuffer (null)
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-   
-    gl.bindTexture(gl.TEXTURE_2D, textures.current[prevIdx]);
+
+    //  // Now copy the rendered data to your texture for use in the next frame
     gl.uniform1i(gl.getUniformLocation(program, 'u_prevFrame'), 0);
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffers.current[currIdx]);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer.current);
 
-  
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.bindTexture(gl.TEXTURE_2D, texture.current);
+    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    // gl.clearColor(1.0, 1.0, 0.0, 0.0);  // clear to yellow
+    // gl.clear(gl.COLOR_BUFFER_BIT);
 
    
     gl.flush();
