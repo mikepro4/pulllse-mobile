@@ -19,10 +19,14 @@ import {
 
 // goddamin it works
 
+let animationFrameId;
+
 function App() {
   const clock = useClockValue();
   const dispatch = useDispatch();
   const [color, setColor] = useState([1.0, 0.5, 0.0, 1.0]);
+  const [animating, setAnimating] = useState(false);
+  const frameHandle = useRef(null);
   const shape = useSelector((state) => state.shape);
   const timeValue = useComputedValue(() => (clock.current), [clock]);
   const programRef = useRef(null);
@@ -70,14 +74,14 @@ function App() {
         vec3 color = vec3(0.0);
         for(int j = 0; j < 3; j++){
           for(int i=0; i < 5; i++){
-            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
+            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.6));
           }
 
       }
 
       vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
 			
-      gl_FragColor = vec4(color[0],color[1],color[2],1.0) - prevFrameColor * 0.9;
+      gl_FragColor = vec4(color[0],color[1],color[2],1.0) - vec4(prevFrameColor[1], prevFrameColor[2], prevFrameColor[0], 1.0)*0.6;
       // gl_FragColor = prevFrameColor;
   }
 
@@ -139,7 +143,11 @@ function App() {
     frameTicker()
   };
 
-  const frameTicker = useCallback((time) => {
+  const frameTicker = useCallback(() => {
+    if(animationFrameId) {
+
+    if(frameHandle && glRef.current) {
+
 
     const gl = glRef.current;
     const program = programRef.current;
@@ -166,6 +174,7 @@ function App() {
     if(boldness && boldness.current) {
       gl.uniform1f(boldnessLocation, boldness.current);
     }
+    console.log(timeValue.current)
 
     gl.activeTexture(gl.TEXTURE0);
 
@@ -186,11 +195,18 @@ function App() {
    
     gl.flush();
     gl.endFrameEXP();
+  }
 
-    requestAnimationFrame(frameTicker);
-  }, [color]);
+    animationFrameId = requestAnimationFrame(frameTicker);
+  } else {
+    cancelAnimationFrame(animationFrameId);
+  }
+
+  }, []);
+
 
   useEffect(() => {
+    animationFrameId = requestAnimationFrame(frameTicker)
 
     setTimeout(() => {
       dispatch(setParams({
@@ -200,6 +216,14 @@ function App() {
         boldness: 0.001
       }))
     }, 1)
+
+    return () => {
+      // Your cleanup code here
+      console.log('Component will unmount');
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null
+      // frameHandle.current = null;
+    };
 
   }, [])
 
