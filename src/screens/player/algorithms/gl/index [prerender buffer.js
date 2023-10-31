@@ -37,6 +37,8 @@ function App() {
   const textures = useRef([null, null]);
   const currentIdx = useRef(0)
   const boldness = useRef(0)
+  const preRenderFramebuffer = useRef(null)
+  const preRenderTexture = useRef(null)
 
   const onContextCreate = (gl) => {
     glRef.current = gl;
@@ -64,6 +66,7 @@ function App() {
     uniform sampler2D u_prevFrame;
     uniform vec2 resolution;
     varying vec2 vUv;
+    uniform sampler2D u_preRenderTexture; 
 
     const int totalCategories = 111;
 
@@ -198,8 +201,10 @@ function App() {
 
         vec4 tempColor;
         
+        // tempColor = texture2D(u_preRenderTexture, gl_FragCoord.xy / resolution); 
+        // fragColor = vec4(colorFromValue(int(tempColor.r)), 1.0);
         fragColor = vec4(float(new), 0.0, 0.0, 1.0);
-        // fragColor = vec4(colorFromValue(getValue(gl_FragCoord.xy)), 1.0);
+        // fragColor = tempColor;
         // fragColor = tempColor;
 
 
@@ -257,6 +262,23 @@ function App() {
     const position = gl.getAttribLocation(program, 'position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+    const preRenderFramebuffer = gl.createFramebuffer();
+    const preRenderTexture = gl.createTexture();
+
+    gl.bindTexture(gl.TEXTURE_2D, preRenderTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.drawingBufferWidth, gl.drawingBufferHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, preRenderFramebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, preRenderTexture, 0);
+
+    preRenderFramebuffer.current = preRenderFramebuffer;
+    preRenderTexture.current = preRenderTexture;
+
 
     // Framebuffer and Texture Setup
     for (let i = 0; i < 2; i++) {
@@ -319,6 +341,10 @@ function App() {
     }
     // console.log(timeValue.current)
 
+    gl.activeTexture(gl.TEXTURE1);  // Use a different texture unit
+    gl.bindTexture(gl.TEXTURE_2D, preRenderTexture.current);
+    gl.uniform1i(gl.getUniformLocation(program, 'u_preRenderTexture'), 1);  // Tell the shader program about it
+
     gl.activeTexture(gl.TEXTURE0);
 
      // Render to default framebuffer (null)
@@ -330,6 +356,7 @@ function App() {
     gl.uniform1i(gl.getUniformLocation(program, 'u_prevFrame'), 0);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffers.current[currIdx]);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, preRenderFramebuffer.current);
 
   
     gl.clear(gl.COLOR_BUFFER_BIT);
