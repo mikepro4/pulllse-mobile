@@ -64,7 +64,10 @@ export { addRecording } from "./slices/recordingsSlice";
 export { addImage } from "./slices/imageSlice";
 export { switchTab, togglePlayer, resetScroll, toggleMap  } from "./slices/tabSlice";
 export { toggleDrawer, toggleNotification } from "./slices/appSlice";
-export { setParams } from "./slices/shapeSlice";
+export { 
+  setParams,
+  setShader
+} from "./slices/shapeSlice";
 
 export {
   toggleMix,
@@ -73,5 +76,5 @@ export {
   setLayers,
   changeLayerParam,
   setActiveLayer,
-  setEdited
+  setEdited,
 } from "./slices/playerSlice";

@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  params: null
+  params: null,
+  shader: null
 };
 
 const shapeSlice = createSlice({
@@ -11,11 +12,16 @@ const shapeSlice = createSlice({
     setParams: (state, action) => {
       state.params = action.payload;
     },
+
+    setShader: (state, action) => {
+      state.shader = action.payload;
+    },
   }
 });
 
 export const { 
-  setParams
+  setParams,
+  setShader
 } = shapeSlice.actions;
 
 export const shapeReducer = shapeSlice.reducer;

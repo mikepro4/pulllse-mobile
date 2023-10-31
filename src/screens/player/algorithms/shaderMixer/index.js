@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { GLView } from 'expo-gl';
 
 import {
-    setParams
+    setParams,
+    setShader
 } from "../../../../redux"
 
 
@@ -69,7 +70,8 @@ function App() {
     const clock = useClockValue();
     const dispatch = useDispatch();
     const [color, setColor] = useState([1.0, 0.5, 0.0, 1.0]);
-    const [animating, setAnimating] = useState(false);
+    const [animating, setAnimating] = useState(false)
+    const [contextResetKey, setContextResetKey] = useState(false);
     const frameHandle = useRef(null);
     const shape = useSelector((state) => state.shape);
     const timeValue = useComputedValue(() => (clock.current), [clock]);
@@ -117,34 +119,44 @@ function App() {
         return updatedShaderCode;
     }
 
-    const onContextCreate = (gl) => {
-        glRef.current = gl;
+    const compileAndLoadShader = (vertexCode, fragmentCode) => {
+        const gl = glRef.current;
 
-        // Vertex Shader
-        const vertShader = gl.createShader(gl.VERTEX_SHADER);
-        gl.shaderSource(vertShader, vertexShader)
-        gl.compileShader(vertShader);
+        if(gl) {
+            // Vertex Shader
+            const vertShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertShader, vertexCode);
+            gl.compileShader(vertShader);
 
-        console.log(replaceTrigFunctions(fragmentShader))
+            // Fragment Shader
+            const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragShader, fragmentCode);
+            gl.compileShader(fragShader);
 
-        
+            // Program
+            const program = gl.createProgram();
+            gl.attachShader(program, vertShader);
+            gl.attachShader(program, fragShader);
+            gl.linkProgram(program);
 
-        // Fragment Shader
-        const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragShader, fragmentShader);
-        gl.compileShader(fragShader);
-        var compileError = gl.getShaderInfoLog(fragShader);
-        if (compileError) {
-            console.error(compileError);
+            programRef.current = program;
+
+            // Attribute
+            const position = gl.getAttribLocation(program, 'position');
+            gl.enableVertexAttribArray(position);
+            gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
         }
+        
+    };
 
-        // Program
-        const program = gl.createProgram();
-        gl.attachShader(program, vertShader);
-        gl.attachShader(program, fragShader);
-        gl.linkProgram(program);
-        gl.useProgram(program);
-        programRef.current = program;
+
+    const onContextCreate = (gl) => {
+        console.log('onContextCreate');
+        glRef.current = gl;
+        
+        setTimeout(() => {
+            compileAndLoadShader(vertexShader, shape.shader); 
+        }, 1000);
 
         // Buffer
         const buffer = gl.createBuffer();
@@ -156,10 +168,7 @@ function App() {
             1.0, 1.0,
         ]), gl.STATIC_DRAW);
 
-        // Attribute
-        const position = gl.getAttribLocation(program, 'position');
-        gl.enableVertexAttribArray(position);
-        gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+        
 
         // Framebuffer and Texture Setup
         for (let i = 0; i < 2; i++) {
@@ -253,6 +262,7 @@ function App() {
 
     useEffect(() => {
         animationFrameId = requestAnimationFrame(frameTicker)
+        setContextResetKey(new Date())
 
         setTimeout(() => {
             dispatch(setParams({
@@ -261,6 +271,8 @@ function App() {
                 rotation: 0.3,
                 boldness: 0.01
             }))
+
+            dispatch(setShader(fragmentShader))
         }, 1)
 
         return () => {
@@ -278,15 +290,31 @@ function App() {
             boldness.current = shape.params.boldness
         }
 
-    }, [shape])
+    }, [shape.params])
+
+    useEffect(() => {
+        // ... (rest of your code)
+        cancelAnimationFrame(animationFrameId);
+            animationFrameId = null
+
+        setTimeout(() => {
+            // ... (rest of your code)
+            setContextResetKey(new Date())
+            animationFrameId = requestAnimationFrame(frameTicker)
+            // compileAndLoadSxhader(vertexShader, shape.shader);  // Update shader
+        }, 100);
+
+        // ... (rest of your code)
+    }, [shape.shader]);
 
 
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
+        <View key={contextResetKey} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
             {/* <GLView style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0}} onContextCreate={onContextCreate} /> */}
             
             <GLView
+                
                 style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
                 onContextCreate={onContextCreate}
             />
