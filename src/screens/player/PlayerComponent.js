@@ -16,8 +16,10 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomText from "../../components/text";
 import Icon from "../../components/icon";
 import { useFocusEffect } from "@react-navigation/native";
+import { modifyObjectArray } from "../../components/soundbar/soundbarThunk";
 
 import Slider from "@react-native-community/slider";
+import SoundBar from "../../components/soundbar";
 
 export default function App() {
   const [name, setName] = useState("Recording");
@@ -26,7 +28,10 @@ export default function App() {
   const [sound, setSound] = useState();
 
   const [duration, setDuration] = useState(0);
+  console.log("duration", duration);
   const [playbackPosition, setPlaybackPosition] = useState(0);
+  console.log("playbackPosition", playbackPosition);
+  const [soundLevels, setSoundLevels] = useState([]);
 
   const [isLooping, setIsLooping] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -34,7 +39,7 @@ export default function App() {
 
   const dispatch = useDispatch();
   const storedUserInfo = useSelector((state) => state.user.userInfo);
-  console.log(isLooping);
+
   useEffect(() => {
     if (sound) {
       // Updating the playback position regularly
@@ -54,7 +59,8 @@ export default function App() {
         }
       });
     }
-  }, [sound]);
+  }, [sound, isLooping]);
+
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -69,7 +75,10 @@ export default function App() {
   useEffect(() => {
     RNSoundLevel.onNewFrame = (data) => {
       // Output the sound level data
-      console.log("Sound level info", data);
+
+      if (data.id % 2 === 0) {
+        setSoundLevels((prevLevels) => [...prevLevels, data]);
+      }
     };
 
     return async () => {
@@ -102,7 +111,7 @@ export default function App() {
       setPlaybackPosition(0);
       setDuration(0);
       setBlob(undefined);
-
+      setSoundLevels([]);
       setName("Recording");
       setIsLooping(false);
     } catch (error) {
@@ -167,6 +176,8 @@ export default function App() {
       setDuration(status.durationMillis);
 
       setSound(sound);
+      const modifiedObjects = modifyObjectArray(soundLevels);
+      setSoundLevels(modifiedObjects);
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
@@ -245,7 +256,7 @@ export default function App() {
     <View
       style={{
         flex: 1,
-
+        backgroundColor: "blue",
         position: "relative",
         zIndex: 1,
       }}
@@ -302,7 +313,11 @@ export default function App() {
           </>
         )}
       </View>
-
+      <SoundBar
+        duration={duration}
+        playbackPosition={playbackPosition}
+        barData={soundLevels}
+      />
       <TouchableOpacity onPress={makePulse}>
         <View style={styles.goContainer}>
           <CustomText style={{ fontWeight: "bold", fontSize: 24 }}>
