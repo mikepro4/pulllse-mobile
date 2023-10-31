@@ -1,22 +1,130 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { Button, StyleSheet, Text, View, TextInput } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { Audio } from "expo-av";
 import * as Sharing from "expo-sharing";
+import RNSoundLevel from "react-native-sound-level";
 import { uploadAudio, createPulse } from "../../redux";
 import { useDispatch, useSelector } from "react-redux";
+import CustomText from "../../components/text";
+import Icon from "../../components/icon";
+import { useFocusEffect } from "@react-navigation/native";
+
+import Slider from "@react-native-community/slider";
 
 export default function App() {
   const [name, setName] = useState("Recording");
   const [recording, setRecording] = useState();
-  const [isRecording, setIsRecording] = useState(false);
-  const [sound, setSound] = useState();
-  const storedUserInfo = useSelector((state) => state.user.userInfo);
-
   const [blob, setBlob] = useState();
-  const [duration, setDuration] = useState();
+  const [sound, setSound] = useState();
+
+  const [duration, setDuration] = useState(0);
+  const [playbackPosition, setPlaybackPosition] = useState(0);
+
+  const [isLooping, setIsLooping] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   const dispatch = useDispatch();
+  const storedUserInfo = useSelector((state) => state.user.userInfo);
+  console.log(isLooping);
+  useEffect(() => {
+    if (sound) {
+      // Updating the playback position regularly
+      sound.setOnPlaybackStatusUpdate(async (status) => {
+        if (status.didJustFinish) {
+          // Check if playback just finished and user had pressed play
+          setPlaybackPosition(0); // Reset the slider to the initial position
+          await sound.setPositionAsync(0);
+          if (isLooping) {
+            setIsPlaying(true);
+          }
+          if (!isLooping) {
+            setIsPlaying(false);
+          }
+        } else {
+          setPlaybackPosition(status.positionMillis); // Otherwise, continue updating the slider position
+        }
+      });
+    }
+  }, [sound]);
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // This function will be executed when the screen loses focus
+        if (isRecording) {
+          stopRecording();
+        }
+      };
+    }, [isRecording]) // Dependencies for useCallback
+  );
+
+  useEffect(() => {
+    RNSoundLevel.onNewFrame = (data) => {
+      // Output the sound level data
+      console.log("Sound level info", data);
+    };
+
+    return async () => {
+      // Ensure to stop the monitor
+      RNSoundLevel.stop();
+    };
+  }, []);
+
+  const reset = async () => {
+    try {
+      // If there's a recording in progress, stop it
+      if (isRecording && recording) {
+        await recording.stopAndUnloadAsync();
+      }
+
+      // If something is playing, stop it
+      if (sound) {
+        await sound.stopAsync();
+        if (sound._loaded) {
+          // Check if sound is loaded before trying to unload
+          await sound.unloadAsync();
+        }
+      }
+
+      // Reset state
+      setRecording(undefined);
+      setSound(undefined);
+      setIsRecording(false);
+      setIsPlaying(false);
+      setPlaybackPosition(0);
+      setDuration(0);
+      setBlob(undefined);
+
+      setName("Recording");
+      setIsLooping(false);
+    } catch (error) {
+      console.error("Error resetting:", error);
+    }
+  };
+
+  const onSliderValueChange = async (value) => {
+    if (sound) {
+      await sound.setPositionAsync(value);
+      setPlaybackPosition(value);
+    }
+  };
+
+  const toggleLooping = async () => {
+    try {
+      await sound.setIsLoopingAsync(!isLooping); // Toggle the looping status
+      setIsLooping(!isLooping);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const startRecording = async () => {
     try {
@@ -28,7 +136,7 @@ export default function App() {
           playsInSilentModeIOS: true,
           staysActiveInBackground: true,
         });
-
+        RNSoundLevel.start();
         const newRecording = new Audio.Recording();
         await newRecording.prepareToRecordAsync(
           Audio.RecordingOptionsPresets.HIGH_QUALITY
@@ -44,6 +152,7 @@ export default function App() {
   };
 
   const stopRecording = async () => {
+    RNSoundLevel.stop();
     try {
       await recording.stopAndUnloadAsync();
       const uri = recording.getURI(); // URI of the recorded file
@@ -63,17 +172,18 @@ export default function App() {
       });
       setIsRecording(false); // Set recording status to false
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
-  const playRecording = async () => {
-    try {
-      await sound.setPositionAsync(0);
+  const togglePlayback = async () => {
+    if (isPlaying) {
+      await sound.pauseAsync();
+    } else {
+      await sound.setPositionAsync(playbackPosition);
       await sound.playAsync();
-    } catch (error) {
-      console.error(error);
     }
+    setIsPlaying(!isPlaying); // Toggle the isPlaying state
   };
 
   const pulse = async (data) => {
@@ -96,33 +206,178 @@ export default function App() {
     setName("Recording");
   };
 
+  const rederPlayerButtons = () => {
+    if (sound) {
+      return (
+        <TouchableOpacity onPress={togglePlayback}>
+          <View style={styles.btnContainer}>
+            <Icon name={isPlaying ? "pause" : "play"} />
+          </View>
+        </TouchableOpacity>
+      );
+    } else {
+      return !isRecording ? (
+        <TouchableOpacity onPress={startRecording}>
+          <View style={styles.btnContainer}>
+            <View style={styles.startRec} />
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity onPress={stopRecording}>
+          <View style={styles.stopRec}>
+            <Icon name="stopRec" />
+          </View>
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  function getDurationFormatted(millis) {
+    const minutes = millis / 1000 / 60;
+    const minutesDisplay = Math.floor(minutes);
+    const seconds = (minutes - minutesDisplay) * 60;
+    const secondsDisplay =
+      seconds < 10 ? `0${Math.round(seconds)}` : Math.round(seconds);
+    return `${minutesDisplay}:${secondsDisplay}`;
+  }
+
   return (
-    <View style={{ flex: 1, paddingTop: 150, position: "relative", zIndex: 1 }}>
+    <View
+      style={{
+        flex: 1,
+
+        position: "relative",
+        zIndex: 1,
+      }}
+    >
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={(value) => setName(value)}
         placeholder="Recording"
       />
-      <Button title="Start Recording" onPress={startRecording} />
-      <Button title="Stop Recording" onPress={stopRecording} />
-      <Button title="Play Recording" onPress={playRecording} />
-      <Button title="Create Pulse" onPress={makePulse} />
-      <Text>{isRecording ? "Recording..." : "Not Recording"}</Text>
+      <View style={styles.buttonSlider}>
+        {rederPlayerButtons()}
+        {sound && (
+          <>
+            <View style={styles.sliderContainer}>
+              <Slider
+                style={{ width: 300, height: 40 }}
+                minimumValue={0}
+                maximumValue={duration || 1}
+                value={playbackPosition}
+                onSlidingComplete={onSliderValueChange}
+                minimumTrackTintColor="#ccc"
+                maximumTrackTintColor="#444"
+              />
+              <View style={styles.duration}>
+                <CustomText>
+                  {getDurationFormatted(playbackPosition)}
+                </CustomText>
+                <CustomText>{getDurationFormatted(duration)}</CustomText>
+              </View>
+            </View>
+            <View style={styles.trashLoop}>
+              <TouchableOpacity onPress={reset}>
+                <View style={styles.trashIcon}>
+                  <Icon
+                    name="trashIcon"
+                    style={{
+                      color: "#F25219",
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={toggleLooping}>
+                <View style={styles.trashIcon}>
+                  <Icon
+                    name="loopIcon"
+                    style={{
+                      color: isLooping ? "#6D55FF" : "#fff",
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+      </View>
+
+      <TouchableOpacity onPress={makePulse}>
+        <View style={styles.goContainer}>
+          <CustomText style={{ fontWeight: "bold", fontSize: 24 }}>
+            Go
+          </CustomText>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  input: {
-    height: 40,
+  trashLoop: {
+    gap: 5,
+  },
+  buttonSlider: {
+    flexDirection: "row",
+    gap: 15,
+    alignItems: "center",
+    justifyContent: "start",
+    marginLeft: 15,
+    height: 100,
+  },
+  sliderContainer: {
     width: 300,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: "#fff", // white background
+  },
+  duration: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  startRec: {
+    width: 20,
+    height: 20,
+    backgroundColor: "#000",
+    borderRadius: 100,
+  },
+  stopRec: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#F25219",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+  },
+
+  goContainer: {
+    width: 70,
+    height: 70,
+    backgroundColor: "#29FF7F",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+    marginTop: 100,
+  },
+  btnContainer: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+  },
+  trashIcon: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  input: {
+    height: 30,
+    marginLeft: 15,
+    color: "#fff",
+
+    fontSize: 18,
   },
   container: {
     flex: 1,
