@@ -294,15 +294,15 @@ function App() {
 
     useEffect(() => {
         // ... (rest of your code)
-        cancelAnimationFrame(animationFrameId);
-            animationFrameId = null
+        // cancelAnimationFrame(animationFrameId);
+        //     animationFrameId = null
 
         setTimeout(() => {
             // ... (rest of your code)
             setContextResetKey(new Date())
-            animationFrameId = requestAnimationFrame(frameTicker)
+            // animationFrameId = requestAnimationFrame(frameTicker)
             // compileAndLoadSxhader(vertexShader, shape.shader);  // Update shader
-        }, 100);
+        }, 1);
 
         // ... (rest of your code)
     }, [shape.shader]);
