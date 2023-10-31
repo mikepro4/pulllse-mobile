@@ -256,38 +256,42 @@ export default function App() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "blue",
+
         position: "relative",
         zIndex: 1,
       }}
     >
-      <TextInput
-        style={styles.input}
-        value={name}
-        onChangeText={(value) => setName(value)}
-        placeholder="Recording"
-      />
       <View style={styles.buttonSlider}>
         {rederPlayerButtons()}
+        <View style={styles.sliderContainer}>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={(value) => setName(value)}
+            placeholder="Recording"
+          />
+          <SoundBar
+            duration={duration}
+            playbackPosition={playbackPosition}
+            barData={soundLevels}
+            onSeek={async (position) => {
+              await sound.setPositionAsync(position); // Assuming 'sound' is your sound object
+              setPlaybackPosition(position);
+            }}
+          />
+          {sound && (
+            <View style={styles.duration}>
+              <CustomText style={{ fontSize: 14 }}>
+                {getDurationFormatted(playbackPosition)}
+              </CustomText>
+              <CustomText style={{ fontSize: 14 }}>
+                {getDurationFormatted(duration)}
+              </CustomText>
+            </View>
+          )}
+        </View>
         {sound && (
           <>
-            <View style={styles.sliderContainer}>
-              <Slider
-                style={{ width: 300, height: 40 }}
-                minimumValue={0}
-                maximumValue={duration || 1}
-                value={playbackPosition}
-                onSlidingComplete={onSliderValueChange}
-                minimumTrackTintColor="#ccc"
-                maximumTrackTintColor="#444"
-              />
-              <View style={styles.duration}>
-                <CustomText>
-                  {getDurationFormatted(playbackPosition)}
-                </CustomText>
-                <CustomText>{getDurationFormatted(duration)}</CustomText>
-              </View>
-            </View>
             <View style={styles.trashLoop}>
               <TouchableOpacity onPress={reset}>
                 <View style={styles.trashIcon}>
@@ -313,11 +317,15 @@ export default function App() {
           </>
         )}
       </View>
-      <SoundBar
-        duration={duration}
-        playbackPosition={playbackPosition}
-        barData={soundLevels}
-      />
+      {/* <Slider
+        style={{ width: 300, height: 40 }}
+        minimumValue={0}
+        maximumValue={duration || 1}
+        value={playbackPosition}
+        onSlidingComplete={onSliderValueChange}
+        minimumTrackTintColor="#ccc"
+        maximumTrackTintColor="#444"
+      /> */}
       <TouchableOpacity onPress={makePulse}>
         <View style={styles.goContainer}>
           <CustomText style={{ fontWeight: "bold", fontSize: 24 }}>
@@ -347,6 +355,9 @@ const styles = StyleSheet.create({
   duration: {
     flexDirection: "row",
     justifyContent: "space-between",
+    position: "absolute",
+    bottom: -20,
+    width: 300,
   },
   startRec: {
     width: 20,
@@ -389,10 +400,11 @@ const styles = StyleSheet.create({
 
   input: {
     height: 30,
-    marginLeft: 15,
     color: "#fff",
-
+    position: "absolute",
     fontSize: 18,
+    zIndex: 1000,
+    bottom: 50,
   },
   container: {
     flex: 1,
