@@ -1,0 +1,39 @@
+GLSL (OpenGL Shading Language) provides a variety of built-in functions that you can use within your shader programs. Here are some of the functions that are similar to `sin()` in terms of being trigonometric or mathematical functions, along with a brief description of each:
+
+1. **Trigonometric Functions**:
+   - `cos(float angle)`: Computes the cosine of the angle.
+   - `tan(float angle)`: Computes the tangent of the angle.
+   - `asin(float x)`: Computes the arc sine of x.
+   - `acos(float x)`: Computes the arc cosine of x.
+   - `atan(float y, float x)`: Computes the arc tangent of y/x.
+   - `atan(float y_over_x)`: Overloaded version, computes the arc tangent of y_over_x.
+   - `sinh(float x)`: Computes the hyperbolic sine of x.
+   - `cosh(float x)`: Computes the hyperbolic cosine of x.
+   - `tanh(float x)`: Computes the hyperbolic tangent of x.
+   - `radians(float degrees)`: Converts degrees to radians.
+   - `degrees(float radians)`: Converts radians to degrees.
+
+2. **Exponential Functions**:
+   - `pow(float base, float exponent)`: Raises base to the power of exponent.
+   - `exp(float x)`: Computes e raised to the power of x.
+   - `log(float x)`: Computes the natural logarithm of x.
+   - `exp2(float x)`: Computes 2 raised to the power of x.
+   - `log2(float x)`: Computes the base 2 logarithm of x.
+   - `sqrt(float x)`: Computes the square root of x.
+   - `inversesqrt(float x)`: Computes the reciprocal of the square root of x.
+
+3. **Common Functions**:
+   - `abs(float x)`: Computes the absolute value of x.
+   - `sign(float x)`: Computes the sign of x.
+   - `floor(float x)`: Computes the floor of x.
+   - `ceil(float x)`: Computes the ceiling of x.
+   - `fract(float x)`: Computes the fractional part of x.
+   - `mod(float x, float y)`: Computes the modulus of x and y.
+   - `min(float x, float y)`: Returns the lesser of x and y.
+   - `max(float x, float y)`: Returns the greater of x and y.
+   - `clamp(float x, float minVal, float maxVal)`: Clamps x to the range [minVal, maxVal].
+   - `mix(float x, float y, float a)`: Computes a linear blend of x and y.
+   - `step(float edge, float x)`: Returns 0.0 if x < edge, otherwise it returns 1.0.
+   - `smoothstep(float edge0, float edge1, float x)`: Returns 0.0 if x <= edge0 and 1.0 if x >= edge1 and performs smooth Hermite interpolation between 0 and 1 when edge0 < x < edge1.
+
+These functions are just a subset of the available built-in functions in GLSL, but they are some of the most commonly used mathematical and trigonometric functions that you might find useful in your shader programming.

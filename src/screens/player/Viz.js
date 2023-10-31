@@ -4,6 +4,7 @@ import CustomText from "../../components/text";
 // import Algorithms from './algorithms';
 import Ethereal from './algorithms/ethereal';
 import GL from './algorithms/gl';
+import ShaderMixer from './algorithms/shaderMixer';
 
 const Viz = ({ preview, layers }) => {
     // const activeLayer = layers.filter(item => item.position === 2);
@@ -15,7 +16,7 @@ const Viz = ({ preview, layers }) => {
                 )
             })} */}
 
-            <GL preview={preview}/>
+            <ShaderMixer preview={preview}/>
         </View>
     );
 };
