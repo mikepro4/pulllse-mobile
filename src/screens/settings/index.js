@@ -13,6 +13,7 @@ const Settings = () => {
       <View style={styles.header}>
         <SettingsHeader />
       </View>
+
       <PlayerComponent />
     </View>
   );

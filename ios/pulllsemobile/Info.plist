@@ -86,5 +86,16 @@
     <string>Need for maps</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>This sample uses the microphone to analyze sound level.</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+    <dict>
+        <key>CFBundleURLName</key>
+        <string>com.yourappname</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>pulse</string>
+        </array>
+    </dict>
+    </array>
   </dict>
 </plist>

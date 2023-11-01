@@ -23,11 +23,17 @@ import Pause from "./pause";
 import StopRec from "./stopRec";
 import LoopIcon from "./loopIcon";
 import TrashIcon from "./trash";
+import SpotifyIcon from "./spotifyIcon";
+import AppleIcon from "./appleIcon";
 
 const Icon = ({ name, style }) => {
   switch (name) {
     case "trashIcon":
       return <TrashIcon style={style} />;
+    case "appleIcon":
+      return <AppleIcon style={style} />;
+    case "spotifyIcon":
+      return <SpotifyIcon style={style} />;
     case "loopIcon":
       return <LoopIcon style={style} />;
     case "stopRec":

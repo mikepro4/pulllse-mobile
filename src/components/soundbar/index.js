@@ -2,7 +2,13 @@ import React from "react";
 import { Canvas, Line, vec } from "@shopify/react-native-skia";
 import { View, TouchableOpacity, PanResponder } from "react-native";
 
-const SoundBar = ({ barData, duration, playbackPosition, onSeek }) => {
+const SoundBar = ({
+  barData,
+  duration,
+  playbackPosition,
+  onSeek,
+  isRecording,
+}) => {
   // Constants for canvas size and calculation
   const canvasWidth = 300;
   const canvasHeight = 50;
@@ -50,11 +56,14 @@ const SoundBar = ({ barData, duration, playbackPosition, onSeek }) => {
               // Calculate the height of the bar relative to the canvasHeight
               const barHeight = Math.max(normalizedValue, 1) * 0.7; // Ensure a minimum height
 
-              const xPos = index * (barWidth + gap); // Modified this line
+              const xPos = index * (barWidth + gap) + 2; // Modified this line
 
               const barIndexPercentage = (index / barData.length) * 100;
-              const barColor =
-                barIndexPercentage <= playbackPercentage ? "#fff" : "#555"; // #fff is active, #555 is inactive
+              const barColor = isRecording
+                ? "#FFB945"
+                : barIndexPercentage <= playbackPercentage
+                ? "#fff"
+                : "#555"; // #fff is active, #555 is inactive
 
               return (
                 <Line

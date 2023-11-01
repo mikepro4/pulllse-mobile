@@ -20,6 +20,7 @@ import { modifyObjectArray } from "../../components/soundbar/soundbarThunk";
 
 import Slider from "@react-native-community/slider";
 import SoundBar from "../../components/soundbar";
+import SignInWithService from "../settings/SignInWithService";
 
 export default function App() {
   const [name, setName] = useState("Recording");
@@ -278,6 +279,7 @@ export default function App() {
               await sound.setPositionAsync(position); // Assuming 'sound' is your sound object
               setPlaybackPosition(position);
             }}
+            isRecording={isRecording}
           />
           {sound && (
             <View style={styles.duration}>
@@ -326,6 +328,7 @@ export default function App() {
         minimumTrackTintColor="#ccc"
         maximumTrackTintColor="#444"
       /> */}
+      <SignInWithService />
       <TouchableOpacity onPress={makePulse}>
         <View style={styles.goContainer}>
           <CustomText style={{ fontWeight: "bold", fontSize: 24 }}>
