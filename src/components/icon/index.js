@@ -19,6 +19,7 @@ import Play from "./play";
 import Loader from "./loader";
 import Feed from "./feed";
 import Cog from "./cog";
+import ArrowRight from "./arrowRight";
 
 
 const Icon = ({ name, style }) => {
@@ -63,6 +64,8 @@ const Icon = ({ name, style }) => {
             return <Feed style={style} />
         case 'cog':
             return <Cog style={style} />
+        case 'arrow_right':
+            return <ArrowRight style={style} />
         default:
             return
     }

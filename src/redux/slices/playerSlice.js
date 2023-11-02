@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   mixEnabled: false,
   edited: false,
+  originalPulse: null,
+  editedPulse: null
 };
 
 const playerSlice = createSlice({
