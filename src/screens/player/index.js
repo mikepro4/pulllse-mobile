@@ -39,50 +39,6 @@ const Player = () => {
 
   useEffect(() => {
     animateIn();
-    dispatch(setLayers(
-      [
-        {
-          algorithm: "ethereal",
-          position: 0,
-          params: {
-            frequency: 0.1,
-            step: 0.1,
-            rotation: 0.1,
-            boldness: 0.1
-          }
-        },
-        {
-          algorithm: "ethereal",
-          position: 1,
-          params: {
-            frequency: 0.2,
-            step: 0.2,
-            rotation: 0.2,
-            boldness: 0.2
-          }
-        },
-        {
-          algorithm: "ethereal",
-          position: 2,
-          params: {
-            frequency: 0.3,
-            step: 0.3,
-            rotation: 0.3,
-            boldness: 0.3
-          }
-        },
-        {
-          algorithm: "ethereal",
-          position: 3,
-          params: {
-            frequency: 0.4,
-            step: 0.4,
-            rotation: 0.4,
-            boldness: 0.4
-          }
-        }
-      ]
-    ))
   }, []);
 
   const animatedStyles = useAnimatedStyle(() => ({
@@ -90,19 +46,26 @@ const Player = () => {
   }));
 
   const renderMainArea = () => {
-    if(!player.mixEnabled) {
-      return(
-        <>
-          <VizLogger/>
-          <VizControls/>
-          <Viz/>
-        </>
-      )
-    } else {
-      return(
-        <Mixer/>
-      )
-    }
+    // if(!player.mixEnabled) {
+    //   return(
+    //     <>
+    //       <VizLogger/>
+    //       <VizControls/>
+    //       <Viz/>
+    //     </>
+    //   )
+    // } else {
+    //   return(
+    //     <Mixer/>
+    //   )
+    // }
+
+    return(<>
+      <VizLogger/>
+      <VizControls/>
+      <Viz/>
+    </>)
+
   }
 
   return (

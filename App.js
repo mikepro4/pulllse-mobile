@@ -165,16 +165,6 @@ const App = () => {
             onPress={close}
           />
         )}
-        <Drawer ref={ref}>
-          <ScrollView style={{ flex: 1, height: 3000 }}>
-            <Text style={{ color: "white", paddingHorizontal: 20 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabre,
-              nulla non pvel pellentesque ipsum tellus vitae ex. Nullam
-              fringilla, dui vitae euismod placerat, ligula tortor aliquam urna,
-              sit amet rutrum arcu turpis non ex.
-            </Text>
-          </ScrollView>
-        </Drawer>
 
         {app.drawerOpen && <Overlay/> }
         <Drawer ref={ref} />

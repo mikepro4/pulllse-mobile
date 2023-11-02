@@ -51,7 +51,7 @@ const SimpleView = () => {
                     // syntaxStyle={CodeEditorSyntaxStyles.atomOneDark}
                     autoFocus={false}
                     showLineNumbers={false}
-                    initialValue={shape.shader}
+                    initialValue={shape.viz.main.source}
                     onChange={(code) => {
                         setCode(code)
                     }
