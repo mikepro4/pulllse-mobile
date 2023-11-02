@@ -68,7 +68,8 @@ export {
   setParams,
   setShader,
   setSource,
-  setUniforms
+  setUniforms,
+  setViz
 } from "./slices/shapeSlice";
 
 export {

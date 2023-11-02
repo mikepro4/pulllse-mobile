@@ -4,8 +4,7 @@ const initialState = {
   params: null,
   shader: null,
   viz: {
-    id: "1",
-
+    id: null,
     main: {
       source: null,
       uniforms: null
@@ -27,6 +26,10 @@ const shapeSlice = createSlice({
 
     setShader: (state, action) => {
       state.shader = action.payload;
+    },
+
+    setViz: (state, action) => {
+      state.viz = action.payload;
     },
 
     setSource: (state, action) => {
@@ -59,7 +62,8 @@ export const {
   setParams,
   setShader,
   setSource,
-  setUniforms
+  setUniforms,
+  setViz
 } = shapeSlice.actions;
 
 export const shapeReducer = shapeSlice.reducer;

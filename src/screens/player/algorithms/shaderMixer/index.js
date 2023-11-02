@@ -7,7 +7,8 @@ import {
     setParams,
     setShader,
     setSource,
-    setUniforms
+    setUniforms,
+    setViz
 } from "../../../../redux"
 
 
@@ -35,9 +36,10 @@ function App() {
     const clock = useClockValue();
     const dispatch = useDispatch();
     const shape = useSelector((state) => state.shape);
+    const viz = useSelector((state) => state.shape.viz);
     const timeValue = useComputedValue(() => (clock.current), [clock]);
     const [contextResetKey, setContextResetKey] = useState(false);
-    const [uniformDefinitions, setUniformDefinitions] = useState(false)
+    
 
     let uniforms = useRef({});
 
@@ -104,65 +106,95 @@ void main() {
     // fragment shader
     let fragmentShader = `
 precision highp float;
-        ${uniformsCode}
+${uniformsCode}
 
-
-void main() {
-    vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-
-    float t = time*0.1;
-    float lineWidth = 0.002;
-    
-    vec3 color = vec3(0.0);
-    for(int j = 0; j < 3; j++){
-        for(int i=0; i < 5; i++){
-        color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
-        }
-    }
-
-    vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
-            
-    gl_FragColor = vec4(color[0],color[1],color[2],1.0) + vec4(prevFrameColor[0], prevFrameColor[1], prevFrameColor[2], 1.0)*0.6;
-}
+${viz.main.source}
 `;
 
 
     useEffect(() => {
-        generateUniformDefinitions(uniforms)
-        animationFrameId = requestAnimationFrame(frameTicker)
-        setContextResetKey(new Date())
 
-        setTimeout(() => {
-            dispatch(setParams({
-                frequency: 0.3,
-                step: 0.3,
-                rotation: 0.3,
-                boldness: 0.01
-            }))
-
-            dispatch(setShader(fragmentShader))
-            
-            dispatch(setSource({
-                destination: "main",
-                source: fragmentShader
-            }))
-
-            dispatch(setUniforms({
-                destination: "main",
+        dispatch(setViz({
+            id: 1,
+            type: "glsl",
+            name: "GLSL Shader 1",
+            main: {
+                source: `void main() {
+                    vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+                
+                    float t = time*0.1;
+                    float lineWidth = 0.002;
+                    
+                    vec3 color = vec3(0.0);
+                    for(int j = 0; j < 3; j++){
+                        for(int i=0; i < 5; i++){
+                        color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
+                        }
+                    }
+                
+                    vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
+                            
+                    gl_FragColor = vec4(color[0],color[1],color[2],1.0) + vec4(prevFrameColor[0], prevFrameColor[1], prevFrameColor[2], 1.0)*0.6;
+                }`,
                 uniforms: {
                     ["u_frequency"] : {
-                        id: 1,
-                        displayName: "Frequency",
-                        name: "u_frequency",
-                        type: "float",
-                        initialValue: 0.3,
-                        from: -10.0,
-                        top: 10.0,
-                        step: 0.1,
-                        value: 0.33244
+                            id: 1,
+                            displayName: "Frequency",
+                            name: "u_frequency",
+                            type: "float",
+                            initialValue: 0.3,
+                            from: -10.0,
+                            top: 10.0,
+                            step: 0.1,
+                            value: 0.33244
+                        }
                     }
                 }
-            }))
+            })
+        )
+       
+        //     dispatch(setSource({
+        //         destination: "main",
+        //         source: fragmentShader
+        //     }))
+
+        //     dispatch(setUniforms({
+        //         destination: "main",
+        //         uniforms: {
+        //             ["u_frequency"] : {
+        //                 id: 1,
+        //                 displayName: "Frequency",
+        //                 name: "u_frequency",
+        //                 type: "float",
+        //                 initialValue: 0.3,
+        //                 from: -10.0,
+        //                 top: 10.0,
+        //                 step: 0.1,
+        //                 value: 0.33244
+        //             }
+        //         }
+        //     }))
+        // }, 1)
+
+        return () => {
+            // Your cleanup code here
+            // console.log('Component will unmount');
+            // cancelAnimationFrame(animationFrameId);
+            // animationFrameId = null
+            // frameHandle.current = null;
+        };
+
+    }, [])
+
+    useEffect(() => {
+        generateUniformDefinitions(uniforms)
+        animationFrameId = requestAnimationFrame(frameTicker)
+        
+
+        setTimeout(() => {
+
+            dispatch(setShader(viz.main.source))
+
         }, 1)
 
         return () => {
@@ -173,7 +205,7 @@ void main() {
             // frameHandle.current = null;
         };
 
-    }, [])
+    }, [shape?.viz?.main?.source])
 
     // useEffect(() => {
     //     if (boldness && shape && shape.params && shape.params.boldness) {
