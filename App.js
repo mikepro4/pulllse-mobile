@@ -86,35 +86,37 @@ const App = () => {
     return () => socket.disconnect();
   }, [storedUserInfo._id]);
 
-  // useEffect(() => {
-  //   if (app.drawerOpen && ref && ref.current) {
-  //     const isActive = ref.current.isActive();
-  //     if (isActive) {
-  //       ref.current.scrollTo(0);
-  //     } else {
-  //       ref.current.scrollTo(-SCREEN_HEIGHT / 2);
-  //     }
+  useEffect(() => {
+    if (app.drawerOpen && ref && ref.current) {
+      const isActive = ref.current.isActive();
+      if (isActive) {
+        ref.current.scrollTo(0);
+      } else {
+        ref.current.scrollTo(-SCREEN_HEIGHT / 2);
+      }
 
-  //     let destination;
+      let destination;
 
-  //     switch (app.drawerHeight) {
-  //       case "halfScreen":
-  //         destination = -SCREEN_HEIGHT / 2;
-  //         break;
-  //       case "fullScreen":
-  //         destination = -SCREEN_HEIGHT + 50;
-  //         break;
-  //       default:
-  //         if (typeof app.drawerHeight === "number") {
-  //           destination = -app.drawerHeight;
-  //         }
-  //         break;
-  //     }
-  //     ref.current.scrollTo(destination);
-  //   } else {
-  //     ref.current.scrollTo(0);
-  //   }
-  // }, [app.drawerOpen]);
+      switch (app.drawerHeight) {
+        case "halfScreen":
+          destination = -SCREEN_HEIGHT / 2;
+          break;
+        case "fullScreen":
+          destination = -SCREEN_HEIGHT + 50;
+          break;
+        default:
+          if (typeof app.drawerHeight === "number") {
+            destination = -app.drawerHeight;
+          }
+          break;
+      }
+      ref.current.scrollTo(destination);
+    } else {
+      if(ref && ref.current){
+        ref.current.scrollTo(0);
+      }
+    }
+  }, [app.drawerOpen]);
 
   const close = useCallback(() => {
     dispatch(
