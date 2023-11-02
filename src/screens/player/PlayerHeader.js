@@ -41,6 +41,81 @@ const PlayerHeader = () => {
         setActiveMix(player.mixEnabled)
     }, [player.mixEnabled])
 
+    const renderSaveButton = () => {
+        if (player.originalPulse) {
+            return (<Button
+                label="Save"
+                icon="save"
+                status={player.edited}
+                loading={saving}
+                onPressIn={() => {
+                    // alert("Save")
+                    setSaving(true)
+                    setTimeout(() => {
+                        setSaving(false)
+                        dispatch(setEdited(false))
+                    }, 2000)
+                    // dispatch(togglePlayer(false))
+                }} />)
+        } else {
+            return (
+                <View style={{paddingRight: 20}}>
+
+                    <Button
+                        label="Post"
+                        iconRight="arrow_right"
+                        purple={true}
+                        status={player.edited}
+                        loading={saving}
+                        onPressIn={() => {
+                            // alert("Save")
+                            setSaving(true)
+                            setTimeout(() => {
+                                setSaving(false)
+                                dispatch(setEdited(false))
+                            }, 2000)
+                            // dispatch(togglePlayer(false))
+                        }} />
+
+                </View>)
+        }
+    }
+
+    const renderDuplicateButton = () => {
+        if (player.originalPulse) {
+            return (<Button
+                label="Duplicate"
+                icon="duplicate"
+                loading={duplicating}
+                activeOpacity={0.1}
+                onPressIn={() => {
+                    setDuplicating(true)
+                    setTimeout(() => {
+                        dispatch(
+                            toggleNotification({
+                                notificationActive: true,
+                                notificationMessage: "Pulse duplicated",
+                                notificationIntent: "success",
+                            }));
+                        setDuplicating(false)
+                    }, 500)
+                }} />)
+        }
+    }
+
+    const renderMoreButton = () => {
+        if (player.originalPulse) {
+            return (
+                <Button
+                    icon="more"
+                    onPressIn={() => {
+                        // dispatch(togglePlayer(false))
+                        alert("More")
+                    }} />
+            )
+        }
+    }
+
     return (
         <View style={styles.header}>
             <Animated.View style={[styles.container, animatedStyles]}>
@@ -64,50 +139,14 @@ const PlayerHeader = () => {
                             // alert("Mix")
                             // dispatch(togglePlayer(false))
                         }} />
-                    <Button
-                        label="Duplicate"
-                        icon="duplicate"
-                        loading={duplicating}
-                        activeOpacity={0.1}
-                        onPressIn={() => {
-                            // alert("Duplicate")
-                            setDuplicating(true)
-                            setTimeout(() => {
-                                dispatch(
-                                    toggleNotification({ 
-                                        notificationActive: true, 
-                                        notificationMessage: "Pulse duplicated", 
-                                        notificationIntent: "success", 
-                                    }));
-                                setDuplicating(false)
-                            }, 500)
+                    {renderDuplicateButton()}
 
-                            // dispatch(togglePlayer(false))
-                        }} />
-                    <Button
-                        label="Save"
-                        icon="save"
-                        status={player.edited}
-                        loading={saving}
-                        onPressIn={() => {
-                            // alert("Save")
-                            setSaving(true)
-                            setTimeout(() => {
-                                setSaving(false)
-                                dispatch(setEdited(false))
-                            }, 2000)
-                            // dispatch(togglePlayer(false))
-                        }} />
+                    {renderSaveButton()}
                 </View>
 
 
 
-                <Button
-                    icon="more"
-                    onPressIn={() => {
-                        // dispatch(togglePlayer(false))
-                        alert("More")
-                    }} />
+                {renderMoreButton()}
 
             </Animated.View>
         </View>

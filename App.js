@@ -32,7 +32,9 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import Overlay from "./src/components/drawer/overlay";
 import Notification from "./src/components/notification";
 
+
 const App = () => {
+
   const [showView, setShowView] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -167,9 +169,10 @@ const App = () => {
           />
         )}
 
-        {app.drawerOpen && <Overlay />}
-        {/* <Drawer ref={ref} /> */}
+        {app.drawerOpen && <Overlay/> }
+        <Drawer ref={ref} />
         <Notification />
+
 
         <MainFlow />
       </GestureHandlerRootView>

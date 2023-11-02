@@ -19,6 +19,7 @@ import Button from "../../components/button"
 
 const PlayerInfoBar = () => {
     const player = useSelector((state) => state.player);
+    const user = useSelector((state) => state.user);
     const opacity = useSharedValue(0);
     const offset = useSharedValue(0);
     const dispatch = useDispatch();
@@ -68,6 +69,24 @@ const PlayerInfoBar = () => {
         opacity: opacity.value,
         transform: [{ translateY: offset.value }],
     }));
+
+    const getUsername = () => {
+        if(player.originalPulse) {
+            return player.originalPulse.pulse.user.userName
+        } else {
+            return user.userInfo.userName
+        }
+
+    }
+
+    const getPulseTitle = () => {
+        if(player.originalPulse) {
+            return player.originalPulse.pulse.name
+        } else {
+            return "New Pulse"
+        }
+    }
+
     return (
         <Animated.View style={[styles.infoBarContainer, animatedStyles]}>
             <View style={styles.infoBarLeft}>
@@ -81,8 +100,8 @@ const PlayerInfoBar = () => {
                 </View>
 
                 <View style={styles.descriptionArea}>
-                    <CustomText style={{fontSize: 11, opacity: 0.5, marginBottom: 2, letterSpacing: 0.34, fontFamily: "aeonik-light" }}>DCDNT</CustomText>
-                    <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>Wednesday</CustomText>  
+                    <CustomText style={{fontSize: 11, opacity: 0.5, marginBottom: 2, letterSpacing: 0.34, fontFamily: "aeonik-light" }}>{getUsername()}</CustomText>
+                    <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>{getPulseTitle()}</CustomText>  
                 </View>
             </View>
 

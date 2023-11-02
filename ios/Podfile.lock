@@ -22,6 +22,9 @@ PODS:
     - ExpoModulesCore
   - ExpoClipboard (4.3.1):
     - ExpoModulesCore
+  - ExpoGL (13.0.1):
+    - ExpoModulesCore
+    - ReactCommon/turbomodule/core
   - ExpoHaptics (12.4.0):
     - ExpoModulesCore
   - ExpoImagePicker (14.3.2):
@@ -641,6 +644,7 @@ DEPENDENCIES:
   - EXPermissions (from `../node_modules/expo-permissions/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
+  - ExpoGL (from `../node_modules/expo-gl`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoImagePicker (from `../node_modules/expo-image-picker/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
@@ -770,6 +774,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo"
   ExpoClipboard:
     :path: "../node_modules/expo-clipboard/ios"
+  ExpoGL:
+    :path: "../node_modules/expo-gl"
   ExpoHaptics:
     :path: "../node_modules/expo-haptics/ios"
   ExpoImagePicker:
@@ -917,6 +923,7 @@ SPEC CHECKSUMS:
   EXPermissions: 4f80cf527001aa408a22eddf076e61465ea71d5a
   Expo: fcfd60c1ed6806dee5103b210335ae0c72f675ed
   ExpoClipboard: 695f274f8e028cd113837f917da40c76850877eb
+  ExpoGL: 77f5c4f4c1efeebceabbbcb18540208c5ab67d12
   ExpoHaptics: 360af6898407ee4e8265d30a1a8fb16491a660eb
   ExpoImagePicker: c58fdf28be551681a8edc550bcec76c397a8dfcd
   ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d

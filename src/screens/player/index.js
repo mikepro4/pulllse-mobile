@@ -16,14 +16,15 @@ import CustomText from "../../components/text";
 import Theme from "../../styles/theme";
 import PlayerComponent from "./PlayerComponent";
 
-import { setLayers } from "../../redux";
+import { setLayers, setOriginalPulse } from "../../redux";
 
 import PlayerHeader from "./PlayerHeader";
 import PlayerInfoBar from "./PlayerInfoBar";
 import Viz from "./Viz";
-import Mixer from "./Mixer";
 import VizControls from "./VizControls";
 import VizLogger from "./VizLogger";
+
+import { clearPlayer } from "../../redux";
 
 const Player = () => {
   const player = useSelector((state) => state.player);
@@ -39,50 +40,11 @@ const Player = () => {
 
   useEffect(() => {
     animateIn();
-    dispatch(setLayers(
-      [
-        {
-          algorithm: "ethereal",
-          position: 0,
-          params: {
-            frequency: 0.1,
-            step: 0.1,
-            rotation: 0.1,
-            boldness: 0.1
-          }
-        },
-        {
-          algorithm: "ethereal",
-          position: 1,
-          params: {
-            frequency: 0.2,
-            step: 0.2,
-            rotation: 0.2,
-            boldness: 0.2
-          }
-        },
-        {
-          algorithm: "ethereal",
-          position: 2,
-          params: {
-            frequency: 0.3,
-            step: 0.3,
-            rotation: 0.3,
-            boldness: 0.3
-          }
-        },
-        {
-          algorithm: "ethereal",
-          position: 3,
-          params: {
-            frequency: 0.4,
-            step: 0.4,
-            rotation: 0.4,
-            boldness: 0.4
-          }
-        }
-      ]
-    ))
+
+    return () => {
+      console.log("Player unmounted");
+      dispatch(clearPlayer());
+    };
   }, []);
 
   const animatedStyles = useAnimatedStyle(() => ({
@@ -90,19 +52,12 @@ const Player = () => {
   }));
 
   const renderMainArea = () => {
-    if(!player.mixEnabled) {
-      return(
-        <>
-          {/* <VizLogger/> */}
-          <VizControls/>
-          <Viz/>
-        </>
-      )
-    } else {
-      return(
-        <Mixer/>
-      )
-    }
+    return(<>
+      {/* <VizLogger/> */}
+      {/* <VizControls/> */}
+      <Viz/>
+    </>)
+
   }
 
   return (

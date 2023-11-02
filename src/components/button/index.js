@@ -10,7 +10,7 @@ import CustomText from "../../components/text"
 import Loader from "../../components/loader"
 
 
-const Button = ({label, onPressIn, icon, iconRight, status, active, loading, activeOpacity}) => {
+const Button = ({label, onPressIn, icon, iconRight, status, active, loading, activeOpacity, purple}) => {
     const opacity = useSharedValue(0);
     const top = useSharedValue(0);
     const left = useSharedValue(0);
@@ -214,6 +214,15 @@ const Button = ({label, onPressIn, icon, iconRight, status, active, loading, act
         textColor = Theme.white
     }
 
+    const renderPurpleBackground = () => {
+        if(purple) {
+            return (
+                <View style={styles.purpleBackground}/>
+            )
+        }
+       
+    }
+
     return (
         <TouchableOpacity
             style={getButtonStyle()}
@@ -222,12 +231,13 @@ const Button = ({label, onPressIn, icon, iconRight, status, active, loading, act
                 onPressIn()
             }}>
 
-            <View style={styles.contnetWrapper}>
+            <View style={styles.contentWrapper}>
                 {renderIcon()}
                 <CustomText style={{fontSize: 14, color: textColor}}>{label}</CustomText>
                 {renderIconRight()}
                 {renderStatusIcon()}
                 {renderActiveBackground()}
+                {renderPurpleBackground()}
             </View>
             
         </TouchableOpacity>
@@ -237,9 +247,10 @@ const Button = ({label, onPressIn, icon, iconRight, status, active, loading, act
 export default Button;
 
 const styles = StyleSheet.create({
-    contnetWrapper: {
+    contentWrapper: {
         position: "relative", 
-        flexDirection: "row"
+        flexDirection: "row",
+        alignItems: "center",
     },
     buttonContainer: {
         // backgroundColor: "blue",
@@ -274,6 +285,16 @@ const styles = StyleSheet.create({
         bottom: -10,
         right: -10,
         backgroundColor: Theme.backgroundGreen,
+        position: "absolute",
+        zIndex: -1,
+        borderRadius: 6,
+    },
+    purpleBackground: {
+        top: -10,
+        left: -10,
+        bottom: -10,
+        right: -10,
+        backgroundColor: Theme.purple,
         position: "absolute",
         zIndex: -1,
         borderRadius: 6,
