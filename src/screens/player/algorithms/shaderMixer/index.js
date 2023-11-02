@@ -41,8 +41,6 @@ function App() {
     const [contextResetKey, setContextResetKey] = useState(false);
     
 
-    let uniforms = useRef({});
-
 
     const frameTicker = useCallback(() => {
         if (animationFrameId) {
@@ -53,31 +51,22 @@ function App() {
 
     }, []);
 
-    uniforms.current = {
-        ["u_frequency"] : {
-            id: 1,
-            displayName: "Frequency",
-            name: "u_frequency",
-            type: "float",
-            initialValue: 0.3,
-            from: -10.0,
-            top: 10.0,
-            step: 0.1,
-            value: 0.33244
-        }
-    }
 
     const generateUniformDefinitions = () => {
         let code = ``
-        const uniformKeys = Object.keys(uniforms.current);
-        uniformKeys.forEach(key => {
-            const uniform = uniforms.current[key];
-            // generateUniform(gl, program, uniform);
-            code += `uniform ${uniforms.current[key].type} ${key};\n`;
+        if(viz?.main?.uniforms) {
 
-        });
+            const uniformKeys = Object.keys(viz?.main?.uniforms);
+            uniformKeys.forEach(key => {
+                const uniform =viz?.main?.uniforms[key];
+                // generateUniform(gl, program, uniform);
+                code += `uniform ${uniform.type} ${key};\n`;
 
-        return code
+            });
+
+            return code
+        }
+
     }
 
     const onContextCreate = (gl) => {
@@ -119,23 +108,24 @@ ${viz.main.source}
             type: "glsl",
             name: "GLSL Shader 1",
             main: {
-                source: `void main() {
-                    vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-                
-                    float t = time*0.1;
-                    float lineWidth = 0.002;
-                    
-                    vec3 color = vec3(0.0);
-                    for(int j = 0; j < 3; j++){
-                        for(int i=0; i < 5; i++){
-                        color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
-                        }
-                    }
-                
-                    vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
-                            
-                    gl_FragColor = vec4(color[0],color[1],color[2],1.0) + vec4(prevFrameColor[0], prevFrameColor[1], prevFrameColor[2], 1.0)*0.6;
-                }`,
+                source: `
+void main() {
+vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+
+float t = time*0.1;
+float lineWidth = 0.002;
+
+vec3 color = vec3(0.0);
+for(int j = 0; j < 3; j++){
+    for(int i=0; i < 5; i++){
+    color[j] += lineWidth*float(i*i) / sin(t + 0.1*float(j)+float(i)*0.0001)*0.9 - length(uv)*0.2 + mod(fract(uv.x + uv.y), boldness);
+    }
+}
+
+vec4 prevFrameColor = texture2D(u_prevFrame, gl_FragCoord.xy/resolution);
+        
+gl_FragColor = vec4(color[0],color[1],color[2],1.0) + vec4(prevFrameColor[0], prevFrameColor[1], prevFrameColor[2], 1.0)*0.6;
+}`,
                 uniforms: {
                     ["u_frequency"] : {
                             id: 1,
@@ -153,28 +143,10 @@ ${viz.main.source}
             })
         )
        
-        //     dispatch(setSource({
-        //         destination: "main",
-        //         source: fragmentShader
-        //     }))
-
-        //     dispatch(setUniforms({
-        //         destination: "main",
-        //         uniforms: {
-        //             ["u_frequency"] : {
-        //                 id: 1,
-        //                 displayName: "Frequency",
-        //                 name: "u_frequency",
-        //                 type: "float",
-        //                 initialValue: 0.3,
-        //                 from: -10.0,
-        //                 top: 10.0,
-        //                 step: 0.1,
-        //                 value: 0.33244
-        //             }
-        //         }
-        //     }))
-        // }, 1)
+        dispatch(setSource({
+            destination: "main",
+            source: fragmentShader
+        }))
 
         return () => {
             // Your cleanup code here
@@ -187,7 +159,7 @@ ${viz.main.source}
     }, [])
 
     useEffect(() => {
-        generateUniformDefinitions(uniforms)
+        generateUniformDefinitions(shape.viz.main.uniforms)
         animationFrameId = requestAnimationFrame(frameTicker)
         
 
@@ -205,7 +177,7 @@ ${viz.main.source}
             // frameHandle.current = null;
         };
 
-    }, [shape?.viz?.main?.source])
+    }, [shape?.viz?.main?.source, shape?.viz?.main?.uniforms])
 
     // useEffect(() => {
     //     if (boldness && shape && shape.params && shape.params.boldness) {
