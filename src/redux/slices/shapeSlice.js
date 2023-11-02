@@ -2,7 +2,19 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   params: null,
-  shader: null
+  shader: null,
+  viz: {
+    id: "1",
+
+    main: {
+      source: null,
+      uniforms: null
+    },
+    buffer: {
+      source: null,
+      uniforms: null
+    }
+  },
 };
 
 const shapeSlice = createSlice({
@@ -16,12 +28,38 @@ const shapeSlice = createSlice({
     setShader: (state, action) => {
       state.shader = action.payload;
     },
+
+    setSource: (state, action) => {
+      if(action.payload?.source) {
+        if(action.payload?.destination == "main") {
+          state.viz.main.source = action.payload.source;
+        }
+
+        if(action.payload?.destination == "buffer") {
+          state.viz.buffer.source = action.payload.source;
+        }
+      }
+    },
+
+    setUniforms: (state, action) => {
+      if(action.payload?.uniforms) {
+        if(action.payload?.destination == "main") {
+          state.viz.main.uniforms = action.payload.uniforms;
+        }
+
+        if(action.payload?.destination == "buffer") {
+          state.viz.buffer.uniforms = action.payload.uniforms;
+        }
+      }
+    },
   }
 });
 
 export const { 
   setParams,
-  setShader
+  setShader,
+  setSource,
+  setUniforms
 } = shapeSlice.actions;
 
 export const shapeReducer = shapeSlice.reducer;

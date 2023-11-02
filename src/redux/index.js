@@ -66,7 +66,9 @@ export { switchTab, togglePlayer, resetScroll, toggleMap  } from "./slices/tabSl
 export { toggleDrawer, toggleNotification } from "./slices/appSlice";
 export { 
   setParams,
-  setShader
+  setShader,
+  setSource,
+  setUniforms
 } from "./slices/shapeSlice";
 
 export {

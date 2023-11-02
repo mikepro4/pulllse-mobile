@@ -5,7 +5,9 @@ import { GLView } from 'expo-gl';
 
 import {
     setParams,
-    setShader
+    setShader,
+    setSource,
+    setUniforms
 } from "../../../../redux"
 
 
@@ -273,6 +275,27 @@ function App() {
             }))
 
             dispatch(setShader(fragmentShader))
+            dispatch(setSource({
+                destination: "main",
+                source: fragmentShader
+            }))
+
+            dispatch(setUniforms({
+                destination: "main",
+                uniforms: {
+                    ["u_frequency"] : {
+                        id: 1,
+                        displayName: "Frequency",
+                        name: "u_frequency",
+                        type: "float",
+                        initialValue: 0.3,
+                        from: -10.0,
+                        top: 10.0,
+                        step: 0.1,
+                        value: 0.33244
+                    }
+                }
+            }))
         }, 1)
 
         return () => {
@@ -300,7 +323,7 @@ function App() {
         setTimeout(() => {
             // ... (rest of your code)
             setContextResetKey(new Date())
-            // animationFrameId = requestAnimationFrame(frameTicker)
+            animationFrameId = requestAnimationFrame(frameTicker)
             // compileAndLoadSxhader(vertexShader, shape.shader);  // Update shader
         }, 1);
 
