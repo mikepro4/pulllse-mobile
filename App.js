@@ -25,8 +25,6 @@ import io from "socket.io-client";
 
 import { togglePlayer, toggleDrawer } from "./src/redux";
 
-import { Linking } from "react-native";
-
 import Drawer from "./src/components/drawer";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -45,7 +43,6 @@ const App = () => {
 
   const fetchUserDetails = async () => {
     const userIdFromStorage = await AsyncStorage.getItem("userId");
-    dispatch(togglePlayer(true));
 
     if (userIdFromStorage) {
       dispatch(fetchUserInfo({ userId: userIdFromStorage }));
@@ -72,31 +69,6 @@ const App = () => {
     });
   };
 
-  useEffect(() => {
-    const handleOpenURL = (event) => {
-      const route = event.url.replace(/.*?:\/\//g, ""); // to get something like 'redirect' from 'pulse://redirect'
-
-      if (route === "redirect") {
-        // Handle the redirect logic here
-      }
-    };
-
-    // Check for deep link when the app is initially opened
-    Linking.getInitialURL()
-      .then((url) => {
-        if (url) handleOpenURL({ url });
-      })
-      .catch((err) => console.error("Failed to fetch the deep link", err));
-
-    // Listen for changes (app opened through a deep link when it was already open)
-    Linking.addEventListener("url", handleOpenURL);
-
-    // Cleanup the listener
-    return () => {
-      Linking.removeEventListener("url", handleOpenURL);
-    };
-  }, []);
-
   // useEffect(() => {
   //   fetchUserDetails();
 
@@ -112,42 +84,42 @@ const App = () => {
     return () => socket.disconnect();
   }, [storedUserInfo._id]);
 
-  useEffect(() => {
-    if (app.drawerOpen) {
-      const isActive = ref.current.isActive();
-      if (isActive) {
-        ref.current.scrollTo(0);
-      } else {
-        ref.current.scrollTo(-SCREEN_HEIGHT / 2);
-      }
+  // useEffect(() => {
+  //   if (app.drawerOpen && ref && ref.current) {
+  //     const isActive = ref.current.isActive();
+  //     if (isActive) {
+  //       ref.current.scrollTo(0);
+  //     } else {
+  //       ref.current.scrollTo(-SCREEN_HEIGHT / 2);
+  //     }
 
-      let destination;
+  //     let destination;
 
-      switch (app.drawerHeight) {
-        case "halfScreen":
-          destination = -SCREEN_HEIGHT / 2;
-          break;
-        case "fullScreen":
-          destination = -SCREEN_HEIGHT + 50;
-          break;
-        default:
-          if (typeof app.drawerHeight === "number") {
-            destination = -app.drawerHeight;
-          }
-          break;
-      }
-      ref.current.scrollTo(destination);
-    } else {
-      ref.current.scrollTo(0);
-    }
-  }, [app.drawerOpen]);
+  //     switch (app.drawerHeight) {
+  //       case "halfScreen":
+  //         destination = -SCREEN_HEIGHT / 2;
+  //         break;
+  //       case "fullScreen":
+  //         destination = -SCREEN_HEIGHT + 50;
+  //         break;
+  //       default:
+  //         if (typeof app.drawerHeight === "number") {
+  //           destination = -app.drawerHeight;
+  //         }
+  //         break;
+  //     }
+  //     ref.current.scrollTo(destination);
+  //   } else {
+  //     ref.current.scrollTo(0);
+  //   }
+  // }, [app.drawerOpen]);
 
   const close = useCallback(() => {
     dispatch(
       toggleDrawer({ drawerOpen: false, drawerType: null, drawerData: null })
     );
     const isActive = ref.current.isActive();
-    if (isActive) {
+    if (isActive && app.drawerOpen && ref && ref.current) {
       ref.current.scrollTo(0);
     } else {
       ref.current.scrollTo(-200);
@@ -156,6 +128,14 @@ const App = () => {
 
   return (
     <NavigationContainer
+      linking={{
+        prefixes: ["pulse://"],
+        config: {
+          screens: {
+            Settings: "callback",
+          },
+        },
+      }}
       screenOptions={{
         cardStyle: { backgroundColor: "black" },
       }}
@@ -186,19 +166,9 @@ const App = () => {
             onPress={close}
           />
         )}
-        <Drawer ref={ref}>
-          <ScrollView style={{ flex: 1, height: 3000 }}>
-            <Text style={{ color: "white", paddingHorizontal: 20 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabre,
-              nulla non pvel pellentesque ipsum tellus vitae ex. Nullam
-              fringilla, dui vitae euismod placerat, ligula tortor aliquam urna,
-              sit amet rutrum arcu turpis non ex.
-            </Text>
-          </ScrollView>
-        </Drawer>
 
         {app.drawerOpen && <Overlay />}
-        <Drawer ref={ref} />
+        {/* <Drawer ref={ref} /> */}
         <Notification />
 
         <MainFlow />

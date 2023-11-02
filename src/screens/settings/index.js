@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import customMapStyle from "../../components/map/mapStyle";
@@ -6,8 +6,32 @@ import AsyncSearch from "../../components/async_search";
 import CustomText from "../../components/text";
 import SettingsHeader from "../../components/header/settingsHeader";
 import PlayerComponent from "../player/PlayerComponent";
+import InAppBrowser from "react-native-inappbrowser-reborn";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Settings = () => {
+const Settings = ({ route }) => {
+  console.log(route.params?.access_token);
+  console.log(route.params?.refresh_token);
+
+  const setSpotifyStorage = async ({ access, refresh }) => {
+    if (access) {
+      await AsyncStorage.setItem("accessToken", access);
+    }
+    if (refresh) {
+      await AsyncStorage.setItem("refreshToken", refresh);
+    }
+  };
+
+  useEffect(() => {
+    setSpotifyStorage({
+      access: route.params?.access_token,
+      refresh: route.params?.refresh_token,
+    });
+  }, [route.params?.access_token, route.params?.refresh_token]);
+
+  if (route.params?.access_token && route.params?.refresh_token) {
+    InAppBrowser.close();
+  }
   return (
     <View style={{ backgroundColor: "black", flex: 1, paddingTop: 130 }}>
       <View style={styles.header}>

@@ -6,14 +6,13 @@ import { center } from "@shopify/react-native-skia";
 
 const Icon = (props) => {
   return (
-    <View
-      style={{
-        width: 24,
-        height: 24,
-        position: "relative",
-      }}
-    >
-      <Svg width="24" height="24" viewBox="0 0 24 24" fill="#000">
+    <View>
+      <Svg
+        width={props.style.width}
+        height={props.style.height}
+        viewBox="0 0 24 24"
+        fill={props.style.color}
+      >
         <Path
           fillRule="evenodd"
           clipRule="evenodd"

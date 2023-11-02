@@ -25,9 +25,12 @@ import LoopIcon from "./loopIcon";
 import TrashIcon from "./trash";
 import SpotifyIcon from "./spotifyIcon";
 import AppleIcon from "./appleIcon";
+import FileIcon from "./fileIcon";
 
 const Icon = ({ name, style }) => {
   switch (name) {
+    case "fileIcon":
+      return <FileIcon style={style} />;
     case "trashIcon":
       return <TrashIcon style={style} />;
     case "appleIcon":
