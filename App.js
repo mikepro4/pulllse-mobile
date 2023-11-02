@@ -32,7 +32,9 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import Overlay from "./src/components/drawer/overlay";
 import Notification from "./src/components/notification";
 
+
 const App = () => {
+
   const [showView, setShowView] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -43,7 +45,7 @@ const App = () => {
 
   const fetchUserDetails = async () => {
     const userIdFromStorage = await AsyncStorage.getItem("userId");
-    dispatch(togglePlayer(true));
+    // dispatch(togglePlayer(true));
 
     if (userIdFromStorage) {
       dispatch(fetchUserInfo({ userId: userIdFromStorage }));

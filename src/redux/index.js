@@ -65,5 +65,7 @@ export { toggleDrawer, toggleNotification } from "./slices/appSlice";
 
 export {
   toggleMix,
-  setEdited
+  setEdited,
+  setOriginalPulse,
+  clearPlayer
 } from "./slices/playerSlice";

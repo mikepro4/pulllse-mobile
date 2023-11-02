@@ -19,12 +19,25 @@ const playerSlice = createSlice({
     toggleMix: (state, action) => {
       state.mixEnabled = action.payload;
     },
+
+    setOriginalPulse: (state, action) => {
+      state.originalPulse = action.payload;
+    },
+
+    clearPlayer: (state, action) => {
+      state.mixEnabled = false,
+      state.edited = false,
+      state.originalPulse = null,
+      state.editedPulse = null
+    },
   }
 });
 
 export const { 
     toggleMix,
-    setEdited
+    setEdited,
+    setOriginalPulse,
+    clearPlayer
 } = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;

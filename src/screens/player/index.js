@@ -16,13 +16,15 @@ import CustomText from "../../components/text";
 import Theme from "../../styles/theme";
 import PlayerComponent from "./PlayerComponent";
 
-import { setLayers } from "../../redux";
+import { setLayers, setOriginalPulse } from "../../redux";
 
 import PlayerHeader from "./PlayerHeader";
 import PlayerInfoBar from "./PlayerInfoBar";
 import Viz from "./Viz";
 import VizControls from "./VizControls";
 import VizLogger from "./VizLogger";
+
+import { clearPlayer } from "../../redux";
 
 const Player = () => {
   const player = useSelector((state) => state.player);
@@ -38,6 +40,11 @@ const Player = () => {
 
   useEffect(() => {
     animateIn();
+
+    return () => {
+      console.log("Player unmounted");
+      dispatch(clearPlayer());
+    };
   }, []);
 
   const animatedStyles = useAnimatedStyle(() => ({

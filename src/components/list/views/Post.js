@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, Easing } from 'react-native-reanimated';
 
-import { togglePlayer } from '../../../redux/slices/tabSlice'
+import { togglePlayer, setOriginalPulse } from '../../../redux/'
 
 import Icon from "../../../components/icon"
 import CustomText from "../../../components/text";
@@ -13,7 +13,7 @@ import Theme from "../../../styles/theme"
 
 import Viz from "../../../screens/player/Viz";
 
-const Post = (props) => {
+const Post = ({item}) => {
     const opacity = useSharedValue(0);
     const dispatch = useDispatch();
 
@@ -32,13 +32,18 @@ const Post = (props) => {
         opacity: opacity.value
     }));
 
+    const openPulse = () => {
+        dispatch(togglePlayer(true))
+        dispatch(setOriginalPulse(item))
+    }
+
     return (
         
         <Animated.View style={[styles.postContainer, animatedStyles]}>
             <TouchableOpacity
                 activeOpacity={1}
                 style={styles.mainClickableArea}
-                onPress={() => dispatch(togglePlayer(true))}
+                onPress={() => openPulse()}
             >
                 {/* <Viz/> */}
             </TouchableOpacity>
@@ -46,19 +51,19 @@ const Post = (props) => {
             <TouchableOpacity
                 activeOpacity={1}
                 style={styles.playerTouchableArea}
-                onPress={() => dispatch(togglePlayer(true))}
+                onPress={() => openPulse()}
             ></TouchableOpacity>
 
             <TouchableOpacity
                 activeOpacity={1}
                 style={styles.infoTouchableArea}
-                onPress={() => dispatch(togglePlayer(true))}
+                onPress={() => openPulse()}
             ></TouchableOpacity>
 
             <TouchableOpacity
                 activeOpacity={1}
                 style={styles.arrowTouchableArea}
-                onPress={() => dispatch(togglePlayer(true))}
+                onPress={() => openPulse()}
             >
                 <Icon name="arrow_forward"/>
             </TouchableOpacity>
