@@ -21,7 +21,6 @@ import { setLayers } from "../../redux";
 import PlayerHeader from "./PlayerHeader";
 import PlayerInfoBar from "./PlayerInfoBar";
 import Viz from "./Viz";
-import Mixer from "./Mixer";
 import VizControls from "./VizControls";
 import VizLogger from "./VizLogger";
 
@@ -46,23 +45,9 @@ const Player = () => {
   }));
 
   const renderMainArea = () => {
-    // if(!player.mixEnabled) {
-    //   return(
-    //     <>
-    //       <VizLogger/>
-    //       <VizControls/>
-    //       <Viz/>
-    //     </>
-    //   )
-    // } else {
-    //   return(
-    //     <Mixer/>
-    //   )
-    // }
-
     return(<>
-      <VizLogger/>
-      <VizControls/>
+      {/* <VizLogger/> */}
+      {/* <VizControls/> */}
       <Viz/>
     </>)
 

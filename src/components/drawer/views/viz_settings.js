@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Theme from "../../../styles/theme";
 
-import { setShader } from "../../../redux";
 
 import Animated, {
     useSharedValue,
@@ -21,22 +20,13 @@ import CodeEditor, { CodeEditorSyntaxStyles } from '@rivascva/react-native-code-
 
 const SimpleView = () => {
     const dispatch = useDispatch();
-    const shape = useSelector((state) => state.shape);
     const [code, setCode] = useState()
-
-    const updateCode = (code) => {
-        dispatch(setShader(code))
-    }
-
-    useEffect(() => {
-        dispatch(setShader(code))
-}   , [code])
 
     return (
         <View style={{ position: "relative", flex: 1}}>
             <ScrollView style={styles.drawerContainer} >
                 {/* <CustomText>Viz settings</CustomText> */}
-                <CodeEditor
+                {/* <CodeEditor
                     style={{
                         fontSize: 12,
                         // inputLineHeight: 26,
@@ -56,7 +46,7 @@ const SimpleView = () => {
                         setCode(code)
                     }
                     }
-                />
+                /> */}
             </ScrollView>
 
         </View>
