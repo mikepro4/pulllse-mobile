@@ -32,7 +32,9 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import Overlay from "./src/components/drawer/overlay";
 import Notification from "./src/components/notification";
 
+
 const App = () => {
+
   const [showView, setShowView] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -43,7 +45,7 @@ const App = () => {
 
   const fetchUserDetails = async () => {
     const userIdFromStorage = await AsyncStorage.getItem("userId");
-    dispatch(togglePlayer(true));
+    // dispatch(togglePlayer(true));
 
     if (userIdFromStorage) {
       dispatch(fetchUserInfo({ userId: userIdFromStorage }));
@@ -165,16 +167,6 @@ const App = () => {
             onPress={close}
           />
         )}
-        <Drawer ref={ref}>
-          <ScrollView style={{ flex: 1, height: 3000 }}>
-            <Text style={{ color: "white", paddingHorizontal: 20 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabre,
-              nulla non pvel pellentesque ipsum tellus vitae ex. Nullam
-              fringilla, dui vitae euismod placerat, ligula tortor aliquam urna,
-              sit amet rutrum arcu turpis non ex.
-            </Text>
-          </ScrollView>
-        </Drawer>
 
         {app.drawerOpen && <Overlay/> }
         <Drawer ref={ref} />

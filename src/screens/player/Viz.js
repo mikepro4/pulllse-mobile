@@ -1,11 +1,8 @@
 import React from 'react';
 import { View, Text , StyleSheet} from 'react-native';
 import CustomText from "../../components/text";
-// import Algorithms from './algorithms';
-import Ethereal from './algorithms/ethereal';
 
 const Viz = ({ preview, layers }) => {
-    // const activeLayer = layers.filter(item => item.position === 2);
     return (
         <View style={styles.container}>
             {/* {layers.map((layer, index) => {
@@ -14,7 +11,7 @@ const Viz = ({ preview, layers }) => {
                 )
             })} */}
 
-            <Ethereal preview={preview}/>
+            {/* <ShaderMixer preview={preview}/> */}
         </View>
     );
 };

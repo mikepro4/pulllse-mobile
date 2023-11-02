@@ -19,19 +19,6 @@ const VizControls = ({ preview }) => {
     const [incrementDivider, setIncrementDivider] = useState(null);
     const dispatch = useDispatch();
 
-    // const startInterval = ({ paramName, direction}) => {
-    //     const timeUpdater = setInterval(() => {
-    //         setTime(prevTime => prevTime + 100);
-
-    //     }, 1)
-    //     setTimeInterval(timeUpdater)
-    // }
-
-    // const stopInterval = () => {
-    //     clearInterval(timeInterval);
-    //     setTime(0)
-    // }
-
 
     const startInterval = ({ paramName, direction, incrementDivider }) => {
         setParamName(paramName)
@@ -48,12 +35,7 @@ const VizControls = ({ preview }) => {
     }
 
     useEffect(() => {
-        // dispatch(
-        //     changeLayerParam({
-        //         paramName: paramName,
-        //         direction: direction,
-        //         valueChange: time / incrementDivider
-        //     }));
+ 
         let valueChange
         if(direction && direction === "up") {
             valueChange = shape.params[paramName] + time / incrementDivider
@@ -208,7 +190,7 @@ const VizControls = ({ preview }) => {
                         startInterval({ 
                             paramName: "boldness",
                             direction: "up",
-                            incrementDivider: 10000
+                            incrementDivider: 100000
                         })
                     }}
                     onPressOut={() => {
