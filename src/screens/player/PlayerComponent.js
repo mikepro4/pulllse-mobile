@@ -536,19 +536,9 @@ export default function App() {
         {rederPlayerButtons()}
         {renderSlider()}
       </View>
-      {/* 
-      <Button
-        title="get track"
-        onPress={() => getTrack("11dFghVXANMlKmJXsNCbNl")}
-      /> */}
-      <SignInWithService />
-      <TouchableOpacity onPress={makePulse}>
-        <View style={styles.goContainer}>
-          <CustomText style={{ fontWeight: "bold", fontSize: 24 }}>
-            Go
-          </CustomText>
-        </View>
-      </TouchableOpacity>
+
+
+     
     </View>
   );
 }

@@ -9,6 +9,8 @@ import PlayerComponent from "../player/PlayerComponent";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import SignInWithService from "./SignInWithService";
+
 const Settings = ({ route }) => {
   console.log(route.params?.access_token);
   console.log(route.params?.refresh_token);
@@ -37,6 +39,8 @@ const Settings = ({ route }) => {
       <View style={styles.header}>
         <SettingsHeader />
       </View>
+
+      <SignInWithService />
 
       <PlayerComponent />
     </View>
