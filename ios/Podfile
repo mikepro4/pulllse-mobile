@@ -45,6 +45,8 @@ target 'pulllsemobile' do
   rn_maps_path = '../node_modules/react-native-maps'
   pod 'react-native-google-maps', :path => rn_maps_path
 
+ pod 'RNSoundLevel', :path => '../node_modules/react-native-sound-level'
+
   config = use_native_modules!
 
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']

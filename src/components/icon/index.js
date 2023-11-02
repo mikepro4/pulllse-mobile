@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import Mountains from "./mountains";
 import X from "./x";
 import Plus from "./plus";
@@ -19,11 +19,19 @@ import Play from "./play";
 import Loader from "./loader";
 import Feed from "./feed";
 import Cog from "./cog";
-import ArrowRight from "./arrowRight";
+import Pause from "./pause";
+import StopRec from "./stopRec";
+import LoopIcon from "./loopIcon";
+import TrashIcon from "./trash";
+import SpotifyIcon from "./spotifyIcon";
+import AppleIcon from "./appleIcon";
+import FileIcon from "./fileIcon";
 
+import ArrowRight from "./arrowRight";
 
 const Icon = ({ name, style }) => {
     switch (name) {
+        
         case 'mountains':
             return <Mountains style={style} />
         case 'x':
@@ -66,6 +74,18 @@ const Icon = ({ name, style }) => {
             return <Cog style={style} />
         case 'arrow_right':
             return <ArrowRight style={style} />
+        case "fileIcon":
+            return <FileIcon style={style} />;
+        case "trashIcon":
+            return <TrashIcon style={style} />;
+        case "appleIcon":
+            return <AppleIcon style={style} />;
+        case "spotifyIcon":
+            return <SpotifyIcon style={style} />;
+        case "loopIcon":
+            return <LoopIcon style={style} />;
+        case "stopRec":
+            return <StopRec style={style} />;
         default:
             return
     }
