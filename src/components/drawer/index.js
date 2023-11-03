@@ -19,6 +19,7 @@ import Theme from "../../styles/theme"
 // Drawer views
 import VizSettings from "./views/viz_settings";
 import LayerSettings from "./views/layer_settings";
+import PulseSettings from "./views/pulse_settings";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -30,14 +31,23 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
     const active = useSharedValue(false);
     const dispatch = useDispatch();
 
-    const scrollTo = useCallback((destination) => {
+    const scrollTo = useCallback((destination, force) => {
         'worklet';
         active.value = destination !== 0;
-
-        translateY.value = withTiming(destination, {
-            duration: 500,
-            easing: Theme.easing1,
-        })
+        if(force) {
+            if(destination < translateY.value) {
+                translateY.value = withTiming(destination, {
+                    duration: 500,
+                    easing: Theme.easing1,
+                })
+            }
+        } else {
+            translateY.value = withTiming(destination, {
+                duration: 500,
+                easing: Theme.easing1,
+            })
+        }
+        
     }, []);
 
     const isActive = useCallback(() => {
@@ -71,11 +81,11 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
             translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y);
         })
         .onEnd(() => {
-            if (translateY.value > -SCREEN_HEIGHT / 3) {
+            if (translateY.value > -SCREEN_HEIGHT / 2.22) {
                 scrollTo(0);
                 runOnJS(dispatchToggleDrawer)();
 
-            } else if (translateY.value < -SCREEN_HEIGHT / 1.5) {
+            } else if (translateY.value < -SCREEN_HEIGHT / 1.6) {
                 scrollTo(MAX_TRANSLATE_Y);
 
             }
@@ -94,6 +104,8 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
                     return <VizSettings />
                 case 'layer_settings':
                     return <LayerSettings />
+                case 'pulse_settings':
+                    return <PulseSettings />
                 default:
                     return
             }

@@ -28,7 +28,7 @@ const appSlice = createSlice({
       state.notificationMessage = action.payload.notificationMessage;
       state.notificationIntent = action.payload.notificationIntent;
       state.notificationDuration = action.payload.notificationDuration;
-    }
+    },
   }
 });
 

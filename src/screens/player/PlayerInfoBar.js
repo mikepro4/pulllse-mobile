@@ -102,10 +102,23 @@ const PlayerInfoBar = () => {
                         }} />
                 </View>
 
-                <View style={styles.descriptionArea}>
+                <TouchableOpacity 
+                    style={styles.descriptionArea}
+                    onPressIn={() => {
+                        dispatch(
+                            toggleDrawer({ 
+                                drawerOpen: true, 
+                                drawerType: "pulse_settings", 
+                                drawerData: null, 
+                                drawerDraggable: true,
+                                drawerHeight: "halfScreen"
+                            }));
+
+                    }}
+                >
                     <CustomText style={{fontSize: 11, opacity: 0.5, marginBottom: 2, letterSpacing: 0.34, fontFamily: "aeonik-light" }}>{getUsername()}</CustomText>
                     <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>{getPulseTitle()}</CustomText>  
-                </View>
+                </TouchableOpacity>
 
                 {/* <PlayerComponent /> */}
             </View>

@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Keyboard
 } from "react-native";
 
 import { useFonts } from "expo-font";
@@ -117,6 +118,26 @@ const App = () => {
       }
     }
   }, [app.drawerOpen]);
+
+
+  useEffect(() => {
+    // Set up keyboard show listener
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        console.log('Keyboard is shown');
+        if(ref && ref.current){
+          ref.current.scrollTo(-SCREEN_HEIGHT / 1.6, true);
+        }
+        // Your action here
+      }
+    );
+
+    // Clean up listeners when component unmounts
+    return () => {
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const close = useCallback(() => {
     dispatch(
