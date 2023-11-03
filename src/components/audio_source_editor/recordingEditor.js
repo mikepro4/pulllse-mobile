@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         // backgroundColor: "blue",
         alignItems: "center",
         justifyContent: "center",
-        marginRight: 20
+        marginRight: 15
     },
     editorRight: {
         flex: 1,

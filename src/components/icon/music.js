@@ -5,7 +5,7 @@ import styles from "./indexStyle";
 
 const Icon = (props) => {
   return (
-    <View style={{width: 22, height: 22, position: "relative", left: 2, top: 2}}>
+    <View style={{width: 22, height: 22, position: "relative", left: 1, top: 2}}>
       <Svg width="18" fill="none" height="17" viewBox="0 0 18 17">
           <Path
             fill={props.style.fill}
