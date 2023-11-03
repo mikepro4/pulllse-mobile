@@ -96,6 +96,5 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingVertical: 10,
         borderRadius: 10,
-        marginBottom: 20,
     }
 });

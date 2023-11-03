@@ -121,9 +121,11 @@ const PulseSettings = () => {
 
                         }}
                     />
-                </View>
 
                 <AudioSourceEditor/>
+
+                </View>
+
 
 
             </ScrollView>
