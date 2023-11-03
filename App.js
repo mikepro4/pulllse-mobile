@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Keyboard
+  Keyboard,
 } from "react-native";
 
 import { useFonts } from "expo-font";
@@ -33,9 +33,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import Overlay from "./src/components/drawer/overlay";
 import Notification from "./src/components/notification";
 
-
 const App = () => {
-
   const [showView, setShowView] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -116,20 +114,19 @@ const App = () => {
       }
       ref.current.scrollTo(destination);
     } else {
-      if(ref && ref.current){
+      if (ref && ref.current) {
         ref.current.scrollTo(0);
       }
     }
   }, [app.drawerOpen]);
 
-
   useEffect(() => {
     // Set up keyboard show listener
     const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
+      "keyboardDidShow",
       () => {
-        console.log('Keyboard is shown');
-        if(ref && ref.current){
+        console.log("Keyboard is shown");
+        if (ref && ref.current) {
           ref.current.scrollTo(-SCREEN_HEIGHT / 1.6, true);
         }
         // Your action here
@@ -195,10 +192,9 @@ const App = () => {
           />
         )}
 
-        {app.drawerOpen && <Overlay/> }
+        {app.drawerOpen && <Overlay />}
         <Drawer ref={ref} />
         <Notification />
-
 
         <MainFlow />
       </GestureHandlerRootView>

@@ -42,10 +42,8 @@ const SoundBar = ({
             height: canvasHeight,
           }}
         >
-          {barData
-            .slice()
-            .reverse()
-            .map((data, index) => {
+          {(isRecording ? barData.slice().reverse() : barData).map(
+            (data, index) => {
               // Ensure the value is non-negative
 
               const absoluteValue = Math.max(data.rawValue + 45, 1);
@@ -76,7 +74,8 @@ const SoundBar = ({
                   lineCap="round"
                 />
               );
-            })}
+            }
+          )}
         </Canvas>
       </View>
     </TouchableOpacity>
