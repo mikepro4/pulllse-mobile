@@ -12,6 +12,7 @@ import Button from "../../../components/button"
 import { setPulseTitle, setPulseAudioSourceType } from "../../../redux";
 
 import ParamSwitcher from "../../param_switcher";
+import AudioSourceEditor from "../../audio_source_editor";
 
 const PulseSettings = () => {
     const dispatch = useDispatch();
@@ -75,7 +76,7 @@ const PulseSettings = () => {
     const getSourceTypeId = (value) => {
         const sourceType = audioSourceTypes.find(source => source.value === value);
         return sourceType ? sourceType.id : null;
-    }
+    }   
 
 
     return (
@@ -109,16 +110,20 @@ const PulseSettings = () => {
                     )}
                 />
 
-                <ParamSwitcher
-                    initialValue={getSourceTypeId(player.editedPulse?.audioSourceType)}
-                    params={audioSourceTypes}
-                    onParamChange={(param) => {
-                        console.log(param)
+                <View style={{ paddingVertical: 5 }} >
+                    <ParamSwitcher
+                        initialValue={getSourceTypeId(player.editedPulse?.audioSourceType)}
+                        params={audioSourceTypes}
+                        onParamChange={(param) => {
+                            console.log(param)
 
-                        dispatch(setPulseAudioSourceType(param.value))
+                            dispatch(setPulseAudioSourceType(param.value))
 
-                    }}
-                />
+                        }}
+                    />
+                </View>
+
+                <AudioSourceEditor/>
 
 
             </ScrollView>

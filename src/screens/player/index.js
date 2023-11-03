@@ -24,7 +24,7 @@ import Viz from "./Viz";
 import VizControls from "./VizControls";
 import VizLogger from "./VizLogger";
 
-import { clearPlayer } from "../../redux";
+import { clearPlayer, setPulseAudioSourceType } from "../../redux";
 
 const Player = () => {
   const player = useSelector((state) => state.player);
@@ -41,11 +41,16 @@ const Player = () => {
   useEffect(() => {
     animateIn();
 
+    if(!player.editedPulse) {
+      dispatch(setPulseAudioSourceType("recording"))
+    }
+
     return () => {
       console.log("Player unmounted");
       dispatch(clearPlayer());
     };
   }, []);
+
 
   const animatedStyles = useAnimatedStyle(() => ({
     opacity: opacity.value,
