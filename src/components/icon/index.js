@@ -66,6 +66,8 @@ const Icon = ({ name, style }) => {
             return <Controls style={style} />
         case 'play':
             return <Play style={style} />
+        case 'pause':
+            return <Pause style={style} />
         case 'loader':
             return <Loader style={style} />
         case 'feed':

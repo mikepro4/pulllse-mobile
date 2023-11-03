@@ -10,7 +10,7 @@ import CustomText from "../../components/text"
 import Loader from "../../components/loader"
 
 
-const Button = ({label, onPressIn, icon, iconRight, status, active, loading, activeOpacity, purple}) => {
+const Button = ({label, onPressIn, icon, iconRight, status, active, loading, activeOpacity, purple, iconColor, small}) => {
     const opacity = useSharedValue(0);
     const top = useSharedValue(0);
     const left = useSharedValue(0);
@@ -122,6 +122,10 @@ const Button = ({label, onPressIn, icon, iconRight, status, active, loading, act
             iconFill = Theme.green
         } else {
             iconFill = Theme.white
+        }
+
+        if(iconColor) {
+            iconFill = iconColor
         }
 
         let iconRender

@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Button,
   StyleSheet,
   Text,
   View,
@@ -27,6 +26,8 @@ import SignInWithService from "../settings/SignInWithService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import config from "../../../config";
+
+import Button from "../../components/button"
 
 export default function App() {
   const [name, setName] = useState("Recording");
@@ -336,14 +337,13 @@ export default function App() {
   const rederPlayerButtons = () => {
     if (currentView === "waveform" && sound) {
       return (
-        <TouchableOpacity onPress={togglePlayback}>
           <View style={styles.btnContainer}>
-            <Icon
-              name={isPlaying ? "pause" : "play"}
-              style={{ width: 24, height: 24, color: "#000", marginLeft: 3 }}
+            <Button
+              icon={isPlaying ? "pause" : "play"}
+              iconColor="black"
+              onPressIn={togglePlayback}
             />
           </View>
-        </TouchableOpacity>
       );
     } else {
       return toggleButton();
@@ -376,12 +376,11 @@ export default function App() {
     if (spotifyTrack) {
       return (
         <View style={styles.smallPlayPause}>
-          <TouchableOpacity onPress={togglePlayback}>
-            <Icon
-              name={isPlaying ? "pause" : "play"}
-              style={{ width: 20, height: 20, color: "white" }}
-            />
-          </TouchableOpacity>
+          <Button
+            icon={isPlaying ? "pause" : "play"}
+            iconColor="white"
+            onPressIn={togglePlayback}
+          />
         </View>
       );
     }
@@ -538,7 +537,6 @@ export default function App() {
       </View>
 
 
-     
     </View>
   );
 }
@@ -547,6 +545,9 @@ const styles = StyleSheet.create({
   smallPlayPause: {
     alignItems: "center",
     justifyContent: "center",
+    position:"relative",
+    left: -10,
+    bottom: -15
   },
   spotifyImage: {
     position: "absolute",

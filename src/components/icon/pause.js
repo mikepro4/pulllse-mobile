@@ -8,10 +8,11 @@ const Icon = (props) => {
   return (
     <View>
       <Svg
-        width={props.style.width}
-        height={props.style.height}
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
-        fill={props.style.color}
+        fill={props.style.fill}
+
       >
         <Path
           fillRule="evenodd"

@@ -96,6 +96,7 @@ const PlayerInfoBar = () => {
                 <View style={styles.playArea}>
                     <Button
                         icon="play"
+                        iconColor="#000"
                         onPressIn={() => {
                             // alert("play")
                         }} />
