@@ -545,9 +545,9 @@ const styles = StyleSheet.create({
   smallPlayPause: {
     alignItems: "center",
     justifyContent: "center",
-    position:"relative",
-    left: -10,
-    bottom: -15
+    position: "relative",
+    bottom: -5,
+    left: -10
   },
   spotifyImage: {
     position: "absolute",
@@ -584,8 +584,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     position: "absolute",
-    bottom: -20,
+    alignItems: "center",
+    bottom: -35,
     width: 265,
+    zIndex: 1
   },
   duration: {
     flexDirection: "row",
