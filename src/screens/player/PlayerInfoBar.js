@@ -93,7 +93,7 @@ const PlayerInfoBar = () => {
         <Animated.View style={[styles.infoBarContainer, animatedStyles]}>
             <View style={styles.infoBarLeft}>
 
-                {/* <View style={styles.playArea}>
+                <View style={styles.playArea}>
                     <Button
                         icon="play"
                         onPressIn={() => {
@@ -104,9 +104,9 @@ const PlayerInfoBar = () => {
                 <View style={styles.descriptionArea}>
                     <CustomText style={{fontSize: 11, opacity: 0.5, marginBottom: 2, letterSpacing: 0.34, fontFamily: "aeonik-light" }}>{getUsername()}</CustomText>
                     <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>{getPulseTitle()}</CustomText>  
-                </View> */}
+                </View>
 
-                <PlayerComponent />
+                {/* <PlayerComponent /> */}
             </View>
 
             <View style={styles.infoBarRight}>

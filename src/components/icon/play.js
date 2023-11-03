@@ -5,19 +5,14 @@ import styles from "./indexStyle";
 
 const Icon = (props) => {
   return (
-    <View style={{ marginLeft: props.style.marginLeft }}>
-      <Svg
-        fill="none"
-        width={props.style.width}
-        height={props.style.height}
-        viewBox="0 0 24 24"
-      >
-        <Path
-          fill={props.style.color}
-          d="M18.1447 10.8665C19.5502 11.6788 19.5554 12.7006 18.1447 13.6189L7.24495 21.2422C5.87541 22.0001 4.94525 21.5526 4.84761 19.9126L4.80136 3.95717C4.77053 2.44647 5.97048 2.01965 7.1139 2.74396L18.1447 10.8665Z"
-        />
+    <View style={{width: 22, height: 22, position: "relative", left: 6, top: 2}}>
+      <Svg width="14" fill="none" height="17" viewBox="0 0 14 17">
+          <Path
+            fill="#000"
+            d="M0 16.13V.907A.5.5 0 01.768.485l12.536 7.942a.5.5 0 01-.017.855L.752 16.562A.5.5 0 010 16.13z"
+          />
       </Svg>
-    </View>
+  </View>
   );
 };
 
