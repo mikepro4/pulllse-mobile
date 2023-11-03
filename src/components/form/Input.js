@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     },
 
     placeholderText: {
-        fontSize: 24,
+        fontSize: 22,
         fontFamily: "aeonik-light",
         color: "rgba(255,255,255,0.2)",
     },

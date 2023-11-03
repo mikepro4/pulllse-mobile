@@ -26,8 +26,8 @@ import TrashIcon from "./trash";
 import SpotifyIcon from "./spotifyIcon";
 import AppleIcon from "./appleIcon";
 import FileIcon from "./fileIcon";
-
 import ArrowRight from "./arrowRight";
+import Mic from "./mic";
 
 const Icon = ({ name, style }) => {
     switch (name) {
@@ -88,6 +88,8 @@ const Icon = ({ name, style }) => {
             return <LoopIcon style={style} />;
         case "stopRec":
             return <StopRec style={style} />;
+        case "mic":
+            return <Mic style={style} />;
         default:
             return
     }

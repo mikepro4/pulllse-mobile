@@ -83,9 +83,9 @@ const PlayerInfoBar = () => {
 
     const getPulseTitle = () => {
         if(player.originalPulse) {
-            return player.originalPulse.pulse.name
+            return <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>{player.originalPulse.pulse.name}</CustomText>
         } else {
-            return "New Pulse"
+            return <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1, opacity: 0.222}}>Untitled...</CustomText>
         }
     }
 
@@ -95,7 +95,7 @@ const PlayerInfoBar = () => {
 
                 <View style={styles.playArea}>
                     <Button
-                        icon="play"
+                        icon={player.originalPulse ? "play" : "mic"}
                         iconColor="#000"
                         onPressIn={() => {
                             // alert("play")
@@ -117,7 +117,7 @@ const PlayerInfoBar = () => {
                     }}
                 >
                     <CustomText style={{fontSize: 11, opacity: 0.5, marginBottom: 2, letterSpacing: 0.34, fontFamily: "aeonik-light" }}>{getUsername()}</CustomText>
-                    <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>{getPulseTitle()}</CustomText>  
+                    {getPulseTitle()}
                 </TouchableOpacity>
 
                 {/* <PlayerComponent /> */}

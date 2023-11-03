@@ -20,11 +20,7 @@ const PulseSettings = () => {
     const scrollViewRef = useRef(null);
 
     const onSubmit = (values) => {
-        // console.log(values);
-        console.log({
-            email,
-            password
-        })
+        console.log(values);
     };
 
     const validateName = value => {
@@ -77,27 +73,6 @@ const PulseSettings = () => {
                                     onChange={(value) => setEmail(value.nativeEvent.text)}
                                     value={email}
                                 />
-
-
-                                {/* <Field
-                                name="password"
-                                label="Password"
-                                component={Input}
-                                placeholder="Password"
-                                value={password}
-                                secureTextEntry={true}
-                                onChange={(value) => setPassword(value.nativeEvent.text)}
-                            />
-
-                            <Field
-                                name="slider"
-                                label="Adjust Slider"
-                                component={Slider}
-                                minimumValue={0}
-                                maximumValue={1}
-                                onChange={value => console.log(value)}
-                                step={0.00001}
-                            /> */}
 
                                 <Button title="Submit" label="Submit" onPressIn={handleSubmit} />
                             </View>
