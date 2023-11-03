@@ -30,11 +30,12 @@ export default RecordingEditor;
 
 const styles = StyleSheet.create({
     editorLeft: {
-        width: 70,
+        width: 50,
         height: 70,
         // backgroundColor: "blue",
         alignItems: "center",
         justifyContent: "center",
+        marginRight: 20
     },
     editorRight: {
         flex: 1,
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         position: "relative",
         flexDirection: "row",
-        height: 124,
+        height: 142,
         borderBottomColor: "rgba(255, 255, 255, 0.1)",
         borderBottomWidth: 1,
     },

@@ -13,6 +13,7 @@ import { setPulseTitle, setPulseAudioSourceType } from "../../../redux";
 
 import ParamSwitcher from "../../param_switcher";
 import AudioSourceEditor from "../../audio_source_editor";
+import BPMTap from "../../bpm_tap";
 
 const PulseSettings = () => {
     const dispatch = useDispatch();
@@ -125,6 +126,8 @@ const PulseSettings = () => {
                 <AudioSourceEditor/>
 
                 </View>
+
+                <BPMTap/>
 
 
 
