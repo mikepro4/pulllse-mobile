@@ -9,6 +9,17 @@ const RecordingEditor = () => {
 
     return (
         <View style={styles.editorContainer}>
+
+            <View style={styles.editorLeft}>
+                <View style={styles.recordButtonContainer}>
+                    <View style={styles.recordButton}></View>
+                </View>
+            </View>
+            <View style={styles.editorRight}>
+                <View style={styles.emptyRecordingContainer}>
+                    <CustomText style={styles.emptyAudioText}>Record audio...</CustomText>
+                </View>
+            </View>
             {/* <CustomText>Recording Editor</CustomText> */}
         </View>
     );
@@ -18,12 +29,64 @@ export default RecordingEditor;
 
 
 const styles = StyleSheet.create({
+    editorLeft: {
+        width: 70,
+        height: 70,
+        // backgroundColor: "blue",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    editorRight: {
+        flex: 1,
+        // backgroundColor: "red",
+        height: 70,
+        position: "relative",
+        justifyContent: "center",
+        // alignItems: "center",
+    },
+
+    recordButtonContainer: {
+        width: 50,
+        height: 50,
+        // backgroundColor: "white",
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: "white",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    recordButton: {
+        width: 40,
+        height: 40,
+        backgroundColor: "white",
+        borderRadius: 50,
+        // borderWidth: 1,
+        // borderColor: "white",
+    },
     editorContainer: {
-        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        // backgroundColor: "rgba(255, 255, 255, 0.05)",
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-        height: 142,
+        flexDirection: "row",
+        height: 124,
+        borderBottomColor: "rgba(255, 255, 255, 0.1)",
+        borderBottomWidth: 1,
     },
-
+    emptyRecordingContainer: {
+        // flex: 1,
+        backgroundColor: "rgba(255, 255, 255, 0.03)",
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10,
+    },
+    emptyAudioText: {
+        color: "white",
+        fontSize: 14,
+        opacity: 0.3,
+        position: "relative",
+        top: -2
+    }
 });
