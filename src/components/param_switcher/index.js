@@ -13,9 +13,8 @@ import Icon from "../../components/icon"
 
 import CustomText from "../text";
 
-const ParamSwitcher = ({ params, onParamChange }) => {
-  const [previousTab, setPreviousTab] = useState(null);
-  const [activeParam, setActiveTab] = useState(0);
+const ParamSwitcher = ({ params, onParamChange, initialValue}) => {
+  const [activeParam, setActiveTab] = useState(initialValue || 0);
 
   const param = (item, index) => {
 
@@ -86,7 +85,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "rgba(255, 255, 255, 0.1)",
         margin: 5,
-        paddingVertical: 20,
+        paddingVertical: 18,
         borderRadius: 10,
     },
     paramGroup: {

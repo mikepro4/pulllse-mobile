@@ -68,5 +68,6 @@ export {
   setEdited,
   setOriginalPulse,
   clearPlayer,
-  setPulseTitle
+  setPulseTitle,
+  setPulseAudioSourceType
 } from "./slices/playerSlice";

@@ -9,7 +9,7 @@ import Input from '../../../components/form/Input';
 import CustomText from "../../../components/text";
 import Button from "../../../components/button"
 
-import { setPulseTitle } from "../../../redux";
+import { setPulseTitle, setPulseAudioSourceType } from "../../../redux";
 
 import ParamSwitcher from "../../param_switcher";
 
@@ -51,6 +51,32 @@ const PulseSettings = () => {
         };
     }, []);
 
+    let audioSourceTypes = [
+        {
+            id: 0,
+            title: "Recording",
+            value: "recording",
+            icon: "mic",
+        },
+        {
+            id: 1,
+            title: "Spotify",
+            value: "spotify",
+            icon: "spotify",
+        },
+        {
+            id: 2,
+            title: "Sound file",
+            value: "file",
+            icon: "music",
+        }
+    ]
+
+    const getSourceTypeId = (value) => {
+        const sourceType = audioSourceTypes.find(source => source.value === value);
+        return sourceType ? sourceType.id : null;
+    }
+
 
     return (
         <View style={{ position: "relative", flex: 1 }}>
@@ -84,29 +110,13 @@ const PulseSettings = () => {
                 />
 
                 <ParamSwitcher
-                    format="stacked"
-                    params={[
-                        {
-                            id: 0,
-                            title: "Recording",
-                            value: "recording",
-                            icon: "mic",
-                        },
-                        {
-                            id: 1,
-                            title: "Spotify",
-                            value: "spotify",
-                            icon: "spotify",
-                        },
-                        {
-                            id: 2,
-                            title: "Sound file",
-                            value: "file",
-                            icon: "music",
-                        }
-                    ]}
+                    initialValue={getSourceTypeId(player.editedPulse?.audioSourceType)}
+                    params={audioSourceTypes}
                     onParamChange={(param) => {
                         console.log(param)
+
+                        dispatch(setPulseAudioSourceType(param.value))
+
                     }}
                 />
 

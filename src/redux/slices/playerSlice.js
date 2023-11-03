@@ -36,6 +36,13 @@ const playerSlice = createSlice({
         ...state.editedPulse,
         title: action.payload
       }
+    },
+
+    setPulseAudioSourceType: (state, action) => {
+      state.editedPulse = {
+        ...state.editedPulse,
+        audioSourceType: action.payload
+      }
     }
   }
 });
@@ -45,7 +52,8 @@ export const {
     setEdited,
     setOriginalPulse,
     clearPlayer,
-    setPulseTitle
+    setPulseTitle,
+    setPulseAudioSourceType
 } = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;

@@ -83,7 +83,7 @@ const PlayerInfoBar = () => {
 
     const getPulseTitle = () => {
         if(player.editedPulse) {
-            if(player.editedPulse.title.length == 0) {
+            if(!player.editedPulse.title || player.editedPulse.title.length == 0 ) {
                 return <CustomText style={{fontSize: 18, fontFamily: "aeonik-light", letterSpacing: 0.1, opacity: 0.222}}>Untitled...</CustomText>
             } else {
                 return <CustomText style={{fontSize: 18, fontFamily: "aeonik-", letterSpacing: 0.1 }}>{player.editedPulse.title}</CustomText>
@@ -97,13 +97,30 @@ const PlayerInfoBar = () => {
         }
     }
 
+    const getIcon = () => {
+        if(!player.originalPulse  && !player.editedPulse) {
+            return "mic"
+        }
+        if(player.originalPulse) {
+            return "play"
+        }
+        switch(player.editedPulse?.audioSourceType) {
+            case "recording":
+                return "mic"
+            case "spotify":
+                return "spotify"
+            case "file":
+                return "music"
+        }
+    }
+
     return (
         <Animated.View style={[styles.infoBarContainer, animatedStyles]}>
             <View style={styles.infoBarLeft}>
 
                 <View style={styles.playArea}>
                     <Button
-                        icon={player.originalPulse ? "play" : "mic"}
+                        icon={getIcon()}
                         iconColor="#000"
                         onPressIn={() => {
                             // alert("play")
