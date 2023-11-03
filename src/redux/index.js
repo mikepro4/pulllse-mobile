@@ -67,5 +67,6 @@ export {
   toggleMix,
   setEdited,
   setOriginalPulse,
-  clearPlayer
+  clearPlayer,
+  setPulseTitle
 } from "./slices/playerSlice";

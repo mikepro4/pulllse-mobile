@@ -11,9 +11,11 @@ import Theme from "../../../styles/theme";
 import CustomText from "../../../components/text";
 import Button from "../../../components/button"
 
+import { setPulseTitle } from "../../../redux";
+
 const PulseSettings = () => {
     const dispatch = useDispatch();
-    const player = useSelector((state) => state.tab);
+    const player = useSelector((state) => state.player);
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -52,38 +54,39 @@ const PulseSettings = () => {
     return (
         <View style={{ position: "relative", flex: 1 }}>
             <ScrollView style={styles.drawerContainer} ref={scrollViewRef}>
-                <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-                    <Form
-                        onSubmit={onSubmit}
-                        render={({ handleSubmit }) => (
-                            <View>
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={{ pulse_name: player.editedPulse?.title }}
+                    render={({ handleSubmit }) => (
+                        <View>
 
-                                <FormSpy
-                                    onChange={formState => {
-                                        console.log('Form state changed!', formState.values);
-                                    }}
-                                />
+                            {/* <FormSpy
+                                onChange={formState => {
+                                    dispatch(setPulseTitle(formState.values.pulse_name))
+                                }}
+                            /> */}
 
-                                <Field
-                                    name="pulse_name"
-                                    label="Pulse name"
-                                    component={Input}
-                                    placeholder="Type pulse name..."
-                                    validate={validateName}
-                                    onChange={(value) => setEmail(value.nativeEvent.text)}
-                                    value={email}
-                                />
+                            <Field
+                                name="pulse_name"
+                                label="Pulse name"
+                                component={Input}
+                                placeholder="Untitled..."
+                                validate={validateName}
+                                onChange={(value) =>  {
+                                    setEmail(value.nativeEvent.text)
+                                    dispatch(setPulseTitle(value.nativeEvent.text))
+                                }}
+                            />
 
-                                <Button title="Submit" label="Submit" onPressIn={handleSubmit} />
-                            </View>
-                        )}
-                    />
+                            {/* <Button title="Submit" label="Submit" onPressIn={handleSubmit} /> */}
+                        </View>
+                    )}
+                />
 
-                    <View
-                        style={{ height: keyboardHeight > 0 ? keyboardHeight * 2.22 : 700, width: "100%", position: "relative" }}
-                    >
-                    </View>
-                </KeyboardAvoidingView>
+                <View
+                    style={{ height: keyboardHeight > 0 ? keyboardHeight * 2.22 : 700, width: "100%", position: "relative" }}
+                >
+                </View>
             </ScrollView>
 
         </View>

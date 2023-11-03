@@ -30,6 +30,13 @@ const playerSlice = createSlice({
       state.originalPulse = null,
       state.editedPulse = null
     },
+
+    setPulseTitle: (state, action) => {
+      state.editedPulse = {
+        ...state.editedPulse,
+        title: action.payload
+      }
+    }
   }
 });
 
@@ -37,7 +44,8 @@ export const {
     toggleMix,
     setEdited,
     setOriginalPulse,
-    clearPlayer
+    clearPlayer,
+    setPulseTitle
 } = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;

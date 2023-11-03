@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { View, StyleSheet, Text, TextInput, Button } from 'react-native';
 import CustomText from "../text";
 
-const Input = ({ label, input, meta, ...inputProps }) => {
+const Input = ({ label, placeholder, input, meta, ...inputProps }) => {
     const [isFocused, setIsFocused] = useState(false);
 
     const [charCount, setCharCount] = useState(0);
@@ -15,11 +15,15 @@ const Input = ({ label, input, meta, ...inputProps }) => {
     const handleBlur = () => {
         setIsFocused(false);
     }; 
+
+    useEffect(() => {   
+        setCharCount(input.value);
+    }, []);
     
     return (
        
         <View style={[styles.inputContainer, isFocused && styles.activeBorder, meta.touched && meta.invalid && styles.errorBorder ]}>
-            {charCount > 0 && <CustomText style={styles.smallPlaceholder}>{label}</CustomText> }
+            {(charCount > 0 || input.value.length > 0) && <CustomText style={styles.smallPlaceholder}>{label}</CustomText> }
             <View style={styles.realInputContainer}>
                 <TextInput
                     autoCompleteType="off"
@@ -33,12 +37,13 @@ const Input = ({ label, input, meta, ...inputProps }) => {
                     placeholderTextColor="rgba(255,255,255,00)"
                     onFocus={handleFocus}
                     onBlur={handleBlur}
+                    value={input.value}
                     {...inputProps}
                 />
             </View>
            
-            {charCount == 0 && <View style={styles.placeholderTextContainer}>
-                <CustomText style={styles.placeholderText}>{label}</CustomText>
+            {charCount == 0  && <View style={styles.placeholderTextContainer}>
+                <CustomText style={styles.placeholderText}>{placeholder}</CustomText>
             </View>}
             {/* <CustomText>{meta.valid ? "valid": "invalid"}</CustomText> */}
             {meta.touched && meta.error && (

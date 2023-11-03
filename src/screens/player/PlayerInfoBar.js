@@ -82,10 +82,18 @@ const PlayerInfoBar = () => {
     }
 
     const getPulseTitle = () => {
-        if(player.originalPulse) {
-            return <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>{player.originalPulse.pulse.name}</CustomText>
+        if(player.editedPulse) {
+            if(player.editedPulse.title.length == 0) {
+                return <CustomText style={{fontSize: 18, fontFamily: "aeonik-light", letterSpacing: 0.1, opacity: 0.222}}>Untitled...</CustomText>
+            } else {
+                return <CustomText style={{fontSize: 18, fontFamily: "aeonik-", letterSpacing: 0.1 }}>{player.editedPulse.title}</CustomText>
+            }
         } else {
-            return <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1, opacity: 0.222}}>Untitled...</CustomText>
+            if(player.originalPulse) {
+                return <CustomText style={{fontSize: 18, fontFamily: "aeonik-medium", letterSpacing: 0.1}}>{player.originalPulse.pulse.name}</CustomText>
+            } else {
+                return <CustomText style={{fontSize: 18, fontFamily: "aeonik-light", letterSpacing: 0.1, opacity: 0.222}}>Untitled...</CustomText>
+            }
         }
     }
 
@@ -111,7 +119,7 @@ const PlayerInfoBar = () => {
                                 drawerType: "pulse_settings", 
                                 drawerData: null, 
                                 drawerDraggable: true,
-                                drawerHeight: "halfScreen"
+                                drawerHeight: "expanded"
                             }));
 
                     }}

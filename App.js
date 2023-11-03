@@ -105,6 +105,9 @@ const App = () => {
         case "fullScreen":
           destination = -SCREEN_HEIGHT + 50;
           break;
+        case "expanded":
+          destination = -SCREEN_HEIGHT / 1.222;
+          break;
         default:
           if (typeof app.drawerHeight === "number") {
             destination = -app.drawerHeight;
