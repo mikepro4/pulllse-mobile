@@ -28,6 +28,8 @@ import AppleIcon from "./appleIcon";
 import FileIcon from "./fileIcon";
 import ArrowRight from "./arrowRight";
 import Mic from "./mic";
+import Spotify from "./spotify";
+import Music from "./music";
 
 const Icon = ({ name, style }) => {
     switch (name) {
@@ -90,6 +92,10 @@ const Icon = ({ name, style }) => {
             return <StopRec style={style} />;
         case "mic":
             return <Mic style={style} />;
+        case "spotify":
+            return <Spotify style={style} />;
+        case "music":
+            return <Music style={style} />;
         default:
             return
     }

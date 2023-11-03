@@ -6,20 +6,21 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { Form, Field, FormSpy } from 'react-final-form';
 import Input from '../../../components/form/Input';
-import Slider from '../../../components/form/Slider';
-import Theme from "../../../styles/theme";
 import CustomText from "../../../components/text";
 import Button from "../../../components/button"
 
 import { setPulseTitle } from "../../../redux";
 
+import ParamSwitcher from "../../param_switcher";
+
 const PulseSettings = () => {
     const dispatch = useDispatch();
     const player = useSelector((state) => state.player);
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const scrollViewRef = useRef(null);
+    const [audioSource, setAudioSource] = useState(1)
 
     const onSubmit = (values) => {
         console.log(values);
@@ -72,21 +73,44 @@ const PulseSettings = () => {
                                 component={Input}
                                 placeholder="Untitled..."
                                 validate={validateName}
-                                onChange={(value) =>  {
+                                onChange={(value) => {
                                     setEmail(value.nativeEvent.text)
                                     dispatch(setPulseTitle(value.nativeEvent.text))
                                 }}
                             />
 
-                            {/* <Button title="Submit" label="Submit" onPressIn={handleSubmit} /> */}
                         </View>
                     )}
                 />
 
-                <View
-                    style={{ height: keyboardHeight > 0 ? keyboardHeight * 2.22 : 700, width: "100%", position: "relative" }}
-                >
-                </View>
+                <ParamSwitcher
+                    format="stacked"
+                    params={[
+                        {
+                            id: 0,
+                            title: "Recording",
+                            value: "recording",
+                            icon: "mic",
+                        },
+                        {
+                            id: 1,
+                            title: "Spotify",
+                            value: "spotify",
+                            icon: "spotify",
+                        },
+                        {
+                            id: 2,
+                            title: "Sound file",
+                            value: "file",
+                            icon: "music",
+                        }
+                    ]}
+                    onParamChange={(param) => {
+                        console.log(param)
+                    }}
+                />
+
+
             </ScrollView>
 
         </View>
