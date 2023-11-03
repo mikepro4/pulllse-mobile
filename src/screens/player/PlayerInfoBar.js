@@ -82,7 +82,7 @@ const PlayerInfoBar = () => {
     }
 
     const getPulseTitle = () => {
-        if(player.editedPulse) {
+        if(player.editedPulse && player.editedPulse.title) {
             if(!player.editedPulse.title || player.editedPulse.title.length == 0 ) {
                 return <CustomText style={{fontSize: 18, fontFamily: "aeonik-light", letterSpacing: 0.1, opacity: 0.222}}>Untitled...</CustomText>
             } else {
