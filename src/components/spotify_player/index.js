@@ -6,6 +6,7 @@ import Slider from "@react-native-community/slider";
 import CustomText from "../../components/text";
 import Icon from "../../components/icon";
 import Button from "../../components/button";
+import LineSoundBar from "../soundbar/lineSoundbar";
 
 const SpotifyPlayer = ({
   spotifyTrack,
@@ -69,7 +70,7 @@ const SpotifyPlayer = ({
             </TouchableOpacity>
           </View>
 
-          <Slider
+          {/* <Slider
             style={styles.slider}
             minimumValue={0}
             maximumValue={duration || 1}
@@ -77,6 +78,13 @@ const SpotifyPlayer = ({
             onSlidingComplete={onSliderValueChange}
             minimumTrackTintColor="#ccc"
             maximumTrackTintColor="#444"
+          /> */}
+          <LineSoundBar
+            duration={duration}
+            playbackPosition={playbackPosition}
+            onSeek={(position) => {
+              onSliderValueChange(position);
+            }}
           />
 
           <View style={styles.spotifyImage}>

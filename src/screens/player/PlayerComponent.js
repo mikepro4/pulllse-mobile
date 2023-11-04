@@ -65,7 +65,7 @@ export default function App() {
     switch (currentView) {
       case "file":
         return (
-          <TouchableOpacity onPress={toggleView} onLongPress={startRecording}>
+          <TouchableOpacity onPress={toggleView}>
             <View style={styles.btnContainer}>
               <Icon name="fileIcon" />
             </View>
@@ -74,22 +74,22 @@ export default function App() {
       case "waveform":
         return !isRecording ? (
           <TouchableOpacity onPress={toggleView} onLongPress={startRecording}>
-            <View style={styles.btnContainer}>
-              <View style={styles.startRec} />
-            </View>
+            <View style={styles.btnContainer}></View>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={stopRecording}>
-            <View style={styles.stopRec}>
-              <Icon name="stopRec" />
-            </View>
+            <View style={styles.stopRec}></View>
           </TouchableOpacity>
         );
       case "spotify":
         return (
           <TouchableOpacity
             onPress={!spotifyTrack ? toggleView : null}
-            onLongPress={() => getTrack("1sseW3KwsD0HSBnjqJTS1D")}
+            onLongPress={() =>
+              getTrack(
+                "https://open.spotify.com/track/4ZtqsOdBbS6GoedzzRGSo9?si=cc4485a8083e4c07"
+              )
+            }
           >
             <Icon name="spotifyIcon" style={{ width: 50, height: 50 }} />
           </TouchableOpacity>
@@ -108,9 +108,12 @@ export default function App() {
     }
   };
 
-  const getTrack = async () => {
+  const getTrack = async (pastedLink) => {
+    if (spotifyTrack) {
+      clearSpotifyTrack();
+    }
     try {
-      const link = await Clipboard.getStringAsync();
+      const link = pastedLink ? pastedLink : await Clipboard.getStringAsync();
 
       const token = await AsyncStorage.getItem("accessToken");
       function getSpotifyTrackID() {
@@ -169,7 +172,7 @@ export default function App() {
     RNSoundLevel.onNewFrame = (data) => {
       // Output the sound level data
 
-      if (data.id % 2 === 0) {
+      if (data.id) {
         setSoundLevels((prevLevels) => [...prevLevels, data]);
       }
     };
@@ -348,21 +351,12 @@ export default function App() {
           <>
             <View style={styles.sliderContainer}>
               <>
-                {sound && (
-                  <TextInput
-                    style={styles.input}
-                    value={name}
-                    onChangeText={(value) => setName(value)}
-                    placeholder="Recording"
-                  />
-                )}
                 <SoundBar
                   duration={duration}
                   playbackPosition={playbackPosition}
                   barData={soundLevels}
-                  onSeek={async (position) => {
-                    await sound.setPositionAsync(position); // Assuming 'sound' is your sound object
-                    setPlaybackPosition(position);
+                  onSeek={(position) => {
+                    onSliderValueChange(position);
                   }}
                   isRecording={isRecording}
                 />
@@ -388,16 +382,6 @@ export default function App() {
                         name="trashIcon"
                         style={{
                           color: "#F25219",
-                        }}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={toggleLooping}>
-                    <View style={styles.trashIcon}>
-                      <Icon
-                        name="loopIcon"
-                        style={{
-                          color: isLooping ? "#6D55FF" : "#fff",
                         }}
                       />
                     </View>
@@ -432,6 +416,7 @@ export default function App() {
         zIndex: 1,
       }}
     >
+      {toggleButton()}
       <View style={styles.buttonSlider}>
         {rederPlayerButtons()}
         {renderSlider()}
@@ -463,17 +448,16 @@ const styles = StyleSheet.create({
     top: -5,
   },
   trashIcon: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: "#222222",
     alignItems: "center",
     justifyContent: "center",
   },
   spotifySongHeader: { fontSize: 16, color: "#fff", marginBottom: 2 },
   spotifySongArtist: { fontSize: 14, color: "#777" },
 
-  sliderContainer: {
-    width: 300,
-  },
   spotifyLinkContainer: {
     left: 3,
     position: "absolute",
@@ -502,7 +486,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     position: "absolute",
     bottom: -20,
-    width: 300,
+    width: "100%",
   },
   startRec: {
     width: 20,

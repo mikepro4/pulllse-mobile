@@ -1,5 +1,5 @@
 function modifyObjectArray(objects) {
-  const targetLength = 60;
+  const targetLength = 50;
 
   // If the object array is longer than 60
   if (objects.length > targetLength) {

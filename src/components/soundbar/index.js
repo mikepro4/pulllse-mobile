@@ -10,7 +10,7 @@ const SoundBar = ({
   isRecording,
 }) => {
   // Constants for canvas size and calculation
-  const canvasWidth = 300;
+  const canvasWidth = 250;
   const canvasHeight = 50;
   const barWidth = 3; // Width of the bars
   const gap = 2; // Space between bars
@@ -28,12 +28,8 @@ const SoundBar = ({
       <View
         style={{
           borderRadius: 10,
-          overflow: "hidden",
-
-          width: 300,
-
-          height: 50,
-          backgroundColor: "#000",
+          width: canvasWidth,
+          backgroundColor: "rgba(255, 255, 255, 0.03)",
         }}
       >
         <Canvas
@@ -60,8 +56,8 @@ const SoundBar = ({
               const barColor = isRecording
                 ? "#FFB945"
                 : barIndexPercentage <= playbackPercentage
-                ? "#fff"
-                : "#555"; // #fff is active, #555 is inactive
+                ? "#29FF7F"
+                : "#112619"; // #fff is active, #555 is inactive
 
               return (
                 <Line
