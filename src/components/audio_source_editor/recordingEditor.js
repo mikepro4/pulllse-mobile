@@ -86,7 +86,7 @@ const RecordingEditor = ({
 
       setIsLooping(false);
     } catch (error) {
-      console.error("Error resetting:", error);
+      console.log("Error resetting:", error);
     }
   };
 

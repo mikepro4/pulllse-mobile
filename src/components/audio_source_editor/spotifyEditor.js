@@ -34,11 +34,13 @@ const RecordingEditor = ({
 }) => {
   const player = useSelector((state) => state.player);
   const [isFocused, setIsFocused] = useState(false);
+  const [trackUrl, setTrackUrl] = useState("");
+
   const [spotifyTrack, setSpotifyTrack] = useState();
   const clearSpotifyTrack = async () => {
     setSpotifyTrack(null);
     setSound(undefined);
-
+    setTrackUrl("");
     setIsPlaying(false);
     setPlaybackPosition(0);
     setDuration(0);
@@ -122,9 +124,30 @@ const RecordingEditor = ({
     }
   };
 
+  const handlePasteAndFetch = () => {
+    if (trackUrl) {
+      getTrack(trackUrl);
+    } else {
+      console.log("No URL provided");
+    }
+  };
+
   const spotifyIcon = (
     <TouchableOpacity onPress={handleOpenSpotifyLink}>
       <Icon name="spotifyIcon" style={{ width: 30, height: 30 }} />
+    </TouchableOpacity>
+  );
+
+  const trashIcon = (
+    <TouchableOpacity onPress={clearSpotifyTrack}>
+      <View style={styles.trashIcon}>
+        <Icon
+          name="trashIcon"
+          style={{
+            color: "#F25219",
+          }}
+        />
+      </View>
     </TouchableOpacity>
   );
 
@@ -168,25 +191,36 @@ const RecordingEditor = ({
           !spotifyTrack && styles.editorContainerBorder,
         ]}
       >
-        <View style={[styles.urlContainer, isFocused && styles.activeBorder]}>
-          <TouchableOpacity
-            onLongPress={() =>
-              getTrack(
-                "https://open.spotify.com/track/4ZtqsOdBbS6GoedzzRGSo9?si=cc4485a8083e4c07"
-              )
-            }
-          >
-            <CustomText style={styles.trackUrl}>TRACK URL:</CustomText>
-          </TouchableOpacity>
-          <TextInput
-            style={styles.trackUrlInput}
-            placeholder="Paste track URL here...."
-            placeholderTextColor="rgba(255, 255, 255, 0.5)"
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-          ></TextInput>
+        <View
+          style={{
+            position: "relative",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <View style={[styles.urlContainer, isFocused && styles.activeBorder]}>
+            <TouchableOpacity
+              onLongPress={() =>
+                getTrack(
+                  "https://open.spotify.com/track/4ZtqsOdBbS6GoedzzRGSo9?si=cc4485a8083e4c07"
+                )
+              }
+            >
+              <CustomText style={styles.trackUrl}>TRACK URL:</CustomText>
+            </TouchableOpacity>
+            <TextInput
+              style={styles.trackUrlInput}
+              placeholder="Paste track URL here...."
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChangeText={(text) => setTrackUrl(text)}
+              value={trackUrl}
+              onSubmitEditing={handlePasteAndFetch}
+            ></TextInput>
+          </View>
+          {spotifyTrack && trashIcon}
         </View>
-
         {spotifyTrack ? component1 : skeleton}
         {spotifyTrack && (
           <LineSoundBar
@@ -207,6 +241,17 @@ const RecordingEditor = ({
 export default RecordingEditor;
 
 const styles = StyleSheet.create({
+  trashIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 6,
+    backgroundColor: "rgba(41, 255, 127, 0.05)",
+    borderColor: "rgba(41, 255, 127, 0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 10,
+    borderWidth: 1,
+  },
   spotifyIcon: {
     position: "absolute",
     right: 10,
@@ -257,7 +302,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   trackUrlInput: {
-    position: "absolute",
+    position: "relative",
     top: 0,
     left: 72,
     right: 0,
@@ -279,14 +324,16 @@ const styles = StyleSheet.create({
   },
   urlContainer: {
     backgroundColor: "rgba(41, 255, 127, 0.05)",
+
     height: 40,
-    // flex: 1,
+
     borderRadius: 6,
     borderWidth: 1,
     borderColor: "rgba(41, 255, 127, 0.2)",
     position: "relative",
     marginBottom: 20,
     flexDirection: "row",
+    flex: 1,
   },
   activeBorder: {
     borderColor: "rgba(41, 255, 127, 1.0)",

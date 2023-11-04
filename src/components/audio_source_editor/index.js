@@ -76,7 +76,19 @@ const App = () => {
           />
         );
       case "file":
-        return <FileEditor />;
+        return (
+          <FileEditor
+            sound={sound}
+            setSound={setSound}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            duration={duration}
+            setDuration={setDuration}
+            playbackPosition={playbackPosition}
+            setPlaybackPosition={setPlaybackPosition}
+            togglePlayback={togglePlayback}
+          />
+        );
       case "spotify":
         return (
           <SpotifyEditor
