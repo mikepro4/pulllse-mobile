@@ -4,7 +4,8 @@ import { View, TouchableOpacity, PanResponder } from "react-native";
 
 const SoundBar = ({ duration, playbackPosition, onSeek }) => {
   const canvasWidth = 388; // Width of the canvas
-  const canvasHeight = 50; // Height of the canvas, touchable area
+  // // Width of the canvas
+  const canvasHeight = 20; // Height of the canvas, touchable area
   const lineHeight = 2; // Height of the line
   const lineY = canvasHeight / 2;
 
@@ -20,7 +21,6 @@ const SoundBar = ({ duration, playbackPosition, onSeek }) => {
     <TouchableOpacity activeOpacity={1} onPress={handlePress}>
       <View
         style={{
-          paddingTop: 18,
           width: canvasWidth,
           height: canvasHeight,
         }}

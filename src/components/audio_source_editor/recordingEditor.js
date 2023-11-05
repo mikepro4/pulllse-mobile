@@ -125,7 +125,7 @@ const RecordingEditor = ({
       // To play the recording
       const { sound } = await Audio.Sound.createAsync({ uri }, { volume: 1.0 });
       // const formData = new FormData();
-
+      console.log(uri);
       const response = await fetch(uri);
       setBlob(await response.arrayBuffer());
       setDuration(status.durationMillis);
@@ -182,7 +182,7 @@ const RecordingEditor = ({
           <CustomText style={styles.emptyAudioText}>Record audio...</CustomText>
         </View> */}
 
-        {sound || isRecording ? (
+        {recording || isRecording ? (
           <SoundBar
             duration={duration}
             playbackPosition={playbackPosition}
@@ -199,7 +199,7 @@ const RecordingEditor = ({
             </CustomText>
           </View>
         )}
-        {sound && (
+        {recording && (
           <View style={styles.duration}>
             <CustomText style={{ fontSize: 14 }}>
               {getDurationFormatted(playbackPosition)}
@@ -211,7 +211,7 @@ const RecordingEditor = ({
         )}
       </View>
       {/* <CustomText>Recording Editor</CustomText> */}
-      {sound ? (
+      {recording ? (
         <TouchableOpacity onPress={reset}>
           <View style={styles.trashIcon}>
             <Icon

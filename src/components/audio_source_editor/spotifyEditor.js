@@ -14,6 +14,7 @@ import axios from "axios";
 import config from "../../../config";
 import { Audio } from "expo-av";
 import LineSoundBar from "../soundbar/lineSoundbar";
+import * as Clipboard from "expo-clipboard";
 
 import CustomText from "../text";
 import Icon from "../icon";
@@ -199,18 +200,16 @@ const RecordingEditor = ({
           }}
         >
           <View style={[styles.urlContainer, isFocused && styles.activeBorder]}>
-            <TouchableOpacity
-              onLongPress={() =>
-                getTrack(
-                  "https://open.spotify.com/track/4ZtqsOdBbS6GoedzzRGSo9?si=cc4485a8083e4c07"
-                )
-              }
-            >
+            <TouchableOpacity onPress={() => getTrack()}>
               <CustomText style={styles.trackUrl}>TRACK URL:</CustomText>
             </TouchableOpacity>
             <TextInput
               style={styles.trackUrlInput}
-              placeholder="Paste track URL here...."
+              placeholder={
+                spotifyTrack
+                  ? spotifyTrack?.external_urls.spotify
+                  : "Paste track URL here...."
+              }
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -223,13 +222,15 @@ const RecordingEditor = ({
         </View>
         {spotifyTrack ? component1 : skeleton}
         {spotifyTrack && (
-          <LineSoundBar
-            duration={duration}
-            playbackPosition={playbackPosition}
-            onSeek={(position) => {
-              onSliderValueChange(position);
-            }}
-          />
+          <View style={{ top: 32 }}>
+            <LineSoundBar
+              duration={duration}
+              playbackPosition={playbackPosition}
+              onSeek={(position) => {
+                onSliderValueChange(position);
+              }}
+            />
+          </View>
         )}
 
         {/* <CustomText>Recording Editor</CustomText> */}
@@ -309,6 +310,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     color: "white",
     fontFamily: "aeonik-regular",
+    paddingRight: 80,
     // backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
   trackUrl: {
