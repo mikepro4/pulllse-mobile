@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { store, fetchUserInfo, fetchUserAudios } from "./src/redux";
+import { getAccessToken } from "./src/utils/initializeSpotifyApp";
 
 import {
   Dimensions,
@@ -80,6 +81,7 @@ const App = () => {
 
   useEffect(() => {
     fetchUserDetails();
+    getAccessToken();
     const socket = io(config.apiURL);
     socketConnection(socket);
     return () => socket.disconnect();

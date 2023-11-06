@@ -47,7 +47,6 @@ const RecordingEditor = ({
     setDuration(0);
   };
 
-  console.log("sound", sound);
   const handleFocus = () => {
     setIsFocused(true);
   };
@@ -71,11 +70,13 @@ const RecordingEditor = ({
       }
     };
   }, [sound]);
+
   useEffect(() => {
     return () => {
       clearSpotifyTrack();
     };
   }, []);
+
   const handleOpenSpotifyLink = () => {
     const spotifyLink = spotifyTrack?.external_urls.spotify;
     Linking.canOpenURL(spotifyLink)
@@ -100,18 +101,19 @@ const RecordingEditor = ({
     }
   };
 
+  function getSpotifyTrackID(link) {
+    const match = link.match(/track\/([a-zA-Z0-9]+)\?/);
+    return match ? match[1] : null;
+  }
+
   const getTrack = async (pastedLink) => {
     try {
       const link = pastedLink ? pastedLink : await Clipboard.getStringAsync();
 
       const token = await AsyncStorage.getItem("accessToken");
-      function getSpotifyTrackID() {
-        const match = link.match(/track\/([a-zA-Z0-9]+)\?/);
-        return match ? match[1] : null;
-      }
 
-      const id = getSpotifyTrackID();
-
+      const id = getSpotifyTrackID(link);
+      setTrackUrl(config.spotifyURL + id + "?market=us");
       const response = await axios.get(config.spotifyURL + id + "?market=us", {
         headers: {
           Authorization: `Bearer ${token}`,

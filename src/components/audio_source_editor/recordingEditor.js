@@ -30,7 +30,7 @@ const RecordingEditor = ({
   const player = useSelector((state) => state.player);
   const [soundLevels, setSoundLevels] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
-
+  console.log(soundLevels);
   const [recording, setRecording] = useState();
   const [blob, setBlob] = useState();
   useFocusEffect(
@@ -199,7 +199,7 @@ const RecordingEditor = ({
             </CustomText>
           </View>
         )}
-        {recording && (
+        {sound && (
           <View style={styles.duration}>
             <CustomText style={{ fontSize: 14 }}>
               {getDurationFormatted(playbackPosition)}
@@ -211,7 +211,7 @@ const RecordingEditor = ({
         )}
       </View>
       {/* <CustomText>Recording Editor</CustomText> */}
-      {recording ? (
+      {sound ? (
         <TouchableOpacity onPress={reset}>
           <View style={styles.trashIcon}>
             <Icon

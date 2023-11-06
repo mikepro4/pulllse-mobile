@@ -93,6 +93,11 @@
     <array>
       <string>pulse</string>
     </array>
+     <key>UIBackgroundModes</key>
+    <array>
+      <string>audio</string>
+    </array>
+
     </dict>
     </array>
   </dict>

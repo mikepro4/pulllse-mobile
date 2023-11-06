@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Canvas, Line, vec } from "@shopify/react-native-skia";
-import { View, TouchableOpacity, PanResponder } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  PanResponder,
+  TouchableWithoutFeedback,
+} from "react-native";
 
-const SoundBar = ({ duration, playbackPosition, onSeek }) => {
+const SoundBar = ({
+  duration,
+  playbackPosition,
+  setPlaybackPosition,
+  onSeek,
+}) => {
   const canvasWidth = 388; // Width of the canvas
   // // Width of the canvas
   const canvasHeight = 20; // Height of the canvas, touchable area

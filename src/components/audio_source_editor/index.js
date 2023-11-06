@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -6,6 +6,7 @@ import CustomText from "../text";
 import RecordingEditor from "./recordingEditor";
 import SpotifyEditor from "./spotifyEditor";
 import FileEditor from "./fileEditor";
+import { useFocusEffect } from "@react-navigation/native";
 
 const App = () => {
   const player = useSelector((state) => state.player);
@@ -25,18 +26,14 @@ const App = () => {
           // Check if playback just finished and user had pressed play
           setPlaybackPosition(0); // Reset the slider to the initial position
           await sound.setPositionAsync(0);
-          if (isLooping) {
-            setIsPlaying(true);
-          }
-          if (!isLooping) {
-            setIsPlaying(false);
-          }
+
+          setIsPlaying(false);
         } else {
           setPlaybackPosition(status.positionMillis); // Otherwise, continue updating the slider position
         }
       });
     }
-  }, [sound, isLooping]);
+  }, [sound]);
 
   const toggleLooping = async () => {
     try {
@@ -57,6 +54,18 @@ const App = () => {
     setIsPlaying(!isPlaying); // Toggle the isPlaying state
   };
 
+  const onSliderValueChange = async (value) => {
+    if (sound) {
+      try {
+        await sound.setPositionAsync(value);
+        setPlaybackPosition(value);
+      } catch (error) {
+        console.log("sound", sound);
+        console.error("Error seeking:", error);
+      }
+    }
+  };
+
   const renderEditor = () => {
     switch (player.editedPulse?.audioSourceType) {
       case "recording":
@@ -73,6 +82,7 @@ const App = () => {
             playbackPosition={playbackPosition}
             setPlaybackPosition={setPlaybackPosition}
             togglePlayback={togglePlayback}
+            onSliderValueChange={onSliderValueChange}
           />
         );
       case "file":
@@ -87,6 +97,7 @@ const App = () => {
             playbackPosition={playbackPosition}
             setPlaybackPosition={setPlaybackPosition}
             togglePlayback={togglePlayback}
+            onSliderValueChange={onSliderValueChange}
           />
         );
       case "spotify":
@@ -103,6 +114,7 @@ const App = () => {
             playbackPosition={playbackPosition}
             setPlaybackPosition={setPlaybackPosition}
             togglePlayback={togglePlayback}
+            onSliderValueChange={onSliderValueChange}
           />
         );
       default:

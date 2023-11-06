@@ -12,6 +12,9 @@ import * as DocumentPicker from "expo-document-picker";
 import { Audio } from "expo-av";
 import Button from "../../components/button";
 import LineSoundBar from "../soundbar/lineSoundbar";
+import SoundBar from "../soundbar";
+import RNSoundLevel from "react-native-sound-level";
+import { modifyObjectArray } from "../soundbar/soundbarThunk";
 
 import CustomText from "../text";
 import Icon from "../icon";
@@ -27,13 +30,19 @@ const RecordingEditor = ({
   playbackPosition,
   setPlaybackPosition,
   togglePlayback,
+  onSliderValueChange,
 }) => {
   const player = useSelector((state) => state.player);
   const [isFocused, setIsFocused] = useState(false);
+
   const [recording, setRecording] = useState();
   const [blob, setBlob] = useState();
-  const fileInfo = extractFileInfo();
 
+  const [soundLevels, setSoundLevels] = useState([]);
+  const [isRecording, setIsRecording] = useState(false);
+
+  const fileInfo = extractFileInfo();
+  console.log("slevels", soundLevels);
   const clearFile = async () => {
     try {
       if (sound) {
@@ -43,18 +52,23 @@ const RecordingEditor = ({
       // Reset state
       setRecording(undefined);
       setSound(undefined);
-
+      setSoundLevels([]);
       setIsPlaying(false);
       setPlaybackPosition(0);
       setDuration(0);
       setBlob(undefined);
-
+      RNSoundLevel.stop();
       setIsLooping(false);
     } catch (error) {
       console.log("Error resetting:", error);
     }
   };
 
+  useEffect(() => {
+    if (duration === playbackPosition) {
+      stopRecordWaveForm();
+    }
+  }, [duration, playbackPosition]);
   function extractFileInfo() {
     if (recording) {
       const fileObject = recording.assets[0];
@@ -85,6 +99,13 @@ const RecordingEditor = ({
   }
 
   useEffect(() => {
+    RNSoundLevel.onNewFrame = (data) => {
+      // Output the sound level data
+
+      if (data.id) {
+        setSoundLevels((prevLevels) => [...prevLevels, data]);
+      }
+    };
     return async () => {
       clearFile();
     };
@@ -133,6 +154,24 @@ const RecordingEditor = ({
     }
   };
 
+  const stopRecordWaveForm = () => {
+    RNSoundLevel.stop();
+
+    setIsRecording(false);
+    setSoundLevels(modifyObjectArray(soundLevels));
+  };
+
+  const recordWaveForm = async () => {
+    // Reset the slider to the initial position
+    setSoundLevels([]);
+
+    await sound.setPositionAsync(0);
+    await sound.playAsync();
+    RNSoundLevel.start();
+    setPlaybackPosition(0);
+    setIsRecording(true);
+  };
+
   const trashIcon = (
     <TouchableOpacity onPress={clearFile}>
       <View style={styles.trashIcon}>
@@ -144,6 +183,30 @@ const RecordingEditor = ({
         />
       </View>
     </TouchableOpacity>
+  );
+  const waveFormIcon = (
+    <TouchableOpacity
+      onPress={() => {
+        if (!isRecording) {
+          recordWaveForm();
+        } else {
+          stopRecordWaveForm();
+        }
+      }}
+    >
+      <Icon
+        name="waveForm"
+        style={{ width: 30, height: 30, color: "#29FF7F" }}
+      />
+    </TouchableOpacity>
+  );
+
+  const recordButton = (
+    <View style={[styles.recordButtonContainer, { borderColor: "#F25219" }]}>
+      <View
+        style={[styles.recordButton, { backgroundColor: "#F25219" }]}
+      ></View>
+    </View>
   );
 
   return (
@@ -183,24 +246,54 @@ const RecordingEditor = ({
             </View>
           ) : (
             <View style={styles.toggleContainer}>
-              <View style={styles.btnContainer}>
-                <Button
-                  icon={isPlaying ? "pause" : "play"}
-                  iconColor="black"
-                  onPressIn={togglePlayback}
-                />
-              </View>
+              {isRecording ? (
+                recordButton
+              ) : (
+                <View style={styles.btnContainer}>
+                  <Button
+                    icon={isPlaying ? "pause" : "play"}
+                    iconColor="black"
+                    onPressIn={togglePlayback}
+                  />
+                </View>
+              )}
             </View>
           )}
 
+          {/* <SoundBar
+            duration={duration}
+            playbackPosition={playbackPosition}
+            barData={soundLevels}
+            onSeek={(position) => {
+              onSliderValueChange(position);
+            }}
+            isRecording={isRecording}
+          /> */}
+
           {recording ? (
             <View style={styles.trackPreviewRight}>
-              <CustomText style={styles.spotifySongHeader}>
-                {fileInfo?.fileName}
-              </CustomText>
-              <CustomText style={styles.spotifySongArtist}>
-                {fileInfo?.extension}
-              </CustomText>
+              {soundLevels.length !== 0 ? (
+                <SoundBar
+                  duration={duration}
+                  playbackPosition={playbackPosition}
+                  barData={soundLevels}
+                  onSeek={(position) => {
+                    onSliderValueChange(position);
+                  }}
+                  isRecording={isRecording}
+                />
+              ) : (
+                <>
+                  <CustomText style={styles.spotifySongHeader}>
+                    {fileInfo?.fileName}
+                  </CustomText>
+                  <CustomText style={styles.spotifySongArtist}>
+                    {fileInfo?.extension}
+                  </CustomText>
+                </>
+              )}
+
+              <View style={styles.waveFormIcon}>{waveFormIcon}</View>
             </View>
           ) : (
             <View style={styles.trackPreviewRight}>
@@ -209,7 +302,7 @@ const RecordingEditor = ({
             </View>
           )}
         </View>
-        {recording && (
+        {recording && !isRecording && soundLevels.length === 0 && (
           <View style={{ top: 32 }}>
             <LineSoundBar
               duration={duration}
@@ -229,6 +322,27 @@ const RecordingEditor = ({
 export default RecordingEditor;
 
 const styles = StyleSheet.create({
+  recordButtonContainer: {
+    width: 50,
+    height: 50,
+    // backgroundColor: "white",
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  recordButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: "white",
+    borderRadius: 50,
+    // borderWidth: 1,
+    // borderColor: "white",
+  },
+  waveFormIcon: { position: "absolute", right: 10 },
+
   trashIcon: {
     width: 40,
     height: 40,
