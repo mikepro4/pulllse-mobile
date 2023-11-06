@@ -15,6 +15,7 @@ import LineSoundBar from "../soundbar/lineSoundbar";
 import SoundBar from "../soundbar";
 import RNSoundLevel from "react-native-sound-level";
 import { modifyObjectArray } from "../soundbar/soundbarThunk";
+import { addRecording } from "../../redux";
 
 import CustomText from "../text";
 import Icon from "../icon";
@@ -33,6 +34,7 @@ const RecordingEditor = ({
   onSliderValueChange,
 }) => {
   const player = useSelector((state) => state.player);
+  const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
 
   const [recording, setRecording] = useState();
@@ -42,7 +44,6 @@ const RecordingEditor = ({
   const [isRecording, setIsRecording] = useState(false);
 
   const fileInfo = extractFileInfo();
-  console.log("slevels", soundLevels);
   const clearFile = async () => {
     try {
       if (sound) {
@@ -69,6 +70,7 @@ const RecordingEditor = ({
       stopRecordWaveForm();
     }
   }, [duration, playbackPosition]);
+
   function extractFileInfo() {
     if (recording) {
       const fileObject = recording.assets[0];
@@ -106,7 +108,14 @@ const RecordingEditor = ({
         setSoundLevels((prevLevels) => [...prevLevels, data]);
       }
     };
-    return async () => {
+    return () => {
+      if (sound) {
+        dispatch(addRecording(fileInfo));
+      }
+    };
+  }, [sound]);
+  useEffect(() => {
+    return () => {
       clearFile();
     };
   }, []);
@@ -171,6 +180,12 @@ const RecordingEditor = ({
     setPlaybackPosition(0);
     setIsRecording(true);
   };
+  const cancelWaveformRecord = () => {
+    RNSoundLevel.stop();
+
+    setIsRecording(false);
+    setSoundLevels([]);
+  };
 
   const trashIcon = (
     <TouchableOpacity onPress={clearFile}>
@@ -187,26 +202,28 @@ const RecordingEditor = ({
   const waveFormIcon = (
     <TouchableOpacity
       onPress={() => {
-        if (!isRecording) {
-          recordWaveForm();
-        } else {
-          stopRecordWaveForm();
-        }
+        recordWaveForm();
       }}
     >
       <Icon
         name="waveForm"
-        style={{ width: 30, height: 30, color: "#29FF7F" }}
+        style={{
+          width: 30,
+          height: 30,
+          color: isRecording ? "#F25219" : "#29FF7F",
+        }}
       />
     </TouchableOpacity>
   );
 
   const recordButton = (
-    <View style={[styles.recordButtonContainer, { borderColor: "#F25219" }]}>
-      <View
-        style={[styles.recordButton, { backgroundColor: "#F25219" }]}
-      ></View>
-    </View>
+    <TouchableOpacity onPress={cancelWaveformRecord}>
+      <View style={[styles.recordButtonContainer, { borderColor: "#F25219" }]}>
+        <View
+          style={[styles.recordButton, { backgroundColor: "#F25219" }]}
+        ></View>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -259,16 +276,6 @@ const RecordingEditor = ({
               )}
             </View>
           )}
-
-          {/* <SoundBar
-            duration={duration}
-            playbackPosition={playbackPosition}
-            barData={soundLevels}
-            onSeek={(position) => {
-              onSliderValueChange(position);
-            }}
-            isRecording={isRecording}
-          /> */}
 
           {recording ? (
             <View style={styles.trackPreviewRight}>

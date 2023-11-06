@@ -10,6 +10,8 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const App = () => {
   const player = useSelector((state) => state.player);
+  const state = useSelector((state) => state.audio.audios);
+  console.log("state", state);
   const [sound, setSound] = useState();
 
   const [isLooping, setIsLooping] = useState(false);

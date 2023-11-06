@@ -16,6 +16,8 @@ import { Audio } from "expo-av";
 import LineSoundBar from "../soundbar/lineSoundbar";
 import * as Clipboard from "expo-clipboard";
 
+import { addRecording } from "../../redux";
+
 import CustomText from "../text";
 import Icon from "../icon";
 
@@ -34,6 +36,7 @@ const RecordingEditor = ({
   togglePlayback,
 }) => {
   const player = useSelector((state) => state.player);
+  const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
   const [trackUrl, setTrackUrl] = useState("");
 
@@ -56,8 +59,14 @@ const RecordingEditor = ({
   };
   useEffect(() => {
     return () => {
-      // This function is called when the component unmounts
-      if (sound) {
+      if (sound && spotifyTrack) {
+        dispatch(
+          addRecording({
+            audioLink: trackUrl,
+            duration: 30000,
+            type: "spotify",
+          })
+        );
         // Unload the sound instance if it exists
         sound
           .unloadAsync()

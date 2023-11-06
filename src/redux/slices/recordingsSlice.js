@@ -7,6 +7,7 @@ import {
 
 const initialState = {
   recordings: [],
+  audios: [],
   status: "idle", // to track the request status
   error: null,
 };
@@ -16,7 +17,7 @@ const recordingsSlice = createSlice({
   initialState,
   reducers: {
     addRecording: (state, action) => {
-      state.recordings.push(action.payload);
+      state.audios.push(action.payload);
     },
   },
   extraReducers: (builder) => {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { addRecording } from "../../redux";
 
 import CustomText from "../text";
 import Button from "../../components/button";
@@ -28,6 +29,8 @@ const RecordingEditor = ({
   togglePlayback,
 }) => {
   const player = useSelector((state) => state.player);
+  const dispatch = useDispatch();
+
   const [soundLevels, setSoundLevels] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   console.log(soundLevels);
@@ -55,8 +58,20 @@ const RecordingEditor = ({
       }
     };
     return () => {
-      reset();
+      if (sound) {
+        dispatch(
+          addRecording({
+            duration,
+            type: "recording",
+            soundLevels: soundLevels,
+          })
+        );
+      }
     };
+  }, [sound]);
+
+  useEffect(() => {
+    return () => reset();
   }, []);
 
   const reset = async () => {
