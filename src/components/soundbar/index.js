@@ -24,7 +24,11 @@ const SoundBar = ({
 
   const playbackPercentage = (playbackPosition / duration) * 100;
   return (
-    <TouchableOpacity activeOpacity={1} onPress={handlePress}>
+    <TouchableOpacity
+      disabled={isRecording}
+      activeOpacity={1}
+      onPress={handlePress}
+    >
       <View
         style={{
           borderRadius: 10,

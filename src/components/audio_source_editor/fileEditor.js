@@ -15,7 +15,7 @@ import LineSoundBar from "../soundbar/lineSoundbar";
 import SoundBar from "../soundbar";
 import RNSoundLevel from "react-native-sound-level";
 import { modifyObjectArray } from "../soundbar/soundbarThunk";
-import { addRecording } from "../../redux";
+import { addPulseRecording } from "../../redux";
 
 import CustomText from "../text";
 import Icon from "../icon";
@@ -44,26 +44,6 @@ const RecordingEditor = ({
   const [isRecording, setIsRecording] = useState(false);
 
   const fileInfo = extractFileInfo();
-  const clearFile = async () => {
-    try {
-      if (sound) {
-        await sound.unloadAsync();
-      }
-
-      // Reset state
-      setRecording(undefined);
-      setSound(undefined);
-      setSoundLevels([]);
-      setIsPlaying(false);
-      setPlaybackPosition(0);
-      setDuration(0);
-      setBlob(undefined);
-      RNSoundLevel.stop();
-      setIsLooping(false);
-    } catch (error) {
-      console.log("Error resetting:", error);
-    }
-  };
 
   useEffect(() => {
     if (duration === playbackPosition) {
@@ -108,17 +88,49 @@ const RecordingEditor = ({
         setSoundLevels((prevLevels) => [...prevLevels, data]);
       }
     };
-    return () => {
+    return async () => {
       if (sound) {
-        dispatch(addRecording(fileInfo));
+        await sound.unloadAsync();
+        dispatch(
+          addPulseRecording({
+            duration,
+            type: "file",
+            soundLevels: soundLevels,
+            link: fileInfo.uri,
+            fileName: fileInfo?.fileName,
+            extension: fileInfo?.extension,
+          })
+        );
       }
     };
   }, [sound]);
   useEffect(() => {
-    return () => {
-      clearFile();
-    };
+    return () => clearFile();
   }, []);
+  const clearFile = async () => {
+    try {
+      if (sound) {
+        await sound.stopAsync();
+        if (sound._loaded) {
+          // Check if sound is loaded before trying to unload
+          await sound.unloadAsync();
+        }
+      }
+
+      // Reset state
+      setRecording(undefined);
+      setSound(undefined);
+      setSoundLevels([]);
+      setIsPlaying(false);
+      setPlaybackPosition(0);
+      setDuration(0);
+      setBlob(undefined);
+      RNSoundLevel.stop();
+      setIsLooping(false);
+    } catch (error) {
+      console.log("Error resetting:", error);
+    }
+  };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -182,7 +194,7 @@ const RecordingEditor = ({
   };
   const cancelWaveformRecord = () => {
     RNSoundLevel.stop();
-
+    setIsPlaying(true);
     setIsRecording(false);
     setSoundLevels([]);
   };
@@ -204,6 +216,7 @@ const RecordingEditor = ({
       onPress={() => {
         recordWaveForm();
       }}
+      disabled={soundLevels.length !== 0}
     >
       <Icon
         name="waveForm"

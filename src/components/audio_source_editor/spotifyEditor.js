@@ -16,7 +16,7 @@ import { Audio } from "expo-av";
 import LineSoundBar from "../soundbar/lineSoundbar";
 import * as Clipboard from "expo-clipboard";
 
-import { addRecording } from "../../redux";
+import { addPulseRecording } from "../../redux";
 
 import CustomText from "../text";
 import Icon from "../icon";
@@ -39,6 +39,7 @@ const RecordingEditor = ({
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
   const [trackUrl, setTrackUrl] = useState("");
+  console.log("trackurl", trackUrl);
 
   const [spotifyTrack, setSpotifyTrack] = useState();
   const clearSpotifyTrack = async () => {
@@ -58,16 +59,17 @@ const RecordingEditor = ({
     setIsFocused(false);
   };
   useEffect(() => {
-    return () => {
-      if (sound && spotifyTrack) {
+    return async () => {
+      if (sound) {
+        await sound.unloadAsync();
         dispatch(
-          addRecording({
-            audioLink: trackUrl,
-            duration: 30000,
+          addPulseRecording({
+            duration,
             type: "spotify",
+            soundLevels: null,
+            link: trackUrl,
           })
         );
-        // Unload the sound instance if it exists
         sound
           .unloadAsync()
           .then(() => {

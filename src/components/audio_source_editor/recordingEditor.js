@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addRecording } from "../../redux";
+import { addPulseRecording } from "../../redux";
 
 import CustomText from "../text";
 import Button from "../../components/button";
@@ -57,13 +57,15 @@ const RecordingEditor = ({
         setSoundLevels((prevLevels) => [...prevLevels, data]);
       }
     };
-    return () => {
+    return async () => {
       if (sound) {
+        await sound.unloadAsync();
         dispatch(
-          addRecording({
+          addPulseRecording({
             duration,
             type: "recording",
-            soundLevels: soundLevels,
+            soundLevels,
+            link: recording ? recording.getURI() : "",
           })
         );
       }
