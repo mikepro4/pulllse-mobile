@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addPulseRecording } from "../../redux";
+import { addPulseRecording, loadAudio } from "../../redux";
 
 import CustomText from "../text";
 import Button from "../../components/button";
@@ -33,9 +33,11 @@ const RecordingEditor = ({
 
   const [soundLevels, setSoundLevels] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
-  console.log(soundLevels);
+  const [waveWidth, setWaveWidth] = useState();
+  console.log("waveWidth", waveWidth);
   const [recording, setRecording] = useState();
   const [blob, setBlob] = useState();
+
   useFocusEffect(
     React.useCallback(() => {
       // No operation when the screen is focused
@@ -148,7 +150,7 @@ const RecordingEditor = ({
       setDuration(status.durationMillis);
 
       setSound(sound);
-      const modifiedObjects = modifyObjectArray(soundLevels);
+      const modifiedObjects = modifyObjectArray(soundLevels, waveWidth);
       setSoundLevels(modifiedObjects);
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
@@ -157,6 +159,11 @@ const RecordingEditor = ({
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onEditorRightLayout = (event) => {
+    const { width } = event.nativeEvent.layout;
+    setWaveWidth(width);
   };
 
   const rederPlayerButtons = () => {
@@ -194,7 +201,7 @@ const RecordingEditor = ({
   return (
     <View style={styles.editorContainer}>
       <View style={styles.editorLeft}>{rederPlayerButtons()}</View>
-      <View style={styles.editorRight}>
+      <View style={styles.editorRight} onLayout={onEditorRightLayout}>
         {/* <View style={styles.emptyRecordingContainer}>
           <CustomText style={styles.emptyAudioText}>Record audio...</CustomText>
         </View> */}
@@ -208,16 +215,17 @@ const RecordingEditor = ({
               onSliderValueChange(position);
             }}
             isRecording={isRecording}
+            canvasWidth={waveWidth}
           />
         ) : (
-          <View style={styles.emptyRecordingContainer}>
+          <View style={[styles.emptyRecordingContainer, { width: waveWidth }]}>
             <CustomText style={styles.emptyAudioText}>
               Record audio...
             </CustomText>
           </View>
         )}
         {sound && (
-          <View style={styles.duration}>
+          <View style={[styles.duration, { width: waveWidth }]}>
             <CustomText style={{ fontSize: 14 }}>
               {getDurationFormatted(playbackPosition)}
             </CustomText>
@@ -270,7 +278,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     position: "absolute",
     bottom: -20,
-    width: 250,
   },
   editorLeft: {
     width: 50,
@@ -281,6 +288,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   editorRight: {
+    marginRight: 10,
     flex: 1,
     // backgroundColor: "red",
     height: 70,
@@ -320,7 +328,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   emptyRecordingContainer: {
-    width: 250,
     // flex: 1,
     backgroundColor: "rgba(255, 255, 255, 0.03)",
     height: 50,

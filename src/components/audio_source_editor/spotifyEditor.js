@@ -16,39 +16,62 @@ import { Audio } from "expo-av";
 import LineSoundBar from "../soundbar/lineSoundbar";
 import * as Clipboard from "expo-clipboard";
 
-import { addPulseRecording } from "../../redux";
+import {
+  addPulseRecording,
+  resetPulseRecording,
+  loadAudio,
+  setPlaybackPosition,
+  setSound,
+  setIsPlaying,
+  setDuration,
+  togglePlayback,
+} from "../../redux";
 
 import CustomText from "../text";
 import Icon from "../icon";
 
 const RecordingEditor = ({
-  sound,
-  setSound,
-  isLooping,
-  setIsLooping,
-  isPlaying,
-  setIsPlaying,
-  duration,
-  setDuration,
-  playbackPosition,
-  setPlaybackPosition,
+  // sound,
+  // setSound,
+  // isLooping,
+  // setIsLooping,
+  // isPlaying,
+  // setIsPlaying,
+  // duration,
+  // setDuration,
+  // playbackPosition,
+  // setPlaybackPosition,
   onSliderValueChange,
-  togglePlayback,
+  // togglePlayback,
 }) => {
   const player = useSelector((state) => state.player);
+  const sound = useSelector((state) => state.pulseRecording.sound);
+  const pulseRecording = useSelector((state) => state.pulseRecording);
+  const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
+  const { artist, imgUri, name, deepLink } = useSelector(
+    (state) => state.pulseRecording.track
+  );
+  const duration = useSelector((state) => state.pulseRecording.duration);
+  const playbackPosition = useSelector(
+    (state) => state.pulseRecording.playbackPosition
+  );
+  console.log("pulseRecording", pulseRecording);
   const dispatch = useDispatch();
-  const [isFocused, setIsFocused] = useState(false);
-  const [trackUrl, setTrackUrl] = useState("");
-  console.log("trackurl", trackUrl);
 
+  const [isFocused, setIsFocused] = useState(false);
+  const [waveWidth, setWaveWidth] = useState();
+
+  console.log("waveWidth", waveWidth);
+
+  const [trackUrl, setTrackUrl] = useState("");
   const [spotifyTrack, setSpotifyTrack] = useState();
   const clearSpotifyTrack = async () => {
     setSpotifyTrack(null);
     setSound(undefined);
     setTrackUrl("");
-    setIsPlaying(false);
-    setPlaybackPosition(0);
-    setDuration(0);
+    dispatch(setIsPlaying(false));
+    dispatch(setPlaybackPosition(0));
+    dispatch(setDuration(0));
   };
 
   const handleFocus = () => {
@@ -58,59 +81,51 @@ const RecordingEditor = ({
   const handleBlur = () => {
     setIsFocused(false);
   };
-  useEffect(() => {
-    return async () => {
-      if (sound) {
-        await sound.unloadAsync();
-        dispatch(
-          addPulseRecording({
-            duration,
-            type: "spotify",
-            soundLevels: null,
-            link: trackUrl,
-          })
-        );
-        sound
-          .unloadAsync()
-          .then(() => {
-            console.log("Sound unloaded successfully");
-          })
-          .catch((error) => {
-            console.error("Failed to unload sound", error);
-          });
-      }
-    };
-  }, [sound]);
+  // useEffect(() => {
+  //   return async () => {
+  //     if (sound) {
+  //       await sound.unloadAsync();
+  //       // dispatch(
+  //       //   addPulseRecording({
+  //       //     duration,
+  //       //     type: "spotify",
+  //       //     soundLevels: null,
+  //       //     link: trackUrl,
+  //       //   })
+  //       // );
+  //     }
+  //   };
+  // }, [sound]);
 
-  useEffect(() => {
-    return () => {
-      clearSpotifyTrack();
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     clearSpotifyTrack();
+  //   };
+  // }, []);
 
   const handleOpenSpotifyLink = () => {
-    const spotifyLink = spotifyTrack?.external_urls.spotify;
-    Linking.canOpenURL(spotifyLink)
+    // const spotifyLink = spotifyTrack?.external_urls.spotify;
+    Linking.canOpenURL(deepLink)
       .then((supported) => {
         if (supported) {
-          Linking.openURL(spotifyLink);
+          Linking.openURL(deepLink);
         } else {
-          console.log("Don't know how to open URI: " + spotifyLink);
+          console.log("Don't know how to open URI: " + deepLink);
         }
       })
       .catch((err) => console.error("An error occurred", err));
   };
 
-  const loadAudio = async (audioLink) => {
-    const soundInstance = new Audio.Sound();
+  // const loadAudio = async (audioLink) => {
+  //   const soundInstance = new Audio.Sound();
 
-    try {
-      await soundInstance.loadAsync({ uri: audioLink });
-      setSound(soundInstance);
-    } catch (error) {
-      console.error("Error loading audio", error);
-    }
-  };
+  //   try {
+  //     await soundInstance.loadAsync({ uri: audioLink });
+  //     setSound(soundInstance);
+  //   } catch (error) {
+  //     console.error("Error loading audio", error);
+  //   }
+  // };
 
   function getSpotifyTrackID(link) {
     const match = link.match(/track\/([a-zA-Z0-9]+)\?/);
@@ -131,8 +146,21 @@ const RecordingEditor = ({
         },
       });
       setSpotifyTrack(response.data);
-      loadAudio(response.data.preview_url);
-      setDuration(30000);
+      dispatch(
+        loadAudio({
+          uri: response.data.preview_url,
+          link: config.spotifyURL + id + "?market=us",
+          type: "spotify",
+          track: {
+            imgUri: response.data.album.images[1].url,
+            name: response.data.name,
+            deepLink: response.data.external_urls.spotify,
+            artist: response.data.artists
+              .map((artist) => artist.name)
+              .join(", "),
+          },
+        })
+      );
     } catch (error) {
       console.error("Error fetching track:", error);
     }
@@ -145,6 +173,10 @@ const RecordingEditor = ({
       console.log("No URL provided");
     }
   };
+  const onEditorRightLayout = (event) => {
+    const { width } = event.nativeEvent.layout;
+    setWaveWidth(width);
+  };
 
   const spotifyIcon = (
     <TouchableOpacity onPress={handleOpenSpotifyLink}>
@@ -153,7 +185,12 @@ const RecordingEditor = ({
   );
 
   const trashIcon = (
-    <TouchableOpacity onPress={clearSpotifyTrack}>
+    <TouchableOpacity
+      onPress={() => {
+        setTrackUrl("");
+        dispatch(resetPulseRecording());
+      }}
+    >
       <View style={styles.trashIcon}>
         <Icon
           name="trashIcon"
@@ -167,20 +204,20 @@ const RecordingEditor = ({
 
   const component1 = (
     <View style={styles.trackPreviewContainer}>
-      <TouchableOpacity onPress={togglePlayback}>
+      <TouchableOpacity
+        onPress={() =>
+          dispatch(togglePlayback({ sound, isPlaying, playbackPosition }))
+        }
+      >
         <Image
-          source={{ uri: spotifyTrack?.album.images[1].url }}
+          source={{ uri: imgUri }}
           style={styles.image} // Adjust the size as needed
         />
       </TouchableOpacity>
 
       <View style={styles.trackPreviewRight}>
-        <CustomText style={styles.spotifySongHeader}>
-          {spotifyTrack?.name}
-        </CustomText>
-        <CustomText style={styles.spotifySongArtist}>
-          {spotifyTrack?.artists.map((artist) => artist.name).join(", ")}
-        </CustomText>
+        <CustomText style={styles.spotifySongHeader}>{name}</CustomText>
+        <CustomText style={styles.spotifySongArtist}>{artist}</CustomText>
         <View style={styles.spotifyIcon}>{spotifyIcon}</View>
       </View>
     </View>
@@ -200,9 +237,10 @@ const RecordingEditor = ({
   return (
     <>
       <View
+        onLayout={onEditorRightLayout}
         style={[
           styles.editorContainer,
-          !spotifyTrack && styles.editorContainerBorder,
+          !imgUri && styles.editorContainerBorder,
         ]}
       >
         <View
@@ -218,25 +256,25 @@ const RecordingEditor = ({
             </TouchableOpacity>
             <TextInput
               style={styles.trackUrlInput}
-              placeholder={
-                spotifyTrack
-                  ? spotifyTrack?.external_urls.spotify
-                  : "Paste track URL here...."
-              }
+              placeholder={deepLink ? deepLink : "Paste track URL here...."}
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               onFocus={handleFocus}
               onBlur={handleBlur}
               onChangeText={(text) => setTrackUrl(text)}
               value={trackUrl}
-              onSubmitEditing={handlePasteAndFetch}
+              onSubmitEditing={() => {
+                handlePasteAndFetch();
+                setTrackUrl("");
+              }}
             ></TextInput>
           </View>
-          {spotifyTrack && trashIcon}
+          {imgUri && trashIcon}
         </View>
-        {spotifyTrack ? component1 : skeleton}
-        {spotifyTrack && (
+        {imgUri ? component1 : skeleton}
+        {imgUri && (
           <View style={{ top: 32 }}>
             <LineSoundBar
+              canvasWidth={waveWidth}
               duration={duration}
               playbackPosition={playbackPosition}
               onSeek={(position) => {

@@ -1,18 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { Audio } from "expo-av";
+import { loadAudio, togglePlayback } from "../thunks/pulseRecordingThunk";
 
 const initialState = {
-  duration: null,
-  type: "recording",
+  type: "",
   soundLevels: [],
+  track: {},
   link: "",
   fileName: "",
-  extencion: "",
+  extension: "",
+  isPlaying: false,
+  isLooping: false,
+  sound: null,
+  duration: 0,
+  playbackPosition: 0,
 };
 
 const pulseRecordingSlice = createSlice({
   name: "pulseRecording",
   initialState,
+
   reducers: {
+    setIsLooping: (state, action) => {
+      state.isLooping = action.payload;
+    },
+    setDuration: (state, action) => {
+      state.duration = action.payload;
+    },
+    setSound: (state, action) => {
+      state.sound = action.payload;
+    },
+    setPlaybackPosition: (state, action) => {
+      state.playbackPosition = action.payload;
+    },
+    setIsPlaying: (state, action) => {
+      state.isPlaying = action.payload;
+    },
+    resetPulseRecording: (state) => {
+      // Reset each piece of the state individually
+      Object.assign(state, initialState);
+    },
     addPulseRecording: (state, action) => {
       state.duration = action.payload.duration;
       state.type = action.payload.type;
@@ -22,8 +49,39 @@ const pulseRecordingSlice = createSlice({
       state.extension = action.payload.extension;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadAudio.pending, (state) => {
+        // Handle the loading state if necessary, e.g., setting a flag
+      })
+      .addCase(loadAudio.fulfilled, (state, action) => {
+        // Update the state with the loaded sound and its status
+        state.sound = action.payload.sound;
+        state.duration = action.payload.status.durationMillis;
+        state.type = action.payload.type;
+        state.track = action.payload.track;
+
+        // Set other state properties based on the fulfilled action
+        state.link = action.payload.link; // If the URI is needed
+        // ... set other state properties from the action.payload.status as needed
+      })
+      .addCase(loadAudio.rejected, (state, action) => {
+        // Handle the error state, e.g., resetting the state or setting an error message
+      })
+      .addCase(togglePlayback.fulfilled, (state, action) => {
+        state.isPlaying = action.payload.isPlaying;
+      });
+  },
 });
 
-export const { addPulseRecording } = pulseRecordingSlice.actions;
+export const {
+  addPulseRecording,
+  resetPulseRecording,
+  setIsPlaying,
+  setPlaybackPosition,
+  setSound,
+  setDuration,
+  setIsLooping,
+} = pulseRecordingSlice.actions;
 
 export const pulseRecordingReducer = pulseRecordingSlice.reducer;

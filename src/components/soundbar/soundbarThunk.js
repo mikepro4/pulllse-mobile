@@ -1,6 +1,5 @@
-function modifyObjectArray(objects) {
-  const targetLength = 50;
-  console.log("modifyObjectArray", objects);
+function modifyObjectArray(objects, waveWidth) {
+  const targetLength = waveWidth / 5;
   // If the object array is longer than 60
   if (objects.length > targetLength) {
     const removalInterval = objects.length / (objects.length - targetLength);

@@ -34,7 +34,7 @@ const Settings = ({ route }) => {
       refresh: route.params?.refresh_token,
       expires_in: route.params?.expires_in,
     });
-  }, [route.params?.access_token, route.params?.refresh_token]);
+  }, [route.params]);
 
   if (route.params?.access_token && route.params?.refresh_token) {
     InAppBrowser.close();
@@ -46,8 +46,6 @@ const Settings = ({ route }) => {
       </View>
 
       <SignInWithService />
-
-      <PlayerComponent />
     </View>
   );
 };

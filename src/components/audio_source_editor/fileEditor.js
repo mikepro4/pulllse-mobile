@@ -15,7 +15,7 @@ import LineSoundBar from "../soundbar/lineSoundbar";
 import SoundBar from "../soundbar";
 import RNSoundLevel from "react-native-sound-level";
 import { modifyObjectArray } from "../soundbar/soundbarThunk";
-import { addPulseRecording } from "../../redux";
+import { addPulseRecording, resetPulseRecording } from "../../redux";
 
 import CustomText from "../text";
 import Icon from "../icon";
@@ -34,6 +34,7 @@ const RecordingEditor = ({
   onSliderValueChange,
 }) => {
   const player = useSelector((state) => state.player);
+  console.log("player", player.editedPulse.audioSourceType);
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -42,6 +43,13 @@ const RecordingEditor = ({
 
   const [soundLevels, setSoundLevels] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
+
+  const [waveWidth, setWaveWidth] = useState();
+
+  const onEditorRightLayout = (event) => {
+    const { width } = event.nativeEvent.layout;
+    setWaveWidth(width);
+  };
 
   const fileInfo = extractFileInfo();
 
@@ -104,8 +112,11 @@ const RecordingEditor = ({
       }
     };
   }, [sound]);
+
   useEffect(() => {
-    return () => clearFile();
+    return () => {
+      clearFile();
+    };
   }, []);
   const clearFile = async () => {
     try {
@@ -139,7 +150,6 @@ const RecordingEditor = ({
   const handleBlur = () => {
     setIsFocused(false);
   };
-  console.log("response", blob);
   const loadSound = async (uri) => {
     try {
       const { sound: newSound } = await Audio.Sound.createAsync(
@@ -179,7 +189,7 @@ const RecordingEditor = ({
     RNSoundLevel.stop();
 
     setIsRecording(false);
-    setSoundLevels(modifyObjectArray(soundLevels));
+    setSoundLevels(modifyObjectArray(soundLevels, waveWidth - 120));
   };
 
   const recordWaveForm = async () => {
@@ -241,7 +251,7 @@ const RecordingEditor = ({
 
   return (
     <>
-      <View style={styles.editorContainer}>
+      <View style={styles.editorContainer} onLayout={onEditorRightLayout}>
         <View
           style={{
             position: "relative",
@@ -294,6 +304,7 @@ const RecordingEditor = ({
             <View style={styles.trackPreviewRight}>
               {soundLevels.length !== 0 ? (
                 <SoundBar
+                  canvasWidth={waveWidth - 120}
                   duration={duration}
                   playbackPosition={playbackPosition}
                   barData={soundLevels}
@@ -325,6 +336,7 @@ const RecordingEditor = ({
         {recording && !isRecording && soundLevels.length === 0 && (
           <View style={{ top: 32 }}>
             <LineSoundBar
+              canvasWidth={waveWidth}
               duration={duration}
               playbackPosition={playbackPosition}
               onSeek={(position) => {

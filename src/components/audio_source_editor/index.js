@@ -7,31 +7,51 @@ import RecordingEditor from "./recordingEditor";
 import SpotifyEditor from "./spotifyEditor";
 import FileEditor from "./fileEditor";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  setPlaybackPosition,
+  setIsPlaying,
+  setDuration,
+  resetPulseRecording,
+} from "../../redux";
 
 const App = () => {
   const player = useSelector((state) => state.player);
   const state = useSelector((state) => state.audio.audios);
   console.log("state", state);
-  const [sound, setSound] = useState();
+  const dispatch = useDispatch();
+  //  const [sound, setSound] = useState();
+  const sound = useSelector((state) => state.pulseRecording.sound);
+  const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
+  const duration = useSelector((state) => state.pulseRecording.duration);
+  const playbackPosition = useSelector(
+    (state) => state.pulseRecording.playbackPosition
+  );
 
   const [isLooping, setIsLooping] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
 
-  const [duration, setDuration] = useState(0);
-  const [playbackPosition, setPlaybackPosition] = useState(0);
+  // const [duration, setDuration] = useState(0);
 
+  // useEffect(() => {
+  //   const unload = async () => {
+  //     if (sound) {
+  //       // await sound.unloadAsync();
+  //     }
+  //   };
+  //   unload();
+  //   dispatch(resetPulseRecording());
+  // }, [player.editedPulse?.audioSourceType]);
   useEffect(() => {
     if (sound) {
       // Updating the playback position regularly
       sound.setOnPlaybackStatusUpdate(async (status) => {
         if (status.didJustFinish) {
           // Check if playback just finished and user had pressed play
-          setPlaybackPosition(0); // Reset the slider to the initial position
+          dispatch(setPlaybackPosition(0)); // Reset the slider to the initial position
           await sound.setPositionAsync(0);
 
-          setIsPlaying(false);
+          dispatch(setIsPlaying(false));
         } else {
-          setPlaybackPosition(status.positionMillis); // Otherwise, continue updating the slider position
+          dispatch(setPlaybackPosition(status.positionMillis)); // Otherwise, continue updating the slider position
         }
       });
     }
@@ -53,14 +73,14 @@ const App = () => {
       await sound.setPositionAsync(playbackPosition);
       await sound.playAsync();
     }
-    setIsPlaying(!isPlaying); // Toggle the isPlaying state
+    dispatch(setIsPlaying(!isPlaying)); // Toggle the isPlaying state
   };
 
   const onSliderValueChange = async (value) => {
     if (sound) {
       try {
         await sound.setPositionAsync(value);
-        setPlaybackPosition(value);
+        dispatch(setPlaybackPosition(value));
       } catch (error) {
         console.log("sound", sound);
         console.error("Error seeking:", error);
@@ -73,16 +93,16 @@ const App = () => {
       case "recording":
         return (
           <RecordingEditor
-            sound={sound}
-            setSound={setSound}
+            //  sound={sound}
+            // setSound={setSound}
             isLooping={isLooping}
             setIsLooping={setIsLooping}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            duration={duration}
-            setDuration={setDuration}
-            playbackPosition={playbackPosition}
-            setPlaybackPosition={setPlaybackPosition}
+            // isPlaying={isPlaying}
+            // setIsPlaying={setIsPlaying}
+            // duration={duration}
+            // setDuration={setDuration}
+            // playbackPosition={playbackPosition}
+            // setPlaybackPosition={setPlaybackPosition}
             togglePlayback={togglePlayback}
             onSliderValueChange={onSliderValueChange}
           />
@@ -90,14 +110,14 @@ const App = () => {
       case "file":
         return (
           <FileEditor
-            sound={sound}
-            setSound={setSound}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            duration={duration}
-            setDuration={setDuration}
-            playbackPosition={playbackPosition}
-            setPlaybackPosition={setPlaybackPosition}
+            //  sound={sound}
+            // setSound={setSound}
+            // isPlaying={isPlaying}
+            // setIsPlaying={setIsPlaying}
+            // duration={duration}
+            // setDuration={setDuration}
+            // playbackPosition={playbackPosition}
+            // setPlaybackPosition={setPlaybackPosition}
             togglePlayback={togglePlayback}
             onSliderValueChange={onSliderValueChange}
           />
@@ -105,16 +125,16 @@ const App = () => {
       case "spotify":
         return (
           <SpotifyEditor
-            sound={sound}
-            setSound={setSound}
+            //  sound={sound}
+            //  setSound={setSound}
             isLooping={isLooping}
             setIsLooping={setIsLooping}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            duration={duration}
-            setDuration={setDuration}
-            playbackPosition={playbackPosition}
-            setPlaybackPosition={setPlaybackPosition}
+            // isPlaying={isPlaying}
+            // setIsPlaying={setIsPlaying}
+            // duration={duration}
+            // setDuration={setDuration}
+            // playbackPosition={playbackPosition}
+            // setPlaybackPosition={setPlaybackPosition}
             togglePlayback={togglePlayback}
             onSliderValueChange={onSliderValueChange}
           />

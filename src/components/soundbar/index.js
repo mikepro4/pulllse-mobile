@@ -8,9 +8,10 @@ const SoundBar = ({
   playbackPosition,
   onSeek,
   isRecording,
+  canvasWidth,
 }) => {
   // Constants for canvas size and calculation
-  const canvasWidth = 250;
+
   const canvasHeight = 50;
   const barWidth = 3; // Width of the bars
   const gap = 2; // Space between bars
@@ -33,7 +34,8 @@ const SoundBar = ({
         style={{
           borderRadius: 10,
           width: canvasWidth,
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
+
+          // backgroundColor: "rgba(255, 255, 255, 0.03)",
         }}
       >
         <Canvas
@@ -47,7 +49,6 @@ const SoundBar = ({
               // Ensure the value is non-negative
 
               const absoluteValue = Math.max(data.rawValue + 45, 1);
-              console.log(absoluteValue);
 
               const normalizedValue = (absoluteValue / 40) * canvasHeight; // 40 is the max value expected
 

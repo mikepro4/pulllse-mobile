@@ -58,11 +58,20 @@ export * from "./thunks/audioThunk";
 export * from "./thunks/followSubscribeThunk";
 export * from "./thunks/imageThunk";
 export * from "./thunks/pulseThunk";
+export * from "./thunks/pulseRecordingThunk";
 
 export { clearErrorMessage } from "./slices/userSlice";
 export { addRecording } from "./slices/recordingsSlice";
 export { addImage } from "./slices/imageSlice";
-export { addPulseRecording } from "./slices/pulseRecordingSlice";
+export {
+  addPulseRecording,
+  resetPulseRecording,
+  setIsPlaying,
+  setPlaybackPosition,
+  setSound,
+  setDuration,
+  setIsLooping,
+} from "./slices/pulseRecordingSlice";
 export {
   switchTab,
   togglePlayer,

@@ -15,17 +15,31 @@ import CustomText from "../text";
 import Icon from "../icon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { toggleDrawer } from "../../redux";
+import { useDispatch, useSelector } from "react-redux";
+import { togglePlayback, setPlaybackPosition, setIsPlaying } from "../../redux";
 
 const PulsePlayer = ({ data }) => {
-  const { duration, soundLevels, link: uri, type, extension, fileName } = data;
+  console.log("pulse recording", data);
+  const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
+  const sound = useSelector((state) => state.pulseRecording.sound);
+  const playbackPosition = useSelector(
+    (state) => state.pulseRecording.playbackPosition
+  );
+  const { artist, imgUri, name, deepLink } = data.track;
+  const { duration, soundLevels, type, extension, fileName } = data;
+  const dispatch = useDispatch();
+  //const [sound, setSound] = useState();
+  // const [playbackPosition, setPlaybackPosition] = useState(0);
+  //  const [spotifyTrack, setSpotifyTrack] = useState();
 
-  const [sound, setSound] = useState();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackPosition, setPlaybackPosition] = useState(0);
-  const [spotifyTrack, setSpotifyTrack] = useState();
-  console.log(spotifyTrack?.preview_url);
+  const [waveWidth, setWaveWidth] = useState();
+  console.log(waveWidth);
 
-  console.log("PulsePlayer", type);
+  const onEditorRightLayout = (event) => {
+    const { width } = event.nativeEvent.layout;
+    setWaveWidth(width);
+  };
 
   useEffect(() => {
     if (sound) {
@@ -33,12 +47,12 @@ const PulsePlayer = ({ data }) => {
       sound.setOnPlaybackStatusUpdate(async (status) => {
         if (status.didJustFinish) {
           // Check if playback just finished and user had pressed play
-          setPlaybackPosition(0); // Reset the slider to the initial position
+          dispatch(setPlaybackPosition(0)); // Reset the slider to the initial position
           await sound.setPositionAsync(0);
 
-          setIsPlaying(false);
+          dispatch(setIsPlaying(false));
         } else {
-          setPlaybackPosition(status.positionMillis); // Otherwise, continue updating the slider position
+          dispatch(setPlaybackPosition(status.positionMillis)); // Otherwise, continue updating the slider position
         }
       });
     }
@@ -55,71 +69,68 @@ const PulsePlayer = ({ data }) => {
     return async () => {
       if (sound) {
         await sound.stopAsync();
-        if (sound._loaded) {
-          await sound.unloadAsync();
-        }
+        // if (sound._loaded) {
+        //   await sound.unloadAsync();
+        // }
       }
     };
   }, [sound]);
-  useEffect(() => {
-    initialCall();
-  }, []);
+  // useEffect(() => {
+  //   initialCall();
+  // }, []);
 
-  function getSpotifyTrackID(link) {
-    const match = link.match(/track\/([a-zA-Z0-9]+)\?/);
-    return match ? match[1] : null;
-  }
+  // function getSpotifyTrackID(link) {
+  //   const match = link.match(/track\/([a-zA-Z0-9]+)\?/);
+  //   return match ? match[1] : null;
+  // }
 
-  const getTrack = async (pastedLink) => {
-    try {
-      const token = await AsyncStorage.getItem("accessToken");
+  // const getTrack = async (pastedLink) => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("accessToken");
 
-      const response = await axios.get(pastedLink, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setSpotifyTrack(response.data);
-      loadAudio(response.data.preview_url);
-    } catch (error) {
-      console.error("Error fetching track:", error);
-    }
-  };
+  //     const response = await axios.get(pastedLink, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     setSpotifyTrack(response.data);
+  //     loadAudio(response.data.preview_url);
+  //   } catch (error) {
+  //     console.error("Error fetching track:", error);
+  //   }
+  // };
 
-  const loadAudio = async (theLink) => {
-    console.log("thelink", theLink);
-    const { sound } = await Audio.Sound.createAsync({ uri: theLink });
-    setSound(sound);
-  };
+  // const loadAudio = async (theLink) => {
+  //   const { sound } = await Audio.Sound.createAsync({ uri: theLink });
+  //   setSound(sound);
+  // };
   const handleOpenSpotifyLink = () => {
-    const spotifyLink = spotifyTrack?.external_urls.spotify;
-    Linking.canOpenURL(spotifyLink)
+    Linking.canOpenURL(deepLink)
       .then((supported) => {
         if (supported) {
-          Linking.openURL(spotifyLink);
+          Linking.openURL(deepLink);
         } else {
-          console.log("Don't know how to open URI: " + spotifyLink);
+          console.log("Don't know how to open URI: " + deepLink);
         }
       })
       .catch((err) => console.error("An error occurred", err));
   };
 
-  const togglePlayback = async () => {
-    if (isPlaying) {
-      await sound.pauseAsync();
-    } else {
-      await sound.setPositionAsync(playbackPosition);
-      await sound.playAsync();
-    }
-    setIsPlaying(!isPlaying); // Toggle the isPlaying state
-  };
+  // const togglePlayback = async () => {
+  //   if (isPlaying) {
+  //     await sound.pauseAsync();
+  //   } else {
+  //     await sound.setPositionAsync(playbackPosition);
+  //     await sound.playAsync();
+  //   }
+  //   setIsPlaying(!isPlaying); // Toggle the isPlaying state
+  // };
   const onSliderValueChange = async (value) => {
     if (sound) {
       try {
         await sound.setPositionAsync(value);
         setPlaybackPosition(value);
       } catch (error) {
-        console.log("sound", sound);
         console.error("Error seeking:", error);
       }
     }
@@ -130,11 +141,23 @@ const PulsePlayer = ({ data }) => {
         icon={isPlaying ? "pause" : "play"}
         iconColor="black"
         onPressIn={togglePlayback}
+        onLongPress={() =>
+          dispatch(
+            toggleDrawer({
+              drawerOpen: true,
+              drawerType: "pulse_settings",
+              drawerData: null,
+              drawerDraggable: true,
+              drawerHeight: "expanded",
+            })
+          )
+        }
       />
     </View>
   );
   const soundBarView = (
     <SoundBar
+      canvasWidth={waveWidth - 92}
       duration={duration}
       playbackPosition={playbackPosition}
       barData={soundLevels}
@@ -155,6 +178,7 @@ const PulsePlayer = ({ data }) => {
   const lineBar = (
     <View style={styles.line}>
       <LineSoundbar
+        canvasWidth={waveWidth + 30 || 100}
         duration={duration}
         playbackPosition={playbackPosition}
         onSeek={(position) => {
@@ -165,9 +189,13 @@ const PulsePlayer = ({ data }) => {
   );
   const imageToggle = (
     <>
-      <TouchableOpacity onPress={togglePlayback}>
+      <TouchableOpacity
+        onPress={() =>
+          dispatch(togglePlayback({ sound, isPlaying, playbackPosition }))
+        }
+      >
         <Image
-          source={{ uri: spotifyTrack?.album.images[1].url }}
+          source={{ uri: imgUri }}
           style={styles.image} // Adjust the size as needed
         />
       </TouchableOpacity>
@@ -175,28 +203,54 @@ const PulsePlayer = ({ data }) => {
     </>
   );
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onEditorRightLayout}>
       {type === "spotify" ? <>{imageToggle}</> : playPause}
 
       <View style={{ paddingLeft: 12 }}>
         {type === "spotify" ? (
           <>
-            <CustomText style={styles.spotifySongHeader}>
-              {spotifyTrack?.name}
-            </CustomText>
-            <CustomText style={styles.spotifySongArtist}>
-              {spotifyTrack?.artists.map((artist) => artist.name).join(", ")}
-            </CustomText>
+            <TouchableOpacity
+              onPress={() =>
+                dispatch(
+                  toggleDrawer({
+                    drawerOpen: true,
+                    drawerType: "pulse_settings",
+                    drawerData: null,
+                    drawerDraggable: true,
+                    drawerHeight: "expanded",
+                  })
+                )
+              }
+            >
+              <CustomText style={styles.spotifySongHeader}>{name}</CustomText>
+              <CustomText style={styles.spotifySongArtist}>{artist}</CustomText>
+            </TouchableOpacity>
             {lineBar}
           </>
         ) : soundLevels?.length !== 0 ? (
           soundBarView
         ) : (
           <>
-            <CustomText style={styles.spotifySongHeader}>{fileName}</CustomText>
-            <CustomText style={styles.spotifySongArtist}>
-              {extension}
-            </CustomText>
+            <TouchableOpacity
+              onPress={() =>
+                dispatch(
+                  toggleDrawer({
+                    drawerOpen: true,
+                    drawerType: "pulse_settings",
+                    drawerData: null,
+                    drawerDraggable: true,
+                    drawerHeight: "expanded",
+                  })
+                )
+              }
+            >
+              <CustomText style={styles.spotifySongHeader}>
+                {fileName}
+              </CustomText>
+              <CustomText style={styles.spotifySongArtist}>
+                {extension}
+              </CustomText>
+            </TouchableOpacity>
             {lineBar}
           </>
         )}

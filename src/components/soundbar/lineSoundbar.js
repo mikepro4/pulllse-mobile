@@ -12,8 +12,9 @@ const SoundBar = ({
   playbackPosition,
   setPlaybackPosition,
   onSeek,
+  canvasWidth,
 }) => {
-  const canvasWidth = 388; // Width of the canvas
+  // Width of the canvas
   // // Width of the canvas
   const canvasHeight = 20; // Height of the canvas, touchable area
   const lineHeight = 2; // Height of the line
