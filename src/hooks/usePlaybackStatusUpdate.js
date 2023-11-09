@@ -23,13 +23,6 @@ const usePlaybackStatusUpdate = (sound) => {
     if (sound) {
       sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
     }
-
-    return () => {
-      isMounted = false;
-      if (sound) {
-        sound.setOnPlaybackStatusUpdate(null); // Remove the event listener
-      }
-    };
   }, [sound, dispatch]); // Add dispatch to the dependency array
 
   // Custom hooks can return values, but it's not needed here unless you have additional logic

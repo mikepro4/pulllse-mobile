@@ -74,6 +74,7 @@ export {
   addSoundLevel,
   setSoundLevels,
   setExtencionFilename,
+  setBpm,
 } from "./slices/pulseRecordingSlice";
 export {
   switchTab,

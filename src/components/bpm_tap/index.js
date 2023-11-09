@@ -1,30 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Theme from "../../styles/theme";
 import CustomText from "../text";
+import { setBpm } from "../../redux";
 
 const BPMTap = () => {
-  const player = useSelector((state) => state.player);
-  const [bpm, setBpm] = useState(0);
+  const dispatch = useDispatch();
+  const bpm = useSelector((state) => state.pulseRecording.bpm);
+
   const [tapTimes, setTapTimes] = useState([]);
 
   const handleTap = () => {
     const now = Date.now();
     setTapTimes((prevTapTimes) => {
-      const newTapTimes = [...prevTapTimes, now].slice(-4); // Keep last 4 taps
-      if (newTapTimes.length > 1) {
-        const intervals = newTapTimes
-          .slice(1)
-          .map((t, i) => t - newTapTimes[i]);
-        const avgInterval =
-          intervals.reduce((a, b) => a + b, 0) / intervals.length;
-        const newBpm = Math.round(60000 / avgInterval);
-        setBpm(newBpm);
-      }
-      return newTapTimes;
+      return [...prevTapTimes, now].slice(-4); // Keep last 4 taps
     });
   };
+
+  useEffect(() => {
+    if (tapTimes.length > 1) {
+      const intervals = tapTimes.slice(1).map((t, i) => t - tapTimes[i]);
+      const avgInterval =
+        intervals.reduce((a, b) => a + b, 0) / intervals.length;
+      const newBpm = Math.round(60000 / avgInterval);
+      dispatch(setBpm(newBpm));
+    }
+  }, [tapTimes, dispatch]);
 
   return (
     <View style={styles.tapContainer}>

@@ -237,9 +237,13 @@ const Button = ({
       style={getButtonStyle()}
       activeOpacity={activeOpacity ? activeOpacity : 1}
       onLongPress={() => {
-        onLongPress();
+        if (onLongPress) {
+          onLongPress();
+        } else {
+          return;
+        }
       }}
-      onPressIn={() => {
+      onPress={() => {
         onPressIn();
       }}
     >

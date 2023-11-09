@@ -18,6 +18,7 @@ const initialState = {
   sound: null,
   duration: 0,
   playbackPosition: 0,
+  bpm: 0,
 };
 
 const pulseRecordingSlice = createSlice({
@@ -25,6 +26,9 @@ const pulseRecordingSlice = createSlice({
   initialState,
 
   reducers: {
+    setBpm: (state, action) => {
+      state.bpm = action.payload;
+    },
     setExtencionFilename: (state, action) => {
       state.fileName = action.payload.fileName;
       state.extension = action.payload.extension;
@@ -104,6 +108,7 @@ export const {
   setDuration,
   setIsLooping,
   setExtencionFilename,
+  setBpm,
 } = pulseRecordingSlice.actions;
 
 export const pulseRecordingReducer = pulseRecordingSlice.reducer;
