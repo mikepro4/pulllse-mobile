@@ -8,13 +8,12 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import SoundBar from "../soundbar";
-import { Audio } from "expo-av";
 import Button from "../../components/button";
 import LineSoundbar from "../soundbar/lineSoundbar";
 import CustomText from "../text";
 import Icon from "../icon";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import usePlaybackStatusUpdate from "../../hooks/usePlaybackStatusUpdate";
+
 import { toggleDrawer } from "../../redux";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -25,7 +24,6 @@ import {
 } from "../../redux";
 
 const PulsePlayer = ({ data }) => {
-  console.log("pulse recording", data);
   const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
   const sound = useSelector((state) => state.pulseRecording.sound);
   const playbackPosition = useSelector(
@@ -34,82 +32,39 @@ const PulsePlayer = ({ data }) => {
   const { artist, imgUri, name, deepLink } = data.track;
   const { duration, soundLevels, type, extension, fileName } = data;
   const dispatch = useDispatch();
-  //const [sound, setSound] = useState();
-  // const [playbackPosition, setPlaybackPosition] = useState(0);
-  //  const [spotifyTrack, setSpotifyTrack] = useState();
 
   const [waveWidth, setWaveWidth] = useState(100);
-  console.log(waveWidth);
 
   const onEditorRightLayout = (event) => {
     const { width } = event.nativeEvent.layout;
     setWaveWidth(width);
   };
 
-  useEffect(() => {
-    if (sound) {
-      // Updating the playback position regularly
-      sound.setOnPlaybackStatusUpdate(async (status) => {
-        if (status.didJustFinish) {
-          // Check if playback just finished and user had pressed play
-          dispatch(setPlaybackPosition(0)); // Reset the slider to the initial position
-          await sound.setPositionAsync(0);
+  // useEffect(() => {
+  //   if (sound) {
+  //     sound.setOnPlaybackStatusUpdate(async (status) => {
+  //       if (status.didJustFinish) {
+  //         dispatch(setPlaybackPosition(0));
+  //         await sound.setPositionAsync(0);
 
-          dispatch(setIsPlaying(false));
-        } else {
-          dispatch(setPlaybackPosition(status.positionMillis)); // Otherwise, continue updating the slider position
-        }
-      });
-    }
-  }, [sound]);
-
-  // const initialCall = async () => {
-  //   if (type === "spotify") {
-  //     await getTrack(uri);
-  //   } else {
-  //     loadAudio(uri);
+  //         dispatch(setIsPlaying(false));
+  //       } else {
+  //         dispatch(setPlaybackPosition(status.positionMillis));
+  //       }
+  //     });
   //   }
-  // };
+  // }, [sound]);
+  usePlaybackStatusUpdate(sound);
+
   useEffect(() => {
     return async () => {
       if (sound) {
         await sound.stopAsync();
         dispatch(setIsPlaying(false));
-        // if (sound._loaded) {
-        //   await sound.unloadAsync();
-        // }
       }
     };
   }, [sound]);
-  // useEffect(() => {
-  //   initialCall();
-  // }, []);
 
-  // function getSpotifyTrackID(link) {
-  //   const match = link.match(/track\/([a-zA-Z0-9]+)\?/);
-  //   return match ? match[1] : null;
-  // }
-
-  // const getTrack = async (pastedLink) => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("accessToken");
-
-  //     const response = await axios.get(pastedLink, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     setSpotifyTrack(response.data);
-  //     loadAudio(response.data.preview_url);
-  //   } catch (error) {
-  //     console.error("Error fetching track:", error);
-  //   }
-  // };
-
-  // const loadAudio = async (theLink) => {
-  //   const { sound } = await Audio.Sound.createAsync({ uri: theLink });
-  //   setSound(sound);
-  // };
   const handleOpenSpotifyLink = () => {
     Linking.canOpenURL(deepLink)
       .then((supported) => {
@@ -122,25 +77,6 @@ const PulsePlayer = ({ data }) => {
       .catch((err) => console.error("An error occurred", err));
   };
 
-  // const togglePlayback = async () => {
-  //   if (isPlaying) {
-  //     await sound.pauseAsync();
-  //   } else {
-  //     await sound.setPositionAsync(playbackPosition);
-  //     await sound.playAsync();
-  //   }
-  //   setIsPlaying(!isPlaying); // Toggle the isPlaying state
-  // };
-  // const onSliderValueChange = async (value) => {
-  //   if (sound) {
-  //     try {
-  //       await sound.setPositionAsync(value);
-  //       setPlaybackPosition(value);
-  //     } catch (error) {
-  //       console.error("Error seeking:", error);
-  //     }
-  //   }
-  // };
   const playPause = (
     <View style={styles.btnContainer}>
       <Button
@@ -163,7 +99,7 @@ const PulsePlayer = ({ data }) => {
       />
     </View>
   );
-  //waveWidth - 92
+
   const soundBarView = (
     <SoundBar
       canvasWidth={waveWidth ? waveWidth - 92 : 200}

@@ -55,12 +55,18 @@ const RecordingEditor = () => {
   };
 
   useEffect(() => {
+    RNSoundLevel.onNewFrame = (data) => {
+      dispatch(addSoundLevel(data));
+    };
+  }, []);
+
+  useEffect(() => {
     if (duration === playbackPosition) {
       stopRecordWaveForm();
     }
   }, [duration, playbackPosition]);
 
-  function extractFileInfo(result) {
+  const extractFileInfo = (result) => {
     if (result) {
       const fileObject = result.assets[0];
       const { name, size, uri } = fileObject;
@@ -87,67 +93,7 @@ const RecordingEditor = () => {
         };
       }
     }
-  }
-
-  // useEffect(() => {
-  //   RNSoundLevel.onNewFrame = (data) => {
-  //     // Output the sound level data
-
-  //     if (data.id) {
-  //       setSoundLevels((prevLevels) => [...prevLevels, data]);
-  //     }
-  //   };
-  //   return async () => {
-  //     if (sound) {
-  //       await sound.unloadAsync();
-  //       dispatch(
-  //         addPulseRecording({
-  //           duration,
-  //           type: "file",
-  //           soundLevels: soundLevels,
-  //           link: fileInfo.uri,
-  //           fileName: fileInfo?.fileName,
-  //           extension: fileInfo?.extension,
-  //         })
-  //       );
-  //     }
-  //   };
-  // }, [sound]);
-  useEffect(() => {
-    RNSoundLevel.onNewFrame = (data) => {
-      dispatch(addSoundLevel(data));
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   return () => {
-  //     clearFile();
-  //   };
-  // }, []);
-  // const clearFile = async () => {
-  //   try {
-  //     if (sound) {
-  //       await sound.stopAsync();
-  //       if (sound._loaded) {
-  //         // Check if sound is loaded before trying to unload
-  //         await sound.unloadAsync();
-  //       }
-  //     }
-
-  //     // Reset state
-  //     setRecording(undefined);
-  //     setSound(undefined);
-  //     setSoundLevels([]);
-  //     setIsPlaying(false);
-  //     setPlaybackPosition(0);
-  //     setDuration(0);
-  //     setBlob(undefined);
-  //     RNSoundLevel.stop();
-  //     setIsLooping(false);
-  //   } catch (error) {
-  //     console.log("Error resetting:", error);
-  //   }
-  // };
+  };
 
   const handleFocus = () => {
     setIsFocused(true);

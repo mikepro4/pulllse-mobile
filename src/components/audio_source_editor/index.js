@@ -7,6 +7,7 @@ import SpotifyEditor from "./spotifyEditor";
 import FileEditor from "./fileEditor";
 import { useFocusEffect } from "@react-navigation/native";
 import { setPlaybackPosition, setIsPlaying } from "../../redux";
+import usePlaybackStatusUpdate from "../../hooks/usePlaybackStatusUpdate";
 
 const App = () => {
   const player = useSelector((state) => state.player);
@@ -15,20 +16,7 @@ const App = () => {
 
   const [isLooping, setIsLooping] = useState(false);
 
-  useEffect(() => {
-    if (sound) {
-      sound.setOnPlaybackStatusUpdate(async (status) => {
-        if (status.didJustFinish) {
-          dispatch(setPlaybackPosition(0));
-          await sound.setPositionAsync(0);
-
-          dispatch(setIsPlaying(false));
-        } else {
-          dispatch(setPlaybackPosition(status.positionMillis));
-        }
-      });
-    }
-  }, [sound]);
+  usePlaybackStatusUpdate(sound);
 
   const toggleLooping = async () => {
     try {
