@@ -71,6 +71,9 @@ export {
   setSound,
   setDuration,
   setIsLooping,
+  addSoundLevel,
+  setSoundLevels,
+  setExtencionFilename,
 } from "./slices/pulseRecordingSlice";
 export {
   switchTab,

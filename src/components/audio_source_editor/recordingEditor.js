@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addPulseRecording, loadAudio } from "../../redux";
 
 import CustomText from "../text";
 import Button from "../../components/button";
-import { useFocusEffect } from "@react-navigation/native";
 
 import RNSoundLevel from "react-native-sound-level";
 import { Audio } from "expo-av";
@@ -13,103 +11,97 @@ import SoundBar from "../soundbar";
 import { modifyObjectArray } from "../soundbar/soundbarThunk";
 import Icon from "../../components/icon";
 import { getDurationFormatted } from "../../utils/getDurationFormated";
-
-const RecordingEditor = ({
-  sound,
-  setSound,
-  isLooping,
-  setIsLooping,
-  isPlaying,
-  setIsPlaying,
-  duration,
-  setDuration,
-  playbackPosition,
-  setPlaybackPosition,
+import {
+  addSoundLevel,
+  setSoundLevels,
+  loadAudio,
+  resetPulseRecording,
   onSliderValueChange,
   togglePlayback,
-}) => {
-  const player = useSelector((state) => state.player);
+} from "../../redux";
+
+const RecordingEditor = () => {
   const dispatch = useDispatch();
-
-  const [soundLevels, setSoundLevels] = useState([]);
-  const [isRecording, setIsRecording] = useState(false);
-  const [waveWidth, setWaveWidth] = useState();
-  console.log("waveWidth", waveWidth);
-  const [recording, setRecording] = useState();
-  const [blob, setBlob] = useState();
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // No operation when the screen is focused
-
-      return () => {
-        // This will run when the screen loses focus
-        if (isRecording) {
-          stopRecording();
-        }
-      };
-    }, [isRecording, stopRecording])
+  const sound = useSelector((state) => state.pulseRecording.sound);
+  const duration = useSelector((state) => state.pulseRecording.duration);
+  const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
+  const soundLevels = useSelector((state) => state.pulseRecording.soundLevels);
+  const type = useSelector((state) => state.pulseRecording.type);
+  const playbackPosition = useSelector(
+    (state) => state.pulseRecording.playbackPosition
   );
+  const [isRecording, setIsRecording] = useState(false);
+  const [recording, setRecording] = useState();
+  const [waveWidth, setWaveWidth] = useState(100);
+
+  const onEditorRightLayout = (event) => {
+    const { width } = event.nativeEvent.layout;
+    setWaveWidth(width);
+  };
 
   useEffect(() => {
     RNSoundLevel.onNewFrame = (data) => {
-      // Output the sound level data
-
-      if (data.id) {
-        setSoundLevels((prevLevels) => [...prevLevels, data]);
-      }
+      dispatch(addSoundLevel(data));
     };
-    return async () => {
-      if (sound) {
-        await sound.unloadAsync();
-        dispatch(
-          addPulseRecording({
-            duration,
-            type: "recording",
-            soundLevels,
-            link: recording ? recording.getURI() : "",
-          })
-        );
-      }
-    };
-  }, [sound]);
 
-  useEffect(() => {
-    return () => reset();
-  }, []);
-
-  const reset = async () => {
-    try {
-      // If there's a recording in progress, stop it
+    return () => {
       if (isRecording) {
-        await recording.stopAndUnloadAsync();
+        stopRecording();
       }
+    };
+  }, [isRecording]);
 
-      if (sound) {
-        await sound.stopAsync();
-        if (sound._loaded) {
-          // Check if sound is loaded before trying to unload
-          await sound.unloadAsync();
-        }
-      }
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // No operation when the screen is focused
+  // return () => {
+  //   if (isRecording) {
+  //     stopRecording();
+  //   }
+  // };
+  //
+  //   }, [isRecording, stopRecording])
+  // );
 
-      // Reset state
-      setRecording(undefined);
-      setSound(undefined);
-      setIsRecording(false);
-      setIsPlaying(false);
-      setPlaybackPosition(0);
-      setDuration(0);
-      setBlob(undefined);
-      setSoundLevels([]);
+  // useEffect(() => {
+  //   return () => reset();
+  // }, []);
 
-      setIsLooping(false);
-    } catch (error) {
-      console.log("Error resetting:", error);
-    }
-  };
+  // const reset = async () => {
+  //   try {
+  //     // If there's a recording in progress, stop it
+  //     if (isRecording) {
+  //       await recording.stopAndUnloadAsync();
+  //     }
+
+  //     if (sound) {
+  //       await sound.stopAsync();
+  //       if (sound._loaded) {
+  //         // Check if sound is loaded before trying to unload
+  //         await sound.unloadAsync();
+  //       }
+  //     }
+
+  //     // Reset state
+  //     setRecording(undefined);
+  //     setSound(undefined);
+  //     setIsRecording(false);
+  //     setIsPlaying(false);
+  //     setPlaybackPosition(0);
+  //     setDuration(0);
+  //     setBlob(undefined);
+  //     setSoundLevels([]);
+
+  //     setIsLooping(false);
+  //   } catch (error) {
+  //     console.log("Error resetting:", error);
+  //   }
+  // };
 
   const startRecording = async () => {
+    if (sound) {
+      dispatch(resetPulseRecording());
+    }
     try {
       const permission = await Audio.requestPermissionsAsync();
 
@@ -138,42 +130,42 @@ const RecordingEditor = ({
     RNSoundLevel.stop();
     try {
       await recording.stopAndUnloadAsync();
-      const uri = recording.getURI(); // URI of the recorded file
-      const { status } = await recording.createNewLoadedSoundAsync();
+      const uri = recording.getURI();
 
-      // To play the recording
-      const { sound } = await Audio.Sound.createAsync({ uri }, { volume: 1.0 });
-      // const formData = new FormData();
-      console.log(uri);
       const response = await fetch(uri);
-      setBlob(await response.arrayBuffer());
-      setDuration(status.durationMillis);
+      const blob = await response.arrayBuffer();
 
-      setSound(sound);
       const modifiedObjects = modifyObjectArray(soundLevels, waveWidth);
-      setSoundLevels(modifiedObjects);
+
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
-      setIsRecording(false); // Set recording status to false
+      dispatch(setSoundLevels(modifiedObjects));
+      dispatch(
+        loadAudio({
+          uri: uri,
+          link: uri,
+          type: "recording",
+          track: { blob },
+        })
+      );
+
+      setIsRecording(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onEditorRightLayout = (event) => {
-    const { width } = event.nativeEvent.layout;
-    setWaveWidth(width);
-  };
-
   const rederPlayerButtons = () => {
-    if (sound) {
+    if (sound && type === "recording") {
       return (
         <View style={styles.btnContainer}>
           <Button
             icon={isPlaying ? "pause" : "play"}
             iconColor="black"
-            onPressIn={togglePlayback}
+            onPressIn={() =>
+              dispatch(togglePlayback({ sound, isPlaying, playbackPosition }))
+            }
           />
         </View>
       );
@@ -202,17 +194,13 @@ const RecordingEditor = ({
     <View style={styles.editorContainer}>
       <View style={styles.editorLeft}>{rederPlayerButtons()}</View>
       <View style={styles.editorRight} onLayout={onEditorRightLayout}>
-        {/* <View style={styles.emptyRecordingContainer}>
-          <CustomText style={styles.emptyAudioText}>Record audio...</CustomText>
-        </View> */}
-
-        {recording || isRecording ? (
+        {(sound && type === "recording") || isRecording ? (
           <SoundBar
             duration={duration}
             playbackPosition={playbackPosition}
             barData={soundLevels}
             onSeek={(position) => {
-              onSliderValueChange(position);
+              dispatch(onSliderValueChange({ sound, position }));
             }}
             isRecording={isRecording}
             canvasWidth={waveWidth}
@@ -224,7 +212,7 @@ const RecordingEditor = ({
             </CustomText>
           </View>
         )}
-        {sound && (
+        {sound && type === "recording" && (
           <View style={[styles.duration, { width: waveWidth }]}>
             <CustomText style={{ fontSize: 14 }}>
               {getDurationFormatted(playbackPosition)}
@@ -236,8 +224,8 @@ const RecordingEditor = ({
         )}
       </View>
       {/* <CustomText>Recording Editor</CustomText> */}
-      {sound ? (
-        <TouchableOpacity onPress={reset}>
+      {sound && type === "recording" ? (
+        <TouchableOpacity onPress={() => dispatch(resetPulseRecording())}>
           <View style={styles.trashIcon}>
             <Icon
               name="trashIcon"

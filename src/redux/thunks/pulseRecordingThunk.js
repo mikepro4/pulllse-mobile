@@ -24,4 +24,14 @@ const togglePlayback = createAsyncThunk(
   }
 );
 
-export { loadAudio, togglePlayback };
+const onSliderValueChange = createAsyncThunk(
+  "player/toggleSlider",
+  async ({ sound, position }, { dispatch }) => {
+    if (sound) {
+      await sound.setPositionAsync(position);
+    }
+    return position;
+  }
+);
+
+export { loadAudio, togglePlayback, onSliderValueChange };

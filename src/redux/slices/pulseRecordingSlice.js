@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Audio } from "expo-av";
-import { loadAudio, togglePlayback } from "../thunks/pulseRecordingThunk";
+import {
+  loadAudio,
+  togglePlayback,
+  onSliderValueChange,
+} from "../thunks/pulseRecordingThunk";
 
 const initialState = {
   type: "",
@@ -21,6 +25,18 @@ const pulseRecordingSlice = createSlice({
   initialState,
 
   reducers: {
+    setExtencionFilename: (state, action) => {
+      state.fileName = action.payload.fileName;
+      state.extension = action.payload.extension;
+    },
+    setSoundLevels: (state, action) => {
+      state.soundLevels = action.payload;
+    },
+    addSoundLevel: (state, action) => {
+      if (action.payload.id) {
+        state.soundLevels.push(action.payload);
+      }
+    },
     setIsLooping: (state, action) => {
       state.isLooping = action.payload;
     },
@@ -70,11 +86,16 @@ const pulseRecordingSlice = createSlice({
       })
       .addCase(togglePlayback.fulfilled, (state, action) => {
         state.isPlaying = action.payload.isPlaying;
+      })
+      .addCase(onSliderValueChange.fulfilled, (state, action) => {
+        state.playbackPosition = action.payload;
       });
   },
 });
 
 export const {
+  setSoundLevels,
+  addSoundLevel,
   addPulseRecording,
   resetPulseRecording,
   setIsPlaying,
@@ -82,6 +103,7 @@ export const {
   setSound,
   setDuration,
   setIsLooping,
+  setExtencionFilename,
 } = pulseRecordingSlice.actions;
 
 export const pulseRecordingReducer = pulseRecordingSlice.reducer;

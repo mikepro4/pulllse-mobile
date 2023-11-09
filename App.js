@@ -82,9 +82,13 @@ const App = () => {
   useEffect(() => {
     fetchUserDetails();
     getAccessToken();
+    const intervalId = setInterval(getAccessToken, 50 * 60 * 1000);
     const socket = io(config.apiURL);
     socketConnection(socket);
-    return () => socket.disconnect();
+    return () => {
+      clearInterval(intervalId);
+      socket.disconnect();
+    };
   }, [storedUserInfo._id]);
 
   useEffect(() => {

@@ -17,36 +17,17 @@ import LineSoundBar from "../soundbar/lineSoundbar";
 import * as Clipboard from "expo-clipboard";
 
 import {
-  addPulseRecording,
   resetPulseRecording,
   loadAudio,
-  setPlaybackPosition,
-  setSound,
-  setIsPlaying,
-  setDuration,
   togglePlayback,
+  onSliderValueChange,
 } from "../../redux";
 
 import CustomText from "../text";
 import Icon from "../icon";
 
-const RecordingEditor = ({
-  // sound,
-  // setSound,
-  // isLooping,
-  // setIsLooping,
-  // isPlaying,
-  // setIsPlaying,
-  // duration,
-  // setDuration,
-  // playbackPosition,
-  // setPlaybackPosition,
-  onSliderValueChange,
-  // togglePlayback,
-}) => {
-  const player = useSelector((state) => state.player);
+const RecordingEditor = () => {
   const sound = useSelector((state) => state.pulseRecording.sound);
-  const pulseRecording = useSelector((state) => state.pulseRecording);
   const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
   const { artist, imgUri, name, deepLink } = useSelector(
     (state) => state.pulseRecording.track
@@ -55,24 +36,22 @@ const RecordingEditor = ({
   const playbackPosition = useSelector(
     (state) => state.pulseRecording.playbackPosition
   );
-  console.log("pulseRecording", pulseRecording);
   const dispatch = useDispatch();
 
   const [isFocused, setIsFocused] = useState(false);
   const [waveWidth, setWaveWidth] = useState();
-
-  console.log("waveWidth", waveWidth);
-
   const [trackUrl, setTrackUrl] = useState("");
-  const [spotifyTrack, setSpotifyTrack] = useState();
-  const clearSpotifyTrack = async () => {
-    setSpotifyTrack(null);
-    setSound(undefined);
-    setTrackUrl("");
-    dispatch(setIsPlaying(false));
-    dispatch(setPlaybackPosition(0));
-    dispatch(setDuration(0));
-  };
+  const [err, setErr] = useState("");
+  console.log(err);
+
+  // const clearSpotifyTrack = async () => {
+  //   setSpotifyTrack(null);
+  //   setSound(undefined);
+  //   setTrackUrl("");
+  //   dispatch(setIsPlaying(false));
+  //   dispatch(setPlaybackPosition(0));
+  //   dispatch(setDuration(0));
+  // };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -81,27 +60,6 @@ const RecordingEditor = ({
   const handleBlur = () => {
     setIsFocused(false);
   };
-  // useEffect(() => {
-  //   return async () => {
-  //     if (sound) {
-  //       await sound.unloadAsync();
-  //       // dispatch(
-  //       //   addPulseRecording({
-  //       //     duration,
-  //       //     type: "spotify",
-  //       //     soundLevels: null,
-  //       //     link: trackUrl,
-  //       //   })
-  //       // );
-  //     }
-  //   };
-  // }, [sound]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     clearSpotifyTrack();
-  //   };
-  // }, []);
 
   const handleOpenSpotifyLink = () => {
     // const spotifyLink = spotifyTrack?.external_urls.spotify;
@@ -116,36 +74,28 @@ const RecordingEditor = ({
       .catch((err) => console.error("An error occurred", err));
   };
 
-  // const loadAudio = async (audioLink) => {
-  //   const soundInstance = new Audio.Sound();
-
-  //   try {
-  //     await soundInstance.loadAsync({ uri: audioLink });
-  //     setSound(soundInstance);
-  //   } catch (error) {
-  //     console.error("Error loading audio", error);
-  //   }
-  // };
-
   function getSpotifyTrackID(link) {
     const match = link.match(/track\/([a-zA-Z0-9]+)\?/);
     return match ? match[1] : null;
   }
 
   const getTrack = async (pastedLink) => {
+    if (sound) {
+      dispatch(resetPulseRecording());
+    }
     try {
       const link = pastedLink ? pastedLink : await Clipboard.getStringAsync();
 
       const token = await AsyncStorage.getItem("accessToken");
 
       const id = getSpotifyTrackID(link);
-      setTrackUrl(config.spotifyURL + id + "?market=us");
+      // setTrackUrl(config.spotifyURL + id + "?market=us");
       const response = await axios.get(config.spotifyURL + id + "?market=us", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setSpotifyTrack(response.data);
+      // setSpotifyTrack(response.data);
       dispatch(
         loadAudio({
           uri: response.data.preview_url,
@@ -161,8 +111,12 @@ const RecordingEditor = ({
           },
         })
       );
+      setErr("");
     } catch (error) {
-      console.error("Error fetching track:", error);
+      setTrackUrl("");
+
+      // console.error("Error fetching track:", error);
+      setErr("Invalid spotify track URL");
     }
   };
 
@@ -256,7 +210,13 @@ const RecordingEditor = ({
             </TouchableOpacity>
             <TextInput
               style={styles.trackUrlInput}
-              placeholder={deepLink ? deepLink : "Paste track URL here...."}
+              placeholder={
+                err
+                  ? "Error"
+                  : deepLink && !err
+                  ? deepLink
+                  : "Paste track URL here...."
+              }
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -278,12 +238,12 @@ const RecordingEditor = ({
               duration={duration}
               playbackPosition={playbackPosition}
               onSeek={(position) => {
-                onSliderValueChange(position);
+                dispatch(onSliderValueChange({ sound, position }));
               }}
             />
           </View>
         )}
-
+        {err ? <CustomText style={styles.errText}>{err}</CustomText> : null}
         {/* <CustomText>Recording Editor</CustomText> */}
       </View>
     </>
@@ -293,6 +253,7 @@ const RecordingEditor = ({
 export default RecordingEditor;
 
 const styles = StyleSheet.create({
+  errText: { fontSize: 14, color: "red", top: 50 },
   trashIcon: {
     width: 40,
     height: 40,

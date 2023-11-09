@@ -17,7 +17,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { toggleDrawer } from "../../redux";
 import { useDispatch, useSelector } from "react-redux";
-import { togglePlayback, setPlaybackPosition, setIsPlaying } from "../../redux";
+import {
+  togglePlayback,
+  setPlaybackPosition,
+  setIsPlaying,
+  onSliderValueChange,
+} from "../../redux";
 
 const PulsePlayer = ({ data }) => {
   console.log("pulse recording", data);
@@ -33,7 +38,7 @@ const PulsePlayer = ({ data }) => {
   // const [playbackPosition, setPlaybackPosition] = useState(0);
   //  const [spotifyTrack, setSpotifyTrack] = useState();
 
-  const [waveWidth, setWaveWidth] = useState();
+  const [waveWidth, setWaveWidth] = useState(100);
   console.log(waveWidth);
 
   const onEditorRightLayout = (event) => {
@@ -58,17 +63,18 @@ const PulsePlayer = ({ data }) => {
     }
   }, [sound]);
 
-  const initialCall = async () => {
-    if (type === "spotify") {
-      await getTrack(uri);
-    } else {
-      loadAudio(uri);
-    }
-  };
+  // const initialCall = async () => {
+  //   if (type === "spotify") {
+  //     await getTrack(uri);
+  //   } else {
+  //     loadAudio(uri);
+  //   }
+  // };
   useEffect(() => {
     return async () => {
       if (sound) {
         await sound.stopAsync();
+        dispatch(setIsPlaying(false));
         // if (sound._loaded) {
         //   await sound.unloadAsync();
         // }
@@ -125,22 +131,24 @@ const PulsePlayer = ({ data }) => {
   //   }
   //   setIsPlaying(!isPlaying); // Toggle the isPlaying state
   // };
-  const onSliderValueChange = async (value) => {
-    if (sound) {
-      try {
-        await sound.setPositionAsync(value);
-        setPlaybackPosition(value);
-      } catch (error) {
-        console.error("Error seeking:", error);
-      }
-    }
-  };
+  // const onSliderValueChange = async (value) => {
+  //   if (sound) {
+  //     try {
+  //       await sound.setPositionAsync(value);
+  //       setPlaybackPosition(value);
+  //     } catch (error) {
+  //       console.error("Error seeking:", error);
+  //     }
+  //   }
+  // };
   const playPause = (
     <View style={styles.btnContainer}>
       <Button
         icon={isPlaying ? "pause" : "play"}
         iconColor="black"
-        onPressIn={togglePlayback}
+        onPressIn={() =>
+          dispatch(togglePlayback({ sound, isPlaying, playbackPosition }))
+        }
         onLongPress={() =>
           dispatch(
             toggleDrawer({
@@ -155,14 +163,15 @@ const PulsePlayer = ({ data }) => {
       />
     </View>
   );
+  //waveWidth - 92
   const soundBarView = (
     <SoundBar
-      canvasWidth={waveWidth - 92}
+      canvasWidth={waveWidth ? waveWidth - 92 : 200}
       duration={duration}
       playbackPosition={playbackPosition}
       barData={soundLevels}
       onSeek={(position) => {
-        onSliderValueChange(position);
+        dispatch(onSliderValueChange({ sound, position }));
       }}
       isRecording={false}
     />
@@ -182,7 +191,7 @@ const PulsePlayer = ({ data }) => {
         duration={duration}
         playbackPosition={playbackPosition}
         onSeek={(position) => {
-          onSliderValueChange(position);
+          dispatch(onSliderValueChange({ sound, position }));
         }}
       />
     </View>

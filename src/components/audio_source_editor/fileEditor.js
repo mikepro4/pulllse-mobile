@@ -15,43 +15,67 @@ import LineSoundBar from "../soundbar/lineSoundbar";
 import SoundBar from "../soundbar";
 import RNSoundLevel from "react-native-sound-level";
 import { modifyObjectArray } from "../soundbar/soundbarThunk";
-import { addPulseRecording, resetPulseRecording } from "../../redux";
 
 import CustomText from "../text";
 import Icon from "../icon";
 import { center } from "@shopify/react-native-skia";
-
-const RecordingEditor = ({
-  sound,
-  setSound,
-  isPlaying,
+import {
+  addSoundLevel,
+  setSoundLevels,
+  loadAudio,
   setIsPlaying,
-  duration,
-  setDuration,
-  playbackPosition,
-  setPlaybackPosition,
-  togglePlayback,
+  resetPulseRecording,
   onSliderValueChange,
-}) => {
-  const player = useSelector((state) => state.player);
-  console.log("player", player.editedPulse.audioSourceType);
+  togglePlayback,
+  setPlaybackPosition,
+  setExtencionFilename,
+} from "../../redux";
+
+const RecordingEditor = (
+  {
+    // sound,
+    // setSound,
+    // isPlaying,
+    // setIsPlaying,
+    // duration,
+    //setDuration,
+    // playbackPosition,
+    // setPlaybackPosition,
+    // togglePlayback,
+    // onSliderValueChange,
+  }
+) => {
   const dispatch = useDispatch();
+  const state = useSelector((state) => state.pulseRecording);
+  console.log("state", state);
+  const sound = useSelector((state) => state.pulseRecording.sound);
+  const duration = useSelector((state) => state.pulseRecording.duration);
+  const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
+  const soundLevels = useSelector((state) => state.pulseRecording.soundLevels);
+  const extension = useSelector((state) => state.pulseRecording.extension);
+  const fileName = useSelector((state) => state.pulseRecording.fileName);
+  const uri = useSelector((state) => state.pulseRecording.link);
+  const type = useSelector((state) => state.pulseRecording.type);
+  const playbackPosition = useSelector(
+    (state) => state.pulseRecording.playbackPosition
+  );
+
   const [isFocused, setIsFocused] = useState(false);
 
   const [recording, setRecording] = useState();
   const [blob, setBlob] = useState();
 
-  const [soundLevels, setSoundLevels] = useState([]);
+  // const [soundLevels, setSoundLevels] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
 
-  const [waveWidth, setWaveWidth] = useState();
+  const [waveWidth, setWaveWidth] = useState(100);
 
   const onEditorRightLayout = (event) => {
     const { width } = event.nativeEvent.layout;
     setWaveWidth(width);
   };
 
-  const fileInfo = extractFileInfo();
+  // const fileInfo = extractFileInfo(recording);
 
   useEffect(() => {
     if (duration === playbackPosition) {
@@ -59,9 +83,9 @@ const RecordingEditor = ({
     }
   }, [duration, playbackPosition]);
 
-  function extractFileInfo() {
-    if (recording) {
-      const fileObject = recording.assets[0];
+  function extractFileInfo(result) {
+    if (result) {
+      const fileObject = result.assets[0];
       const { name, size, uri } = fileObject;
       const nameParts = name.split(".");
 
@@ -88,60 +112,65 @@ const RecordingEditor = ({
     }
   }
 
+  // useEffect(() => {
+  //   RNSoundLevel.onNewFrame = (data) => {
+  //     // Output the sound level data
+
+  //     if (data.id) {
+  //       setSoundLevels((prevLevels) => [...prevLevels, data]);
+  //     }
+  //   };
+  //   return async () => {
+  //     if (sound) {
+  //       await sound.unloadAsync();
+  //       dispatch(
+  //         addPulseRecording({
+  //           duration,
+  //           type: "file",
+  //           soundLevels: soundLevels,
+  //           link: fileInfo.uri,
+  //           fileName: fileInfo?.fileName,
+  //           extension: fileInfo?.extension,
+  //         })
+  //       );
+  //     }
+  //   };
+  // }, [sound]);
   useEffect(() => {
     RNSoundLevel.onNewFrame = (data) => {
-      // Output the sound level data
-
-      if (data.id) {
-        setSoundLevels((prevLevels) => [...prevLevels, data]);
-      }
-    };
-    return async () => {
-      if (sound) {
-        await sound.unloadAsync();
-        dispatch(
-          addPulseRecording({
-            duration,
-            type: "file",
-            soundLevels: soundLevels,
-            link: fileInfo.uri,
-            fileName: fileInfo?.fileName,
-            extension: fileInfo?.extension,
-          })
-        );
-      }
-    };
-  }, [sound]);
-
-  useEffect(() => {
-    return () => {
-      clearFile();
+      dispatch(addSoundLevel(data));
     };
   }, []);
-  const clearFile = async () => {
-    try {
-      if (sound) {
-        await sound.stopAsync();
-        if (sound._loaded) {
-          // Check if sound is loaded before trying to unload
-          await sound.unloadAsync();
-        }
-      }
 
-      // Reset state
-      setRecording(undefined);
-      setSound(undefined);
-      setSoundLevels([]);
-      setIsPlaying(false);
-      setPlaybackPosition(0);
-      setDuration(0);
-      setBlob(undefined);
-      RNSoundLevel.stop();
-      setIsLooping(false);
-    } catch (error) {
-      console.log("Error resetting:", error);
-    }
-  };
+  // useEffect(() => {
+  //   return () => {
+  //     clearFile();
+  //   };
+  // }, []);
+  // const clearFile = async () => {
+  //   try {
+  //     if (sound) {
+  //       await sound.stopAsync();
+  //       if (sound._loaded) {
+  //         // Check if sound is loaded before trying to unload
+  //         await sound.unloadAsync();
+  //       }
+  //     }
+
+  //     // Reset state
+  //     setRecording(undefined);
+  //     setSound(undefined);
+  //     setSoundLevels([]);
+  //     setIsPlaying(false);
+  //     setPlaybackPosition(0);
+  //     setDuration(0);
+  //     setBlob(undefined);
+  //     RNSoundLevel.stop();
+  //     setIsLooping(false);
+  //   } catch (error) {
+  //     console.log("Error resetting:", error);
+  //   }
+  // };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -152,25 +181,34 @@ const RecordingEditor = ({
   };
   const loadSound = async (uri) => {
     try {
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri },
-        { shouldPlay: false }
-      );
-      const status = await newSound.getStatusAsync();
-      if (status.isLoaded) {
-        setDuration(status.durationMillis);
-      }
-      const response = await fetch(uri);
-
-      setBlob(response.arrayBuffer());
-
-      setSound(newSound);
+      // const { sound: newSound } = await Audio.Sound.createAsync(
+      //   { uri },
+      //   { shouldPlay: false }
+      // );
+      // const status = await newSound.getStatusAsync();
+      // if (status.isLoaded) {
+      //   setDuration(status.durationMillis);
+      // }
+      // setSound(newSound);
+      //  dispatch(
+      //         addPulseRecording({
+      //           duration,
+      //           type: "file",
+      //           soundLevels: soundLevels,
+      //           link: fileInfo.uri,
+      //           fileName: fileInfo?.fileName,
+      //           extension: fileInfo?.extension,
+      //         })
+      //       );
     } catch (e) {
       console.error(`Error loading sound: ${e}`);
     }
   };
 
   const pickDocument = async () => {
+    if (sound) {
+      dispatch(resetPulseRecording());
+    }
     try {
       let result = await DocumentPicker.getDocumentAsync({ type: "audio/*" });
       if (result.canceled) {
@@ -178,8 +216,25 @@ const RecordingEditor = ({
       }
       const uri = result.assets[0].uri;
 
-      setRecording(result);
-      await loadSound(uri);
+      //  setRecording(result);
+      const response = await fetch(uri);
+      //  setRecording(result);
+      const blob = response.arrayBuffer();
+      const Info = extractFileInfo(result);
+      dispatch(
+        setExtencionFilename({
+          fileName: Info?.fileName,
+          extension: Info?.extension,
+        })
+      );
+      dispatch(
+        loadAudio({
+          uri: uri,
+          link: uri,
+          type: "file",
+          track: { blob },
+        })
+      );
     } catch (error) {
       console.error(error);
     }
@@ -194,23 +249,23 @@ const RecordingEditor = ({
 
   const recordWaveForm = async () => {
     // Reset the slider to the initial position
-    setSoundLevels([]);
+    dispatch(setSoundLevels([]));
 
     await sound.setPositionAsync(0);
     await sound.playAsync();
     RNSoundLevel.start();
-    setPlaybackPosition(0);
+    dispatch(setPlaybackPosition(0));
     setIsRecording(true);
   };
   const cancelWaveformRecord = () => {
     RNSoundLevel.stop();
-    setIsPlaying(true);
+    dispatch(setIsPlaying(true));
     setIsRecording(false);
-    setSoundLevels([]);
+    dispatch(setSoundLevels([]));
   };
 
   const trashIcon = (
-    <TouchableOpacity onPress={clearFile}>
+    <TouchableOpacity onPress={() => dispatch(resetPulseRecording())}>
       <View style={styles.trashIcon}>
         <Icon
           name="trashIcon"
@@ -267,7 +322,7 @@ const RecordingEditor = ({
 
             <TextInput
               style={styles.trackUrlInput}
-              placeholder={!recording ? "Select file...." : fileInfo?.uri}
+              placeholder={!uri ? "Select file...." : uri}
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -276,15 +331,11 @@ const RecordingEditor = ({
             />
           </TouchableOpacity>
 
-          {recording && trashIcon}
+          {uri && type === "file" && trashIcon}
         </View>
 
         <View style={styles.trackPreviewContainer}>
-          {!recording ? (
-            <View style={styles.trackPreviewLeft}>
-              <Icon style={{ opacity: 0.5 }} name="x" />
-            </View>
-          ) : (
+          {uri && type === "file" ? (
             <View style={styles.toggleContainer}>
               {isRecording ? (
                 recordButton
@@ -293,14 +344,22 @@ const RecordingEditor = ({
                   <Button
                     icon={isPlaying ? "pause" : "play"}
                     iconColor="black"
-                    onPressIn={togglePlayback}
+                    onPressIn={() =>
+                      dispatch(
+                        togglePlayback({ sound, isPlaying, playbackPosition })
+                      )
+                    }
                   />
                 </View>
               )}
             </View>
+          ) : (
+            <View style={styles.trackPreviewLeft}>
+              <Icon style={{ opacity: 0.5 }} name="x" />
+            </View>
           )}
 
-          {recording ? (
+          {uri && type === "file" ? (
             <View style={styles.trackPreviewRight}>
               {soundLevels.length !== 0 ? (
                 <SoundBar
@@ -309,17 +368,17 @@ const RecordingEditor = ({
                   playbackPosition={playbackPosition}
                   barData={soundLevels}
                   onSeek={(position) => {
-                    onSliderValueChange(position);
+                    dispatch(onSliderValueChange({ sound, position }));
                   }}
                   isRecording={isRecording}
                 />
               ) : (
                 <>
                   <CustomText style={styles.spotifySongHeader}>
-                    {fileInfo?.fileName}
+                    {fileName}
                   </CustomText>
                   <CustomText style={styles.spotifySongArtist}>
-                    {fileInfo?.extension}
+                    {extension}
                   </CustomText>
                 </>
               )}
@@ -333,18 +392,21 @@ const RecordingEditor = ({
             </View>
           )}
         </View>
-        {recording && !isRecording && soundLevels.length === 0 && (
-          <View style={{ top: 32 }}>
-            <LineSoundBar
-              canvasWidth={waveWidth}
-              duration={duration}
-              playbackPosition={playbackPosition}
-              onSeek={(position) => {
-                onSliderValueChange(position);
-              }}
-            />
-          </View>
-        )}
+        {uri &&
+          !isRecording &&
+          soundLevels.length === 0 &&
+          type === "recording" && (
+            <View style={{ top: 32 }}>
+              <LineSoundBar
+                canvasWidth={waveWidth}
+                duration={duration}
+                playbackPosition={playbackPosition}
+                onSeek={(position) => {
+                  dispatch(onSliderValueChange({ sound, position }));
+                }}
+              />
+            </View>
+          )}
         {/* <CustomText>Recording Editor</CustomText> */}
       </View>
     </>

@@ -1,5 +1,5 @@
 function modifyObjectArray(objects, waveWidth) {
-  const targetLength = waveWidth / 5;
+  const targetLength = Math.round(waveWidth / 5);
   // If the object array is longer than 60
   if (objects.length > targetLength) {
     const removalInterval = objects.length / (objects.length - targetLength);
@@ -16,27 +16,27 @@ function modifyObjectArray(objects, waveWidth) {
     });
   }
   // If the object array is shorter than 60
-  else if (objects.length < targetLength) {
-    const initialLength = objects.length;
-    const objectsToAdd = targetLength - initialLength;
-    let ratio = Math.ceil(objectsToAdd / initialLength);
+  // else if (objects.length < targetLength) {
+  //   const initialLength = objects.length;
+  //   const objectsToAdd = targetLength - initialLength;
+  //   let ratio = Math.ceil(objectsToAdd / initialLength);
 
-    let index = 0;
-    while (objects.length < targetLength && index < objects.length) {
-      // Keep original objects
-      index++;
+  //   let index = 0;
+  //   while (objects.length < targetLength && index < objects.length) {
+  //     // Keep original objects
+  //     index++;
 
-      // Insert new objects
-      for (let j = 0; j < ratio && objects.length < targetLength; j++) {
-        const newObject = {
-          id: Math.random().toString(36).substring(2),
-          rawValue: -45,
-        };
-        objects.splice(index, 0, newObject);
-        index++;
-      }
-    }
-  }
+  //     // Insert new objects
+  //     for (let j = 0; j < ratio && objects.length < targetLength; j++) {
+  //       const newObject = {
+  //         id: Math.random().toString(36).substring(2),
+  //         rawValue: -45,
+  //       };
+  //       objects.splice(index, 0, newObject);
+  //       index++;
+  //     }
+  //   }
+  // }
 
   return objects;
 }
