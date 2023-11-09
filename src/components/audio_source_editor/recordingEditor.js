@@ -18,6 +18,7 @@ import {
   resetPulseRecording,
   onSliderValueChange,
   togglePlayback,
+  setExtencionFilename,
 } from "../../redux";
 
 const RecordingEditor = () => {
@@ -78,7 +79,10 @@ const RecordingEditor = () => {
       console.error("Failed to start recording", err);
     }
   };
-
+  function formatSizeToMB(byteLength) {
+    const sizeInMB = byteLength / 1048576;
+    return `${sizeInMB.toFixed(2)} MB`;
+  }
   const stopRecording = async () => {
     RNSoundLevel.stop();
     try {
@@ -86,20 +90,31 @@ const RecordingEditor = () => {
       const uri = recording.getURI();
 
       const response = await fetch(uri);
+
       const blob = await response.arrayBuffer();
 
+      const sizeMb = formatSizeToMB(response._bodyBlob._data.size);
       const modifiedObjects = modifyObjectArray(soundLevels, waveWidth);
-
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
+      const fileName = response._bodyBlob._data.name;
+      const extension = fileName.split(".").pop();
+
+      dispatch(
+        setExtencionFilename({
+          fileName,
+          extension,
+          size: sizeMb,
+        })
+      );
       dispatch(setSoundLevels(modifiedObjects));
       dispatch(
         loadAudio({
           uri: uri,
           link: uri,
           type: "recording",
-          track: { blob },
+          track: { blob, dataType: response._bodyBlob._data.type },
         })
       );
 

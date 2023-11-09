@@ -13,19 +13,43 @@ import LineSoundbar from "../soundbar/lineSoundbar";
 import CustomText from "../text";
 import Icon from "../icon";
 import usePlaybackStatusUpdate from "../../hooks/usePlaybackStatusUpdate";
+import { Audio } from "expo-av";
 
 import { toggleDrawer } from "../../redux";
 import { useDispatch, useSelector } from "react-redux";
-import { togglePlayback, setIsPlaying, onSliderValueChange } from "../../redux";
+// import {
+//   togglePostPlayback,
+//   setPostIsPlaying,
+//   onPostSliderValueChange,
+//   loadPostAudio,
+// } from "../../redux";
 
-const PulsePlayer = ({ data }) => {
-  const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
-  const sound = useSelector((state) => state.pulseRecording.sound);
-  const playbackPosition = useSelector(
-    (state) => state.pulseRecording.playbackPosition
-  );
-  const { artist, imgUri, name, deepLink } = data.track;
-  const { duration, soundLevels, type, extension, fileName } = data;
+const PulsePlayer = ({
+  data,
+  toggleSound,
+  playbackPosition,
+  onPostSliderValueChange,
+  sound,
+  isPlaying,
+}) => {
+  console.log(data);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [sound, setSound] = useState(null);
+  // const [playbackPosition, setPlaybackPosition] = useState(0);
+  let artist, imgUri, name, deepLink;
+
+  if (data && data.track) {
+    // Destructure only if data and data.track exist
+    ({ artist, imgUri, name, deepLink } = data.track);
+  } else {
+    // Handle the case where data.track is not available
+    // Maybe set default values or leave them undefined
+    artist = "";
+    imgUri = ""; // Default image path or URI
+    name = "";
+    deepLink = ""; // Default link or action
+  }
+  const { duration, soundLevels, type, extension, fileName, audioLink } = data;
 
   const dispatch = useDispatch();
 
@@ -35,17 +59,16 @@ const PulsePlayer = ({ data }) => {
     const { width } = event.nativeEvent.layout;
     setWaveWidth(width);
   };
+  // usePlaybackStatusUpdate(sound);
 
-  usePlaybackStatusUpdate(sound);
-
-  useEffect(() => {
-    return async () => {
-      if (sound) {
-        await sound.stopAsync();
-        dispatch(setIsPlaying(false));
-      }
-    };
-  }, [sound]);
+  // useEffect(() => {
+  //   return async () => {
+  //     if (sound) {
+  //       await sound.stopAsync();
+  //       setIsPlaying(false);
+  //     }
+  //   };
+  // }, [sound]);
 
   const handleOpenSpotifyLink = () => {
     Linking.canOpenURL(deepLink)
@@ -59,25 +82,52 @@ const PulsePlayer = ({ data }) => {
       .catch((err) => console.error("An error occurred", err));
   };
 
+  // const loadPostAudio = async () => {
+  //   try {
+  //     const { sound: newSound } = await Audio.Sound.createAsync(
+  //       { uri: audioLink },
+  //       {}, // Your initial status if needed
+  //       (status) => {
+  //         if (status.isLoaded && status.didJustFinish) {
+  //           // Handle completion of playback
+  //         }
+  //       }
+  //     );
+  //     setSound(newSound);
+  //   } catch (error) {
+  //     console.error("Error loading audio:", error);
+  //     // Handle the error, possibly update the UI to inform the user
+  //   }
+  // };
+
+  // const togglePostPlayback = async () => {
+  //   if (!sound) {
+  //     await loadPostAudio();
+  //   }
+  //   if (isPlaying) {
+  //     await sound.pauseAsync();
+  //   } else {
+  //     await sound.setPositionAsync(playbackPosition);
+  //     await sound.playAsync();
+  //   }
+  //   return setIsPlaying(!isPlaying); // Toggle the isPlaying state
+  // };
+
+  // const onPostSliderValueChange = async (position) => {
+  //   if (sound) {
+  //     await sound.setPositionAsync(position);
+  //   }
+  //   return setPlaybackPosition(position);
+  // };
+
   const playPause = (
     <View style={styles.btnContainer}>
       <Button
         icon={isPlaying ? "pause" : "play"}
         iconColor="black"
-        onPressIn={() =>
-          dispatch(togglePlayback({ sound, isPlaying, playbackPosition }))
-        }
-        onLongPress={() =>
-          dispatch(
-            toggleDrawer({
-              drawerOpen: true,
-              drawerType: "pulse_settings",
-              drawerData: null,
-              drawerDraggable: true,
-              drawerHeight: "expanded",
-            })
-          )
-        }
+        onPressIn={() => {
+          toggleSound(data._id, audioLink);
+        }}
       />
     </View>
   );
@@ -89,10 +139,9 @@ const PulsePlayer = ({ data }) => {
       playbackPosition={playbackPosition}
       barData={soundLevels}
       onSeek={(position) => {
-        dispatch(onSliderValueChange({ sound, position }));
+        onPostSliderValueChange(data._id, position);
       }}
       isRecording={false}
-      disabled={false}
     />
   );
   const spotifyIcon = (
@@ -110,19 +159,15 @@ const PulsePlayer = ({ data }) => {
         duration={duration}
         playbackPosition={playbackPosition}
         onSeek={(position) => {
-          dispatch(onSliderValueChange({ sound, position }));
+          onPostSliderValueChange(data._id, position);
         }}
-        disabled={false}
+        disabled={!isPlaying}
       />
     </View>
   );
   const imageToggle = (
     <>
-      <TouchableOpacity
-        onPress={() =>
-          dispatch(togglePlayback({ sound, isPlaying, playbackPosition }))
-        }
-      >
+      <TouchableOpacity onPress={() => toggleSound(data._id, audioLink)}>
         <Image
           source={{ uri: imgUri }}
           style={styles.image} // Adjust the size as needed
@@ -138,48 +183,18 @@ const PulsePlayer = ({ data }) => {
       <View style={{ paddingLeft: 12 }}>
         {type === "spotify" ? (
           <>
-            <TouchableOpacity
-              onPress={() =>
-                dispatch(
-                  toggleDrawer({
-                    drawerOpen: true,
-                    drawerType: "pulse_settings",
-                    drawerData: null,
-                    drawerDraggable: true,
-                    drawerHeight: "expanded",
-                  })
-                )
-              }
-            >
-              <CustomText style={styles.spotifySongHeader}>{name}</CustomText>
-              <CustomText style={styles.spotifySongArtist}>{artist}</CustomText>
-            </TouchableOpacity>
+            <CustomText style={styles.spotifySongHeader}>{name}</CustomText>
+            <CustomText style={styles.spotifySongArtist}>{artist}</CustomText>
             {lineBar}
           </>
         ) : soundLevels?.length !== 0 ? (
           soundBarView
         ) : (
           <>
-            <TouchableOpacity
-              onPress={() =>
-                dispatch(
-                  toggleDrawer({
-                    drawerOpen: true,
-                    drawerType: "pulse_settings",
-                    drawerData: null,
-                    drawerDraggable: true,
-                    drawerHeight: "expanded",
-                  })
-                )
-              }
-            >
-              <CustomText style={styles.spotifySongHeader}>
-                {fileName}
-              </CustomText>
-              <CustomText style={styles.spotifySongArtist}>
-                {extension}
-              </CustomText>
-            </TouchableOpacity>
+            <CustomText style={styles.spotifySongHeader}>{fileName}</CustomText>
+            <CustomText style={styles.spotifySongArtist}>
+              {extension}
+            </CustomText>
             {lineBar}
           </>
         )}
@@ -192,7 +207,6 @@ export default PulsePlayer;
 
 const styles = StyleSheet.create({
   image: {
-    marginLeft: 20,
     width: 50,
     height: 50,
 
@@ -220,7 +234,6 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   btnContainer: {
-    marginLeft: 20,
     width: 50,
     height: 50,
     backgroundColor: "#fff",

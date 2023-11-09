@@ -72,26 +72,16 @@ const RecordingEditor = () => {
       const { name, size, uri } = fileObject;
       const nameParts = name.split(".");
 
-      if (nameParts.length > 1) {
-        const extension = nameParts.pop();
-        const fileNameWithoutExtension = nameParts.join(".");
-        const sizeInMB = (size / (1024 * 1024)).toFixed(2) + " MB";
+      const extension = nameParts.pop();
+      const fileNameWithoutExtension = nameParts.join(".");
+      const sizeInMB = (size / (1024 * 1024)).toFixed(2) + " MB";
 
-        return {
-          fileName: fileNameWithoutExtension,
-          extension: extension,
-          formattedSize: sizeInMB,
-          uri,
-        };
-      } else {
-        const sizeInMB = (size / (1024 * 1024)).toFixed(2) + " MB";
-        return {
-          fileName: name,
-          extension: "",
-          formattedSize: sizeInMB,
-          uri,
-        };
-      }
+      return {
+        fileName: fileNameWithoutExtension,
+        extension: extension,
+        formattedSize: sizeInMB,
+        uri,
+      };
     }
   };
 
@@ -117,12 +107,15 @@ const RecordingEditor = () => {
       //  setRecording(result);
       const response = await fetch(uri);
       //  setRecording(result);
-      const blob = response.arrayBuffer();
+      const blob = await response.arrayBuffer();
       const Info = extractFileInfo(result);
+      console.log("blob", response._bodyBlob._data.type);
+
       dispatch(
         setExtencionFilename({
           fileName: Info?.fileName,
           extension: Info?.extension,
+          size: Info?.formattedSize,
         })
       );
       dispatch(
@@ -130,7 +123,7 @@ const RecordingEditor = () => {
           uri: uri,
           link: uri,
           type: "file",
-          track: { blob },
+          track: { blob, dataType: response._bodyBlob._data.type },
         })
       );
     } catch (error) {

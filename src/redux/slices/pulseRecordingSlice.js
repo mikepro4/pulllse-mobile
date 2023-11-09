@@ -18,7 +18,9 @@ const initialState = {
   sound: null,
   duration: 0,
   playbackPosition: 0,
-  bpm: 0,
+  bpm: null,
+  size: null,
+  uri: null,
 };
 
 const pulseRecordingSlice = createSlice({
@@ -32,6 +34,7 @@ const pulseRecordingSlice = createSlice({
     setExtencionFilename: (state, action) => {
       state.fileName = action.payload.fileName;
       state.extension = action.payload.extension;
+      state.size = action.payload.size;
     },
     setSoundLevels: (state, action) => {
       state.soundLevels = action.payload;
@@ -80,6 +83,7 @@ const pulseRecordingSlice = createSlice({
         state.duration = action.payload.status.durationMillis;
         state.type = action.payload.type;
         state.track = action.payload.track;
+        state.uri = action.payload.uri;
 
         // Set other state properties based on the fulfilled action
         state.link = action.payload.link; // If the URI is needed

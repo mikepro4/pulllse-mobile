@@ -3,12 +3,19 @@ import {
   uploadAudio,
   fetchUserAudios,
   deleteAudio,
+  loadPostAudio,
+  togglePostPlayback,
+  onPostSliderValueChange,
 } from "../thunks/audioThunk";
 
 const initialState = {
   recordings: [],
+  isPlaying: false,
+  sound: null,
+  duration: 0,
+  playbackPosition: 0,
   audios: [],
-  status: "idle", // to track the request status
+  status: "idle",
   error: null,
 };
 
@@ -18,6 +25,9 @@ const recordingsSlice = createSlice({
   reducers: {
     addRecording: (state, action) => {
       state.audios.push(action.payload);
+    },
+    setPostIsPlaying: (state, action) => {
+      state.isPlaying = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -56,10 +66,27 @@ const recordingsSlice = createSlice({
       .addCase(deleteAudio.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(loadPostAudio.pending, (state) => {
+        // Handle the loading state if necessary, e.g., setting a flag
+      })
+      .addCase(loadPostAudio.fulfilled, (state, action) => {
+        // Update the state with the loaded sound and its status
+        state.sound = action.payload.sound;
+        state.duration = action.payload.status.durationMillis;
+      })
+      .addCase(loadPostAudio.rejected, (state, action) => {
+        // Handle the error state, e.g., resetting the state or setting an error message
+      })
+      .addCase(togglePostPlayback.fulfilled, (state, action) => {
+        state.isPlaying = action.payload.isPlaying;
+      })
+      .addCase(onPostSliderValueChange.fulfilled, (state, action) => {
+        state.playbackPosition = action.payload;
       });
   },
 });
 
-export const { addRecording } = recordingsSlice.actions;
+export const { addRecording, setPostIsPlaying } = recordingsSlice.actions;
 
 export const recordsReducer = recordingsSlice.reducer;

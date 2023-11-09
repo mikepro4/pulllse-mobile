@@ -13,6 +13,7 @@ const SoundBar = ({
   setPlaybackPosition,
   onSeek,
   canvasWidth,
+  disabled,
 }) => {
   // Width of the canvas
   // // Width of the canvas
@@ -29,7 +30,11 @@ const SoundBar = ({
   const progressLineWidth = (playbackPosition / duration) * canvasWidth;
 
   return (
-    <TouchableOpacity activeOpacity={1} onPress={handlePress}>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={handlePress}
+      disabled={disabled}
+    >
       <View
         style={{
           width: canvasWidth,

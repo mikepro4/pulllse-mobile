@@ -9,6 +9,7 @@ const SoundBar = ({
   onSeek,
   isRecording,
   canvasWidth,
+  disabled,
 }) => {
   // Constants for canvas size and calculation
 
@@ -26,7 +27,7 @@ const SoundBar = ({
   const playbackPercentage = (playbackPosition / duration) * 100;
   return (
     <TouchableOpacity
-      disabled={isRecording}
+      disabled={isRecording || disabled}
       activeOpacity={1}
       onPress={handlePress}
     >

@@ -61,7 +61,7 @@ export * from "./thunks/pulseThunk";
 export * from "./thunks/pulseRecordingThunk";
 
 export { clearErrorMessage } from "./slices/userSlice";
-export { addRecording } from "./slices/recordingsSlice";
+export { addRecording, setPostIsPlaying } from "./slices/recordingsSlice";
 export { addImage } from "./slices/imageSlice";
 export {
   addPulseRecording,

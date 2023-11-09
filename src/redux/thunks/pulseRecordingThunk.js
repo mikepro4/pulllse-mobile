@@ -6,7 +6,7 @@ const loadAudio = createAsyncThunk(
   async ({ uri, link, type, track }, { dispatch }) => {
     const { sound } = await Audio.Sound.createAsync({ uri });
     const status = await sound.getStatusAsync();
-    return { sound, status, link, type, track };
+    return { sound, status, link, type, track, uri };
   }
 );
 
