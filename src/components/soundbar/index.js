@@ -56,10 +56,12 @@ const SoundBar = ({
               // Calculate the height of the bar relative to the canvasHeight
               const barHeight = Math.max(normalizedValue, 1) * 0.7; // Ensure a minimum height
 
-              const xPos = index * (barWidth + gap) + 2; // Modified this line
+              const xPos = index * (barWidth + gap) - 3; // Modified this line
 
               const barIndexPercentage = (index / barData.length) * 100;
-              const barColor = isRecording
+              const barColor = disabled
+                ? "#112619"
+                : isRecording
                 ? "#FFB945"
                 : barIndexPercentage <= playbackPercentage
                 ? "#29FF7F"

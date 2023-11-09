@@ -23,6 +23,7 @@ import {
   toggleNotification,
   setEdited,
   uploadAudio,
+  resetPulseRecording,
 } from "../../redux";
 
 import Icon from "../../components/icon";
@@ -94,6 +95,7 @@ const PlayerHeader = () => {
             onPressIn={() => {
               alert("Save");
               dispatch(uploadAudio({ pulseRecording }));
+              dispatch(resetPulseRecording());
               // setSaving(true)
               // setTimeout(() => {
               //     setSaving(false)

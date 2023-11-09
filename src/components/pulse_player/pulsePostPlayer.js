@@ -12,46 +12,25 @@ import Button from "../../components/button";
 import LineSoundbar from "../soundbar/lineSoundbar";
 import CustomText from "../text";
 import Icon from "../icon";
-import usePlaybackStatusUpdate from "../../hooks/usePlaybackStatusUpdate";
-import { Audio } from "expo-av";
-
-import { toggleDrawer } from "../../redux";
-import { useDispatch, useSelector } from "react-redux";
-// import {
-//   togglePostPlayback,
-//   setPostIsPlaying,
-//   onPostSliderValueChange,
-//   loadPostAudio,
-// } from "../../redux";
 
 const PulsePlayer = ({
   data,
   toggleSound,
   playbackPosition,
   onPostSliderValueChange,
-  sound,
+
   isPlaying,
 }) => {
-  console.log(data);
-  // const [isPlaying, setIsPlaying] = useState(false);
-  // const [sound, setSound] = useState(null);
-  // const [playbackPosition, setPlaybackPosition] = useState(0);
   let artist, imgUri, name, deepLink;
-
   if (data && data.track) {
-    // Destructure only if data and data.track exist
     ({ artist, imgUri, name, deepLink } = data.track);
   } else {
-    // Handle the case where data.track is not available
-    // Maybe set default values or leave them undefined
     artist = "";
-    imgUri = ""; // Default image path or URI
+    imgUri = "";
     name = "";
-    deepLink = ""; // Default link or action
+    deepLink = "";
   }
   const { duration, soundLevels, type, extension, fileName, audioLink } = data;
-
-  const dispatch = useDispatch();
 
   const [waveWidth, setWaveWidth] = useState(100);
 
@@ -59,16 +38,6 @@ const PulsePlayer = ({
     const { width } = event.nativeEvent.layout;
     setWaveWidth(width);
   };
-  // usePlaybackStatusUpdate(sound);
-
-  // useEffect(() => {
-  //   return async () => {
-  //     if (sound) {
-  //       await sound.stopAsync();
-  //       setIsPlaying(false);
-  //     }
-  //   };
-  // }, [sound]);
 
   const handleOpenSpotifyLink = () => {
     Linking.canOpenURL(deepLink)
@@ -81,44 +50,6 @@ const PulsePlayer = ({
       })
       .catch((err) => console.error("An error occurred", err));
   };
-
-  // const loadPostAudio = async () => {
-  //   try {
-  //     const { sound: newSound } = await Audio.Sound.createAsync(
-  //       { uri: audioLink },
-  //       {}, // Your initial status if needed
-  //       (status) => {
-  //         if (status.isLoaded && status.didJustFinish) {
-  //           // Handle completion of playback
-  //         }
-  //       }
-  //     );
-  //     setSound(newSound);
-  //   } catch (error) {
-  //     console.error("Error loading audio:", error);
-  //     // Handle the error, possibly update the UI to inform the user
-  //   }
-  // };
-
-  // const togglePostPlayback = async () => {
-  //   if (!sound) {
-  //     await loadPostAudio();
-  //   }
-  //   if (isPlaying) {
-  //     await sound.pauseAsync();
-  //   } else {
-  //     await sound.setPositionAsync(playbackPosition);
-  //     await sound.playAsync();
-  //   }
-  //   return setIsPlaying(!isPlaying); // Toggle the isPlaying state
-  // };
-
-  // const onPostSliderValueChange = async (position) => {
-  //   if (sound) {
-  //     await sound.setPositionAsync(position);
-  //   }
-  //   return setPlaybackPosition(position);
-  // };
 
   const playPause = (
     <View style={styles.btnContainer}>
@@ -142,6 +73,7 @@ const PulsePlayer = ({
         onPostSliderValueChange(data._id, position);
       }}
       isRecording={false}
+      disabled={!isPlaying}
     />
   );
   const spotifyIcon = (
@@ -155,7 +87,7 @@ const PulsePlayer = ({
   const lineBar = (
     <View style={styles.line}>
       <LineSoundbar
-        canvasWidth={waveWidth + 30 || 100}
+        canvasWidth={waveWidth - 50 || 100}
         duration={duration}
         playbackPosition={playbackPosition}
         onSeek={(position) => {
@@ -185,7 +117,7 @@ const PulsePlayer = ({
           <>
             <CustomText style={styles.spotifySongHeader}>{name}</CustomText>
             <CustomText style={styles.spotifySongArtist}>{artist}</CustomText>
-            {lineBar}
+            {isPlaying && lineBar}
           </>
         ) : soundLevels?.length !== 0 ? (
           soundBarView
@@ -195,7 +127,7 @@ const PulsePlayer = ({
             <CustomText style={styles.spotifySongArtist}>
               {extension}
             </CustomText>
-            {lineBar}
+            {isPlaying && lineBar}
           </>
         )}
       </View>
@@ -222,11 +154,12 @@ const styles = StyleSheet.create({
   spotifySongHeader: { fontSize: 18, color: "#fff", marginBottom: 2 },
   spotifySongArtist: { fontSize: 14, color: "#777" },
   line: {
-    left: -50,
+    left: 10,
     top: 45,
     position: "absolute",
   },
   container: {
+    marginRight: 10,
     flex: 1,
     // backgroundColor: "red",
     flexDirection: "row",

@@ -37,7 +37,7 @@ const recordingsSlice = createSlice({
       })
       .addCase(uploadAudio.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.recordings = [...state.recordings, action.payload];
+        state.recordings = [action.payload, ...state.recordings];
       })
       .addCase(uploadAudio.rejected, (state, action) => {
         state.status = "failed";
@@ -60,7 +60,7 @@ const recordingsSlice = createSlice({
       .addCase(deleteAudio.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.recordings = state.recordings.filter(
-          (recording) => recording.audioLink !== action.payload
+          (recording) => recording._id !== action.payload
         );
       })
       .addCase(deleteAudio.rejected, (state, action) => {

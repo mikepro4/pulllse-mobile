@@ -1,15 +1,23 @@
-import { StyleSheet, Text, View, ScrollView, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { Audio } from "expo-av";
 import { useDispatch } from "react-redux";
 import { deleteAudio } from "../../redux";
 import PulsePlayer from "../../components/pulse_player/pulsePostPlayer";
-//data = { pulseRecording };
+import Icon from "../../components/icon";
+
 const UserPosts = ({ storedUserInfo, userId, audioList }) => {
   const [sound, setSound] = useState();
   const [playingStatus, setPlayingStatus] = useState({});
 
-  const [playbackPositions, setPlaybackPositions] = useState({});
+  const [playbackPosition, setPlaybackPosition] = useState(0);
   const dispatch = useDispatch();
   console.log("audioList", audioList);
 
@@ -22,35 +30,52 @@ const UserPosts = ({ storedUserInfo, userId, audioList }) => {
 
   useEffect(() => {
     setPlayer();
-    return async () => {
+    return () => {
       // This cleanup function will be called when the component unmounts
-
-      await sound?.unloadAsync(); // Unload the sound
+      if (sound) {
+        sound.unloadAsync(); // Unload the sound
+      }
     };
   }, [sound]);
 
-  const onPlaybackStatusUpdate = (status, id) => {
-    // No need for the isMounted check here as we'll handle the effect cleanup below
-    if (status.isLoaded) {
-      if (status.isPlaying) {
-        setPlaybackPositions((prevPositions) => ({
-          ...prevPositions,
-          [id]: status.positionMillis,
-        }));
-      }
+  useEffect(() => {
+    const onPlaybackStatusUpdate = async (status) => {
       if (status.didJustFinish) {
-        setPlaybackPositions((prevPositions) => ({
-          ...prevPositions,
-          [id]: 0,
-        }));
-        setPlayingStatus((prevState) => ({
-          ...prevState,
-          [id]: false,
-        }));
-        sound.unloadAsync(); // Unload the sound when finished playing
+        setPlaybackPosition(0);
+        await sound.setPositionAsync(0);
+        // setPlayingStatus(false);
+      } else {
+        setPlaybackPosition(status.positionMillis);
       }
+    };
+
+    if (sound) {
+      sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
     }
-  };
+  }, [sound]);
+
+  // const onPlaybackStatusUpdate = (status, id) => {
+  //   // No need for the isMounted check here as we'll handle the effect cleanup below
+  //   if (status.isLoaded) {
+  //     if (status.isPlaying) {
+  //       setPlaybackPositions((prevPositions) => ({
+  //         ...prevPositions,
+  //         [id]: status.positionMillis,
+  //       }));
+  //     }
+  //     if (status.didJustFinish) {
+  //       setPlaybackPositions((prevPositions) => ({
+  //         ...prevPositions,
+  //         [id]: 0,
+  //       }));
+  //       setPlayingStatus((prevState) => ({
+  //         ...prevState,
+  //         [id]: false,
+  //       }));
+  //       sound.unloadAsync(); // Unload the sound when finished playing
+  //     }
+  //   }
+  // };
 
   async function toggleSound(id, url) {
     const isCurrentlyPlaying = playingStatus[id] || false;
@@ -70,27 +95,20 @@ const UserPosts = ({ storedUserInfo, userId, audioList }) => {
 
   const onPostSliderValueChange = async (id, position) => {
     // Update the playback position for the specific audio file
-    setPlaybackPositions((prevPositions) => ({
-      ...prevPositions,
-      [id]: position,
-    }));
+    setPlaybackPosition(position);
 
     // If the audio file being interacted with is the one that's loaded in the sound object
-    if (sound && playingStatus[id]) {
+    if (sound) {
       await sound.setPositionAsync(position);
     }
   };
 
   async function playSound(id, url) {
-    setPlaybackPositions({});
+    setPlaybackPosition(0);
     if (sound) {
       await sound.unloadAsync(); // Make sure to unload any previously loaded sound
     }
-    const { sound: newSound } = await Audio.Sound.createAsync(
-      { uri: url },
-      null,
-      (status) => onPlaybackStatusUpdate(status, id) // Pass the `id` here
-    );
+    const { sound: newSound } = await Audio.Sound.createAsync({ uri: url });
     setSound(newSound);
     setPlayingStatus((prevState) => ({
       ...prevState,
@@ -119,19 +137,24 @@ const UserPosts = ({ storedUserInfo, userId, audioList }) => {
     return `${minutesDisplay}:${secondsDisplay}`;
   }
 
-  const handleDelete = async (audioLink) => {
-    function removeBaseUrl(link) {
-      if (audioList) {
-        const baseUrl =
-          "https://my-audio-bucket-111.s3.us-east-2.amazonaws.com/";
-        return link.replace(baseUrl, "");
-      }
-    }
-    if (audioLink) {
-      const key = removeBaseUrl(audioLink);
-      dispatch(deleteAudio({ key, link: audioLink }));
+  const handleDelete = (id) => {
+    if (id) {
+      dispatch(deleteAudio(id));
     }
   };
+
+  const trash = (id) => (
+    <TouchableOpacity onPress={() => handleDelete(id)}>
+      <View style={styles.trashIcon}>
+        <Icon
+          name="trashIcon"
+          style={{
+            color: "#F25219",
+          }}
+        />
+      </View>
+    </TouchableOpacity>
+  );
   return (
     <View style={{ height: 450 }}>
       <Text>UserPosts</Text>
@@ -142,12 +165,13 @@ const UserPosts = ({ storedUserInfo, userId, audioList }) => {
                 <PulsePlayer
                   data={audio}
                   toggleSound={toggleSound}
-                  playbackPosition={playbackPositions[audio._id] || 0}
+                  playbackPosition={playbackPosition}
                   onPostSliderValueChange={onPostSliderValueChange}
                   sound={sound}
                   // isPlaying={isPlaying}
                   isPlaying={playingStatus[audio._id]}
                 />
+                {trash(audio._id)}
               </View>
             ))
           : null}
@@ -159,11 +183,23 @@ const UserPosts = ({ storedUserInfo, userId, audioList }) => {
 export default UserPosts;
 
 const styles = StyleSheet.create({
+  trashIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 10,
+
+    alignItems: "center",
+    justifyContent: "center",
+  },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   postComponent: {
-    marginBottom: 50,
+    marginBottom: 30,
+    flexDirection: "row",
+    marginLeft: 15,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
