@@ -9,7 +9,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import Theme from "../../styles/theme";
 import * as DocumentPicker from "expo-document-picker";
-import { Audio } from "expo-av";
 import Button from "../../components/button";
 import LineSoundBar from "../soundbar/lineSoundbar";
 import SoundBar from "../soundbar";
@@ -31,23 +30,9 @@ import {
   setExtencionFilename,
 } from "../../redux";
 
-const RecordingEditor = (
-  {
-    // sound,
-    // setSound,
-    // isPlaying,
-    // setIsPlaying,
-    // duration,
-    //setDuration,
-    // playbackPosition,
-    // setPlaybackPosition,
-    // togglePlayback,
-    // onSliderValueChange,
-  }
-) => {
+const RecordingEditor = () => {
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.pulseRecording);
-  console.log("state", state);
+
   const sound = useSelector((state) => state.pulseRecording.sound);
   const duration = useSelector((state) => state.pulseRecording.duration);
   const isPlaying = useSelector((state) => state.pulseRecording.isPlaying);
@@ -61,21 +46,13 @@ const RecordingEditor = (
   );
 
   const [isFocused, setIsFocused] = useState(false);
-
-  const [recording, setRecording] = useState();
-  const [blob, setBlob] = useState();
-
-  // const [soundLevels, setSoundLevels] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
-
   const [waveWidth, setWaveWidth] = useState(100);
 
   const onEditorRightLayout = (event) => {
     const { width } = event.nativeEvent.layout;
     setWaveWidth(width);
   };
-
-  // const fileInfo = extractFileInfo(recording);
 
   useEffect(() => {
     if (duration === playbackPosition) {
@@ -178,31 +155,6 @@ const RecordingEditor = (
 
   const handleBlur = () => {
     setIsFocused(false);
-  };
-  const loadSound = async (uri) => {
-    try {
-      // const { sound: newSound } = await Audio.Sound.createAsync(
-      //   { uri },
-      //   { shouldPlay: false }
-      // );
-      // const status = await newSound.getStatusAsync();
-      // if (status.isLoaded) {
-      //   setDuration(status.durationMillis);
-      // }
-      // setSound(newSound);
-      //  dispatch(
-      //         addPulseRecording({
-      //           duration,
-      //           type: "file",
-      //           soundLevels: soundLevels,
-      //           link: fileInfo.uri,
-      //           fileName: fileInfo?.fileName,
-      //           extension: fileInfo?.extension,
-      //         })
-      //       );
-    } catch (e) {
-      console.error(`Error loading sound: ${e}`);
-    }
   };
 
   const pickDocument = async () => {
@@ -392,21 +344,18 @@ const RecordingEditor = (
             </View>
           )}
         </View>
-        {uri &&
-          !isRecording &&
-          soundLevels.length === 0 &&
-          type === "recording" && (
-            <View style={{ top: 32 }}>
-              <LineSoundBar
-                canvasWidth={waveWidth}
-                duration={duration}
-                playbackPosition={playbackPosition}
-                onSeek={(position) => {
-                  dispatch(onSliderValueChange({ sound, position }));
-                }}
-              />
-            </View>
-          )}
+        {uri && !isRecording && soundLevels.length === 0 && type === "file" && (
+          <View style={{ top: 32 }}>
+            <LineSoundBar
+              canvasWidth={waveWidth}
+              duration={duration}
+              playbackPosition={playbackPosition}
+              onSeek={(position) => {
+                dispatch(onSliderValueChange({ sound, position }));
+              }}
+            />
+          </View>
+        )}
         {/* <CustomText>Recording Editor</CustomText> */}
       </View>
     </>

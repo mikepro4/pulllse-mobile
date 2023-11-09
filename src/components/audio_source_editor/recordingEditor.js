@@ -51,53 +51,6 @@ const RecordingEditor = () => {
     };
   }, [isRecording]);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     // No operation when the screen is focused
-  // return () => {
-  //   if (isRecording) {
-  //     stopRecording();
-  //   }
-  // };
-  //
-  //   }, [isRecording, stopRecording])
-  // );
-
-  // useEffect(() => {
-  //   return () => reset();
-  // }, []);
-
-  // const reset = async () => {
-  //   try {
-  //     // If there's a recording in progress, stop it
-  //     if (isRecording) {
-  //       await recording.stopAndUnloadAsync();
-  //     }
-
-  //     if (sound) {
-  //       await sound.stopAsync();
-  //       if (sound._loaded) {
-  //         // Check if sound is loaded before trying to unload
-  //         await sound.unloadAsync();
-  //       }
-  //     }
-
-  //     // Reset state
-  //     setRecording(undefined);
-  //     setSound(undefined);
-  //     setIsRecording(false);
-  //     setIsPlaying(false);
-  //     setPlaybackPosition(0);
-  //     setDuration(0);
-  //     setBlob(undefined);
-  //     setSoundLevels([]);
-
-  //     setIsLooping(false);
-  //   } catch (error) {
-  //     console.log("Error resetting:", error);
-  //   }
-  // };
-
   const startRecording = async () => {
     if (sound) {
       dispatch(resetPulseRecording());

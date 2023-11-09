@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,6 @@ import { Linking, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import config from "../../../config";
-import { Audio } from "expo-av";
 import LineSoundBar from "../soundbar/lineSoundbar";
 import * as Clipboard from "expo-clipboard";
 
@@ -43,15 +42,6 @@ const RecordingEditor = () => {
   const [trackUrl, setTrackUrl] = useState("");
   const [err, setErr] = useState("");
   console.log(err);
-
-  // const clearSpotifyTrack = async () => {
-  //   setSpotifyTrack(null);
-  //   setSound(undefined);
-  //   setTrackUrl("");
-  //   dispatch(setIsPlaying(false));
-  //   dispatch(setPlaybackPosition(0));
-  //   dispatch(setDuration(0));
-  // };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -89,13 +79,11 @@ const RecordingEditor = () => {
       const token = await AsyncStorage.getItem("accessToken");
 
       const id = getSpotifyTrackID(link);
-      // setTrackUrl(config.spotifyURL + id + "?market=us");
       const response = await axios.get(config.spotifyURL + id + "?market=us", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      // setSpotifyTrack(response.data);
       dispatch(
         loadAudio({
           uri: response.data.preview_url,
@@ -115,7 +103,6 @@ const RecordingEditor = () => {
     } catch (error) {
       setTrackUrl("");
 
-      // console.error("Error fetching track:", error);
       setErr("Invalid spotify track URL");
     }
   };
@@ -163,10 +150,7 @@ const RecordingEditor = () => {
           dispatch(togglePlayback({ sound, isPlaying, playbackPosition }))
         }
       >
-        <Image
-          source={{ uri: imgUri }}
-          style={styles.image} // Adjust the size as needed
-        />
+        <Image source={{ uri: imgUri }} style={styles.image} />
       </TouchableOpacity>
 
       <View style={styles.trackPreviewRight}>
@@ -244,7 +228,6 @@ const RecordingEditor = () => {
           </View>
         )}
         {err ? <CustomText style={styles.errText}>{err}</CustomText> : null}
-        {/* <CustomText>Recording Editor</CustomText> */}
       </View>
     </>
   );
