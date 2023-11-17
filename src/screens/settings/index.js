@@ -8,6 +8,9 @@ import SettingsHeader from "../../components/header/settingsHeader";
 import PlayerComponent from "../player/PlayerComponent";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Slider from "./Slider";
+import ColorPicker from "./ColorPicker";
+import Icon from "../../components/icon";
 
 import SignInWithService from "./SignInWithService";
 
@@ -39,10 +42,11 @@ const Settings = ({ route }) => {
       <View style={styles.header}>
         <SettingsHeader />
       </View>
-
-      <SignInWithService />
-
-      <PlayerComponent />
+      <View style={{ marginTop: 100, marginBottom: 50 }}>
+        <Slider />
+      </View>
+      <ColorPicker />
+      {/* <SignInWithService /> */}
     </View>
   );
 };
