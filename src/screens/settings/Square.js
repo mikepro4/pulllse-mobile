@@ -36,14 +36,10 @@ const SaturationBrightnessSquare = ({
   const contextS = useSharedValue(0); // Saturation starts at 100%
   const contextB = useSharedValue(0); // Saturation starts at 100%
   const brightness = useSharedValue(100); // Brightness starts at 100%
-  const currentS = useRef(0);
-  const currentB = useRef(0);
   console.log("hue", (hue * 100) / 360);
   // ... other state and shared values
 
   const setColors = (newS, newB) => {
-    currentS.current = newS;
-    currentB.current = newB;
     setCurrentS(newS);
     setCurrentB(newB);
   };
