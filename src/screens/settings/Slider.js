@@ -29,8 +29,10 @@ const Slider = () => {
   const [containerWidth, setContainerWidth] = useState(0);
   const TICK_INTERVAL = containerWidth / TICK_COUNT;
   const translateX = useSharedValue(0);
+  //console.log("translateX", translateX);
   const contextX = useSharedValue(0);
   const lastIntervalIndex = useSharedValue(-1);
+  const cumulativeMovement = useSharedValue(0);
   const maxTranslateX = containerWidth / 2;
   const numberMeter = 360;
   const onLayout = (event) => {
@@ -61,11 +63,18 @@ const Slider = () => {
         Math.max(newValue, -maxTranslateX),
         maxTranslateX
       );
-      console.log(event);
-      // const currentIntervalIndex = Math.floor(translateX.value / TICK_INTERVAL);
+
+      // const TOLERANCE = 0.2;
+      // const division = newValue / TICK_INTERVAL;
+      // const divisionFloor = Math.floor(division);
+      // if (Math.abs(division - divisionFloor) < TOLERANCE) {
+      //   console.log("trig");
+      //   runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
+      //   cumulativeMovement.value = 0;
+      // }
       // if (currentIntervalIndex !== lastIntervalIndex.value) {
       //   lastIntervalIndex.value = currentIntervalIndex;
-      //   runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
+      // runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
       // }
     });
   const doubleTapGesture = Gesture.Tap()
