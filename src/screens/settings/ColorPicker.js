@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import {
   Canvas,
@@ -38,8 +38,20 @@ const HUE_MAX = 360;
 const Slider = () => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [currentHue, setCurrentHue] = useState(0);
-  const [currentS, setCurrentS] = useState(100);
-  const [currentB, setCurrentB] = useState(100);
+  //   const [currentS, setCurrentS] = useState(100);
+  //   const [currentB, setCurrentB] = useState(100);
+
+  const setCurrentB = (newB) => {
+    currentB.value = newB;
+  };
+
+  const setCurrentS = (newS) => {
+    currentS.value = newS;
+  };
+
+  const currentS = useSharedValue(100);
+  const currentB = useSharedValue(100);
+  const hueShared = useSharedValue(0);
 
   const TICK_INTERVAL = containerWidth / TICK_COUNT;
   const translateX = useSharedValue(0);
@@ -62,6 +74,7 @@ const Slider = () => {
       const newValue = contextX.value + event.translationX;
       translateX.value = Math.min(Math.max(newValue, 0), maxTranslateX);
       const hue = (translateX.value / maxTranslateX) * HUE_MAX;
+      hueShared.value = hue;
       runOnJS(setCurrentHue)(hue);
     });
   const doubleTapGesture = Gesture.Tap()
@@ -115,6 +128,21 @@ const Slider = () => {
     return { backgroundColor: color };
   });
 
+  const colorDisplay = useAnimatedStyle(() => {
+    let s = currentS.value;
+    let v = currentB.value;
+    s /= 100;
+    v /= 100;
+    let k = (n) => (n + hueShared.value / 60) % 6;
+    let f = (n) => v * (1 - s * Math.max(Math.min(k(n), 4 - k(n), 1), 0));
+    let r = Math.round(f(5) * 255);
+    let g = Math.round(f(3) * 255);
+    let b = Math.round(f(1) * 255); // This is the only declaration of 'b' now
+    return {
+      backgroundColor: `rgb(${r}, ${g}, ${b})`,
+    };
+  });
+
   return (
     <>
       <View style={styles.container} onLayout={onLayout}>
@@ -139,12 +167,7 @@ const Slider = () => {
           </Animated.View>
         </GestureDetector>
         <View style={styles.btnContainer}>
-          <Animated.View
-            style={[
-              styles.colorDisplay,
-              { backgroundColor: hsbToRgb(currentHue, currentS, currentB) },
-            ]}
-          />
+          <Animated.View style={[styles.colorDisplay, colorDisplay]} />
         </View>
         <View style={styles.square}>
           <Square
