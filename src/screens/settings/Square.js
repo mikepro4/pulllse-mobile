@@ -59,9 +59,6 @@ const SaturationBrightnessSquare = ({
       saturation.value = Math.min(Math.max(newSaturation, 0), 100);
       brightness.value = Math.min(Math.max(newBrightness, 0), 100);
 
-      let testS = (event.translationX / size) * 100;
-      let testB = (event.translationX / size) * 100;
-
       runOnJS(setColors)(newSaturation, newBrightness);
 
       //   runOnJS(setCurrentB)(newBrightness);
